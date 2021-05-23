@@ -1,10 +1,10 @@
 import React from 'react'
-import logo from './logo.svg'
+import AppRouter from './routers'
 
 function App () {
   return (
     <div className="App">
-      MGT web
+      <AppRouter />
     </div>
   )
 }
