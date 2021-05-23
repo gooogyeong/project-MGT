@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { postPost } from '../services/posts'
+import { postPost } from '@/services/posts'
 
 const Write: React.FC = () => {
 

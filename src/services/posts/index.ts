@@ -1,6 +1,6 @@
-import { db } from '../../services/firebase'
+import { db } from '@/services/firebase'
 import { collection, addDoc, getDocs } from 'firebase/firestore'
-import { Post, PostPayload } from '../../types/posts'
+import { Post, PostPayload } from '@/types/posts'
 
 export const getPosts = async () => {
   return new Promise((resolve, reject) => {
