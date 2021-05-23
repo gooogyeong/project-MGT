@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { getPosts } from '../services/posts'
-import { Post } from '../types/posts'
+import { getPosts } from '@/services/posts'
+import { Post } from '@/types/posts'
 
 const Feed: React.FC = () => {
 

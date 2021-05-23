@@ -1,5 +1,5 @@
 import React from 'react'
-import AppRouter from './routers'
+import AppRouter from '@/routers'
 
 function App () {
   return (
