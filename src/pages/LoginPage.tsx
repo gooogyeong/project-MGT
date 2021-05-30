@@ -1,11 +1,17 @@
 import React from 'react'
 import Login from '@/components/Login'
+import { RouteComponentProps } from 'react-router-dom'
+import { History } from 'history';
 
-const LoginPage: React.FC = () => {
+type LoginPageProps = {
+  history: History
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ history }) => {
 
   return (
     <div>
-      <Login />
+      <Login history={history}/>
     </div>
   )
 }
