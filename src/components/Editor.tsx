@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
-// import { Image } from 'tiptap-extensions'
 import styled from 'styled-components'
 import Image from '@tiptap/extension-image'
+import { Iframe } from '@/TipTap/Iframe'
 import StarterKit from '@tiptap/starter-kit'
 import { postPost } from '@/services/posts'
 import MenuBar from '@/components/MenuBar'
@@ -11,23 +11,22 @@ const Editor = () => {
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  // const [imageSrc, setImageSrc] = useState('')
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image
+      Image,
+      Iframe
     ],
-    // content: ''// ,
-    // autofocus: true
+    content: '',
+    autofocus: true
   })
 
   const handleSubmitClick = async () => {
     if (editor) {
       const htmlContent = editor.getHTML()
-      console.log(htmlContent)
       setContent(htmlContent)
-      if (title && content) await submit()
+      if (title && htmlContent) await submit()
       else {
         alert('제목 또는 내용은 반드시 입력해야합니다')
       }
@@ -64,7 +63,7 @@ const Editor = () => {
         spellCheck={false}
       />
       <div className='menu-bar__wrapper'>
-        <MenuBar editor={editor}/>
+        <MenuBar editor={editor} />
       </div>
       <EditorContent
         className='editor__wrapper'
