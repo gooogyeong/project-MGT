@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useRef, useState, MouseEvent, ReactNode } from 'react'
+import React, { Dispatch, SetStateAction, ReactNode } from 'react'
 import styled from 'styled-components'
 
 type ModalProps = {
@@ -7,13 +7,21 @@ type ModalProps = {
   children: ReactNode;
   confirmButtonText: string;
   onConfirmButtonClick: () => void;
+  onCancelButtonClick?: () => void;
+  isConfirmButtonDisabled?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
 
   const close = (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    // TODO: self close not working
     console.log('close')
     if (event.target !== event.currentTarget) return
+    props.open(false)
+  }
+
+  const handleCancelButtonClick = () => {
+    if (props.onCancelButtonClick) props.onCancelButtonClick()
     props.open(false)
   }
 
@@ -25,6 +33,7 @@ const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
             <div>{props.children}</div>
             <div className="modal-footer">
               <button
+                disabled={props.isConfirmButtonDisabled}
                 onClick={() => {
                   props.onConfirmButtonClick()
                 }}
@@ -33,7 +42,7 @@ const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
                 {props.confirmButtonText}
               </button>
               <button onClick={() => {
-                props.open(false)
+                handleCancelButtonClick()
               }}>cancel
               </button>
             </div>

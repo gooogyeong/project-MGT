@@ -81,6 +81,7 @@ const MGTEditor = styled.div`
 .editor__wrapper {
 border: 1px solid black;
 border-radius: 4px;
+user-select: auto !important;
 & > * {
 padding: 1rem;
 &:focus {

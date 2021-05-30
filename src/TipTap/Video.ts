@@ -34,12 +34,21 @@ export const Video = TipTapNode.create({
       src: {
         default: null
       },
-      loop: {
-        default: true
-      },
+      /*autoplay: {
+        default: false
+      },*/
+      // loop: {
+      //   default: true
+      // },
       controls: {
         default: true
-      }
+      }// ,
+      // width: {
+      //   default: 500
+      // },
+      // height: {
+      //   default: 300
+      // }
     }
   },
 
