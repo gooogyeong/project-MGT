@@ -1,6 +1,8 @@
 import { Editor as EditorType } from '@tiptap/react'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { useState } from 'react'
 import ImageUploadModal from '@/components/ImageUploadModal'
+import VideoUploadModal from '@/components/VideoUploadModal'
+import styled from 'styled-components'
 
 type MenuBarProps = {
   editor: EditorType | null;
@@ -14,20 +16,28 @@ const MenuBar = ({ editor }: MenuBarProps) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isOpenImageUploadModal, setIsOpenImageUploadModal] = useState(false)
 
-  const openImageUploadModal = () => {
-    setIsOpenImageUploadModal(!isOpenImageUploadModal)
-  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [isOpenVideoUploadModal, setIsOpenVideoUploadModal] = useState(false)
 
   const addImageToEditor = (imageSrc: string) => {
     editor.chain().focus().setImage({ src: imageSrc }).run()
   }
 
+  const addVideoToEditor = (videoSrc: string) => {
+    editor.chain().focus().setIframe({ src: videoSrc }).run()
+  }
+
   return (
-    <div>
+    <MGTEditorMenuBar>
       <ImageUploadModal
         isOpen={isOpenImageUploadModal}
         openImageUploadModal={setIsOpenImageUploadModal}
         addImageToEditor={addImageToEditor}
+      />
+      <VideoUploadModal
+        isOpen={isOpenVideoUploadModal}
+        openVideoUploadModal={setIsOpenVideoUploadModal}
+        addVideoToEditor={addVideoToEditor}
       />
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -114,12 +124,26 @@ const MenuBar = ({ editor }: MenuBarProps) => {
         redo
       </button>
       <button onClick={() => {
-        openImageUploadModal()
+        setIsOpenImageUploadModal(!isOpenImageUploadModal)
       }}>
         upload image
       </button>
-    </div>
+      <button onClick={() => {
+        setIsOpenVideoUploadModal(!isOpenVideoUploadModal)
+      }}>
+        upload video
+      </button>
+    </MGTEditorMenuBar>
   )
 }
+
+const MGTEditorMenuBar = styled.div`
+button {
+&.is-active {
+background-color: black;
+color: white;
+}
+}
+`
 
 export default MenuBar

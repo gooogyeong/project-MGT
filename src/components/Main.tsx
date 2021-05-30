@@ -6,7 +6,6 @@ import { Post } from '@/types/posts'
 const Feed: React.FC = () => {
 
   const [posts, setPosts] = useState([] as Post[])
-  // const [posts, setPosts] = useState([] as (React.ReactElement<any, string | React.JSXElementConstructor<any>>[][]))
 
   useEffect(() => {
     const getPost = async () => {
@@ -20,6 +19,18 @@ const Feed: React.FC = () => {
     getPost()
   }, [])
 
+  const getHtmlContent = (content: string): (ReactElement<any, string | JSXElementConstructor<any>> | ReactElement<any, string | JSXElementConstructor<any>>[])[] => {
+    return ReactHtmlParser(content).map((content) => {
+      // TODO: 정교화
+      const getIsContainIframe = (htmlString: string) => {
+        return new RegExp(/<iframe\s*.*>\s*.*<\/iframe>/g).test(htmlString)
+      }
+      const isContainVideo = content.props.children && content.props.children.length && typeof content.props.children[0] === 'string' && getIsContainIframe(content.props.children[0])
+      if (content.props.children && content.props.children.length) console.log(console.log(content.props.children[0]))
+      return isContainVideo ? ReactHtmlParser(content.props.children[0]) : content
+    })
+  }
+
   return (
     <div>
       post lists:
@@ -28,7 +39,8 @@ const Feed: React.FC = () => {
           <div key={postIndex}>
             <div>createdAt: {post.createdAt.toString()}</div>
             <div>title: {post.title}</div>
-            <div>content: {ReactHtmlParser(post.content)}</div>
+            {/*<div>{getHtmlContent(post.content)}</div>*/}
+            <div>{ReactHtmlParser(post.content).map((content => content))}</div>
           </div>
         )
       })}
