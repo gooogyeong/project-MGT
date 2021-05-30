@@ -1,5 +1,4 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from 'react'
-import styled from 'styled-components'
 import Modal from '@/components/fragmented/Modal'
 
 type ImageUploadModalProps = {
