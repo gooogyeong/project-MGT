@@ -1,4 +1,4 @@
-import React, { useState, Dispatch, SetStateAction, ChangeEvent } from 'react'
+import React, { useState, Dispatch, SetStateAction, ChangeEvent, useRef } from 'react'
 import Modal from '@/components/fragmented/Modal'
 
 type ImageUploadModalProps = {
@@ -9,7 +9,10 @@ type ImageUploadModalProps = {
 
 const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadModalProps): JSX.Element => {
 
+  const fileUploader = useRef<HTMLInputElement>(null)
+
   const [tempVideoSrc, setTempVideoSrc] = useState('')
+  const [previewSrc, setPreviewSrc] = useState('')
 
   const addVideoToEditor = () => {
     if (tempVideoSrc) {
@@ -21,12 +24,23 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
         setTempVideoSrc(embedURL)
         props.addVideoToEditor(embedURL)
       }
+    } else if (previewSrc) {
+      props.addVideoToEditor(previewSrc)
     }
     props.openVideoUploadModal(false)
   }
 
   const handleVideoSrcInput = (e: ChangeEvent<HTMLInputElement>) => {
     setTempVideoSrc(e.target.value)
+  }
+
+  const handleFileChange = async () => {
+    if (fileUploader.current && fileUploader.current.files) {
+      const file = fileUploader.current.files[0]
+      const src = URL.createObjectURL(file)
+      setPreviewSrc(src)
+      // preview = <video src={src} autoPlay loop controls />
+    }
   }
 
   return (
@@ -38,8 +52,11 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
     >
       <div>
         <div>
-          <label htmlFor="up">video url:</label>
-          <input type="text" onChange={handleVideoSrcInput} id="up"/>
+          <label>video url:</label>
+          <input type="text" onChange={handleVideoSrcInput}/>
+          <label>video url:</label>
+          <input type="file" onChange={handleFileChange} ref={fileUploader}/>
+          {/*<video src={previewSrc} autoPlay loop controls />*/}
         </div>
       </div>
     </Modal>

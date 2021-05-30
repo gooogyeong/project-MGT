@@ -1,4 +1,4 @@
-import React, { ReactElement, JSXElementConstructor, useState, useEffect } from 'react'
+import React, { ReactElement, JSXElementConstructor, useState, useEffect, useRef } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import { getPosts } from '@/services/posts'
 import { Post } from '@/types/posts'

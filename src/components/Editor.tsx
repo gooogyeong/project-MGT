@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
 import Image from '@tiptap/extension-image'
 import { Iframe } from '@/TipTap/Iframe'
+import { Video } from '@/TipTap/Video'
 import StarterKit from '@tiptap/starter-kit'
 import { postPost } from '@/services/posts'
 import MenuBar from '@/components/MenuBar'
@@ -16,7 +17,8 @@ const Editor = () => {
     extensions: [
       StarterKit,
       Image,
-      Iframe
+      Iframe,
+      Video
     ],
     content: '',
     autofocus: true
