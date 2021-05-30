@@ -2,6 +2,8 @@ import React, { ReactElement, JSXElementConstructor, useState, useEffect, useRef
 import ReactHtmlParser from 'react-html-parser'
 import { getPosts } from '@/services/posts'
 import { Post } from '@/types/posts'
+import { signOut } from 'firebase/auth'
+import { auth } from '@/services/firebase'
 
 const Feed: React.FC = () => {
 
@@ -31,8 +33,18 @@ const Feed: React.FC = () => {
     })
   }
 
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      console.log('signout successful')
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
   return (
     <div>
+      <button onClick={handleSignOut}>sign out</button>
       post lists:
       {posts.map((post, postIndex) => {
         return (
