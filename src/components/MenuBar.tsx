@@ -24,7 +24,11 @@ const MenuBar = ({ editor }: MenuBarProps) => {
   }
 
   const addVideoToEditor = (videoSrc: string) => {
-    editor.chain().focus().setIframe({ src: videoSrc }).run()
+    if (videoSrc.includes('youtube')) {
+      editor.chain().focus().setIframe({ src: videoSrc }).run()
+    } else {
+      editor.chain().focus().setVideo({ src: videoSrc }).run()
+    }
   }
 
   return (
