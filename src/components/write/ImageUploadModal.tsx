@@ -1,5 +1,4 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from 'react'
-import styled from 'styled-components'
 import Modal from '@/components/fragmented/Modal'
 
 type ImageUploadModalProps = {
@@ -51,7 +50,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
         <div>
           <input type="file" onChange={handleFileChange} id="up" ref={fileUploader}/>
         </div>
-        <img src={tempImageSrc}/>
+        <img src={tempImageSrc} alt="preview"/>
       </div>
     </Modal>
   )

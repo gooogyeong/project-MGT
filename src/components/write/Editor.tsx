@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
 import Image from '@tiptap/extension-image'
-import { Iframe } from '@/TipTap/Iframe'
-import { Video } from '@/TipTap/Video'
+import { Iframe } from '@/utils/tiptap/Iframe'
+import { Video } from '@/utils/tiptap/Video'
 import StarterKit from '@tiptap/starter-kit'
 import { postPost } from '@/services/posts'
-import MenuBar from '@/components/MenuBar'
+import EditorMenuBar from '@/components/write/EditorMenuBar'
 
 const Editor = () => {
 
@@ -65,7 +65,7 @@ const Editor = () => {
         spellCheck={false}
       />
       <div className='menu-bar__wrapper'>
-        <MenuBar editor={editor} />
+        <EditorMenuBar editor={editor} />
       </div>
       <EditorContent
         className='editor__wrapper'

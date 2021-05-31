@@ -1,14 +1,14 @@
 import { Editor as EditorType } from '@tiptap/react'
 import React, { useState } from 'react'
-import ImageUploadModal from '@/components/ImageUploadModal'
-import VideoUploadModal from '@/components/VideoUploadModal'
+import ImageUploadModal from '@/components/write/ImageUploadModal'
+import VideoUploadModal from '@/components/write/VideoUploadModal'
 import styled from 'styled-components'
 
 type MenuBarProps = {
   editor: EditorType | null;
 }
 
-const MenuBar = ({ editor }: MenuBarProps) => {
+const EditorMenuBar = ({ editor }: MenuBarProps) => {
   if (!editor) {
     return null
   }
@@ -150,4 +150,4 @@ color: white;
 }
 `
 
-export default MenuBar
+export default EditorMenuBar
