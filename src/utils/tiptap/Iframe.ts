@@ -22,12 +22,12 @@ export const Iframe = TipTapNode.create({
   name: 'iframe',
   group: 'block',
   atom: true,
-  defaultOptions: <IframeOptions>{
+  defaultOptions: {
     allowFullscreen: true,
     HTMLAttributes: {
       class: 'iframe-wrapper'
     }
-  },
+  } as IframeOptions,
 
   addAttributes () {
     return {

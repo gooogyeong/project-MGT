@@ -1,10 +1,9 @@
-import React, { ReactNode, createContext, useState, useEffect, Dispatch } from 'react'
+import React, { ReactNode, createContext, useState, useEffect } from 'react'
 import { auth } from '@/services/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import firebase from 'firebase/compat'
 
 export const AuthContext = createContext<{ currentUser: (firebase.User | null) } | null>(null)
-// export const AuthContext = createContext<{ currentUser: (firebase.User | null) }>(null)
 
 type AuthProviderProps = {
   children: ReactNode;
