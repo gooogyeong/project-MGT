@@ -1,6 +1,5 @@
 import React from 'react'
 import Login from '@/components/Login'
-import { RouteComponentProps } from 'react-router-dom'
 import { History } from 'history';
 
 type LoginPageProps = {

@@ -50,7 +50,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
         <div>
           <input type="file" onChange={handleFileChange} id="up" ref={fileUploader}/>
         </div>
-        <img src={tempImageSrc}/>
+        <img src={tempImageSrc} alt="preview"/>
       </div>
     </Modal>
   )
