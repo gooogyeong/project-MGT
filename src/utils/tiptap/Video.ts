@@ -22,12 +22,12 @@ export const Video = TipTapNode.create({
   name: 'video',
   group: 'block',
   atom: true,
-  defaultOptions: <VideoOptions>{
+  defaultOptions: {
     allowFullscreen: true,
     HTMLAttributes: {
       class: 'video-wrapper'
     }
-  },
+  } as VideoOptions,
 
   addAttributes () {
     return {
