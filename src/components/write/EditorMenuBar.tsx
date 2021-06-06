@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import ImageUploadModal from '@/components/write/ImageUploadModal'
 import VideoUploadModal from '@/components/write/VideoUploadModal'
 import styled from 'styled-components'
+// import { ImageSize } from '@/utils/tiptap/ImageExtension'
 
 type MenuBarProps = {
   editor: EditorType | null;
@@ -31,6 +32,23 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
     }
   }
 
+  const toggleFontSizeOption = (option: string) => {
+    if (editor.isActive('textStyle', { fontSize: '15px' })) {
+      editor.chain().focus().setFontSize('12px').run()
+    } else {
+      editor.chain().focus().setFontSize(option).run()
+    }
+  }
+
+  const toggleFontFamilyOption = (option: string) => {
+    if (editor.isActive('textStyle', { fontFamily: option })) {
+      editor.chain().focus().unsetFontFamily().run()
+    } else {
+      editor.chain().focus().setFontFamily(option).run()
+    }
+  }
+
+  // @ts-ignore
   return (
     <MGTEditorMenuBar>
       <ImageUploadModal
@@ -43,6 +61,26 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
         openVideoUploadModal={setIsOpenVideoUploadModal}
         addVideoToEditor={addVideoToEditor}
       />
+      <button onClick={() => editor.chain().focus().setTextAlign('left').run()}
+              className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}>
+        left
+      </button>
+      <button onClick={() => editor.chain().focus().setTextAlign('center').run()}
+              className={editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}>
+        center
+      </button>
+      <button onClick={() => editor.chain().focus().setTextAlign('right').run()}
+              className={editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}>
+        right
+      </button>
+      <button onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+              className={editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}>
+        justify
+      </button>
+      <button onClick={() => editor.chain().focus().setParagraph().run()}
+              className={editor.isActive('paragraph') ? 'is-active' : ''}>
+        paragraph
+      </button>
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? 'is-active' : ''}
@@ -97,6 +135,63 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
       >
         h6
       </button>
+      <button onClick={() => { toggleFontSizeOption('15px')} }
+              className={editor.isActive('textStyle', { fontSize: '15px' }) ? 'is-active' : ''}>
+        15px
+      </button>
+      <button onClick={() => { toggleFontSizeOption('18px')} }
+              className={editor.isActive('textStyle', { fontSize: '18px' }) ? 'is-active' : ''}>
+        18px
+      </button>
+      <button onClick={() => toggleFontFamilyOption('Nanum MyeongJo')}
+              className={editor.isActive('textStyle', { fontFamily: 'Nanum MyeongJo' }) ? 'is-active' : ''}>
+        나눔명조
+      </button>
+      <button onClick={() => toggleFontFamilyOption('Noto Serif KR')}
+              className={editor.isActive('textStyle', { fontFamily: 'Noto Serif KR' }) ? 'is-active' : ''}>
+        Noto Serif KR
+      </button>
+      <button onClick={() => toggleFontFamilyOption('Black Han Sans')}
+              className={editor.isActive('textStyle', { fontFamily: 'Black Han Sans' }) ? 'is-active' : ''}>
+        Black Han Sans
+      </button>
+      <button onClick={() => toggleFontFamilyOption('monospace')}
+              className={editor.isActive('textStyle', { fontFamily: 'monospace' }) ? 'is-active' : ''}>
+        monospace
+      </button>
+      <button onClick={() => toggleFontFamilyOption('cursive')}
+              className={editor.isActive('textStyle', { fontFamily: 'cursive' }) ? 'is-active' : ''}>
+        cursive
+      </button>
+      <button onClick={() => toggleFontFamilyOption('Comic Sans MS, Comic Sans')}
+              className={editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' }) ? 'is-active' : ''}>
+        Comic Sans
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffa8a8' }).run()}
+        className={editor.isActive('highlight', { color: '#ffa8a8' }) ? 'is-active' : ''}>
+        red
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffc078' }).run()}
+        className={editor.isActive('highlight', { color: '#ffc078' }) ? 'is-active' : ''}>
+        orange
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHighlight({ color: '#8ce99a' }).run()}
+        className={editor.isActive('highlight', { color: '#8ce99a' }) ? 'is-active' : ''}>
+        green
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHighlight({ color: '#74c0fc' }).run()}
+        className={editor.isActive('highlight', { color: '#74c0fc' }) ? 'is-active' : ''}>
+        blue
+      </button>
+      <button
+        onClick={() => editor.chain().focus().toggleHighlight({ color: '#b197fc' }).run()}
+        className={editor.isActive('highlight', { color: '#b197fc' }) ? 'is-active' : ''}>
+        purple
+      </button>
       <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'is-active' : ''}
@@ -109,12 +204,12 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
       >
         ordered list
       </button>
-      {/*<button*/}
-      {/*  onClick={}*/}
-      {/*  className={editor.isActive('blockquote') ? 'is-active' : ''}*/}
-      {/*>*/}
-      {/*  blockquote*/}
-      {/*</button>*/}
+      <button
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        className={editor.isActive('blockquote') ? 'is-active' : ''}
+      >
+        blockquote
+      </button>
       <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         horizontal rule
       </button>
@@ -131,6 +226,36 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
         setIsOpenImageUploadModal(!isOpenImageUploadModal)
       }}>
         upload image
+      </button>
+      <button onClick={() => {
+        // @ts-ignore
+        editor.chain().focus().setSize({ size: 'small' }).run()}
+      }>
+        resize image - small
+      </button>
+      <button onClick={() => {
+        // @ts-ignore
+        editor.chain().focus().setSize({ size: 'medium' }).run()}
+      }>
+        resize image - medium
+      </button>
+      <button onClick={() => {
+        // @ts-ignore
+        editor.chain().focus().setPosition({ position: 'flex-start' }).run()}
+      }>
+        justify image - left
+      </button>
+      <button onClick={() => {
+        // @ts-ignore
+        editor.chain().focus().setPosition({ position: 'center' }).run()}
+      }>
+        justify image - center
+      </button>
+      <button onClick={() => {
+        // @ts-ignore
+        editor.chain().focus().setPosition({ position: 'flex-end' }).run()}
+      }>
+        justify image - right
       </button>
       <button onClick={() => {
         setIsOpenVideoUploadModal(!isOpenVideoUploadModal)
