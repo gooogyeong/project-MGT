@@ -18,6 +18,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { postPost } from '@/services/posts'
 import EditorMenuBar from '@/components/write/EditorMenuBar'
 import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
+import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
 
 const Editor = () => {
 
@@ -35,9 +36,10 @@ const Editor = () => {
       Table.configure({
         resizable: true,
       }),
+      TableHeader,
       TableRow,
       TableCell,
-      TableHeader,
+      TableCellExtension,
       Image,
       ImageExtension,
       Iframe,

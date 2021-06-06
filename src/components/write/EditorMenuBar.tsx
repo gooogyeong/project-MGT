@@ -243,6 +243,10 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
       <button onClick={() => editor.chain().focus().mergeOrSplit().run()}>
         merge or split cells
       </button>
+      <button onClick={() => editor.chain().focus().setCellAttribute('backgroundColor', '#FAF594').run()}
+              disabled={!editor.can().setCellAttribute('backgroundColor', '#FAF594')}>
+        change background color
+      </button>
       <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         horizontal rule
       </button>
