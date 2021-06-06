@@ -11,7 +11,6 @@ function AppRouter (): JSX.Element {
       <Switch>
         <Route exact path="/" component={MainPage}/>
         <Route path="/login" component={LoginPage}/>
-        {/*<Route path="/write" component={WritePage}/>*/}
         <PrivateRoute exact path="/write" component={WritePage}/>
       </Switch>
     </Router>
