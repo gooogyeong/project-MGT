@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import ImageUploadModal from '@/components/write/ImageUploadModal'
 import VideoUploadModal from '@/components/write/VideoUploadModal'
 import styled from 'styled-components'
-// import { ImageSize } from '@/utils/tiptap/ImageExtension'
 
 type MenuBarProps = {
   editor: EditorType | null;
@@ -213,6 +212,36 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
         className={editor.isActive('blockquote') ? 'is-active' : ''}
       >
         blockquote
+      </button>
+      <button onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
+        insertTable
+      </button>
+      <button onClick={() => editor.chain().focus().addColumnAfter().run()}>
+        add column
+      </button>
+      <button onClick={() => editor.chain().focus().deleteColumn().run()}>
+        delete column
+      </button>
+      <button onClick={() => editor.chain().focus().addRowAfter().run()}>
+        add row
+      </button>
+      <button onClick={() => editor.chain().focus().deleteRow().run()}>
+        delete row
+      </button>
+      <button onClick={() => editor.chain().focus().deleteTable().run()}>
+        delete table
+      </button>
+      <button onClick={() => editor.chain().focus().toggleHeaderColumn().run()}>
+        toggle header column
+      </button>
+      <button onClick={() => editor.chain().focus().toggleHeaderRow().run()}>
+        toggle header row
+      </button>
+      <button onClick={() => editor.chain().focus().toggleHeaderCell().run()}>
+        toggle header cell
+      </button>
+      <button onClick={() => editor.chain().focus().mergeOrSplit().run()}>
+        merge or split cells
       </button>
       <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         horizontal rule

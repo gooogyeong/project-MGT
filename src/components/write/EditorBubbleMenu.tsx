@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { BubbleMenu, Editor as EditorType } from '@tiptap/react'
-import styled from 'styled-components'
 import { TextSelection, NodeSelection } from 'prosemirror-state'
 
 type BubbleMenuProps = {
