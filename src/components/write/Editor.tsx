@@ -1,12 +1,19 @@
 import React, { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
+import TextAlign from '@tiptap/extension-text-align'
+import TextStyle from '@tiptap/extension-text-style'
+import FontFamily from '@tiptap/extension-font-family'
+import Highlight from '@tiptap/extension-highlight'
 import Image from '@tiptap/extension-image'
+import ImageExtension from '@/utils/tiptap/ImageExtension'
+import { FontSize } from '@/utils/tiptap/FontSize'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import StarterKit from '@tiptap/starter-kit'
 import { postPost } from '@/services/posts'
 import EditorMenuBar from '@/components/write/EditorMenuBar'
+import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
 
 const Editor = () => {
 
@@ -16,12 +23,22 @@ const Editor = () => {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TextAlign,
+      TextStyle,
+      FontSize,
+      FontFamily,
+      Highlight.configure({ multicolor: true }),
       Image,
+      ImageExtension.configure({
+        HTMLAttributes: {
+          class: 'custom-image'
+        }
+      }),
       Iframe,
       Video
     ],
     content: '',
-    autofocus: true
+    // autofocus: true
   })
 
   const handleSubmitClick = async () => {
@@ -58,12 +75,15 @@ const Editor = () => {
   }
 
   return (
-    <MGTEditor>
+    <MGTEditor >
       <label>제목</label>
       <input
         onChange={handleTitleChange}
         spellCheck={false}
       />
+      <div className='bubble-menu__wrapper'>
+        <EditorBubbleMenu editor={editor}/>
+      </div>
       <div className='menu-bar__wrapper'>
         <EditorMenuBar editor={editor} />
       </div>
@@ -88,6 +108,10 @@ padding: 1rem;
 outline: none !important;
 }
 }
+  blockquote {
+    padding-left: 1rem;
+    border-left: 3px solid black;
+  }
 }
 `
 
