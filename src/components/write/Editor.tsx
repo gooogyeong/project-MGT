@@ -29,15 +29,11 @@ const Editor = () => {
       FontFamily,
       Highlight.configure({ multicolor: true }),
       Image,
-      ImageExtension.configure({
-        HTMLAttributes: {
-          class: 'custom-image'
-        }
-      }),
+      ImageExtension,
       Iframe,
       Video
     ],
-    content: '',
+    content: ''
     // autofocus: true
   })
 
@@ -45,11 +41,18 @@ const Editor = () => {
     if (editor) {
       const htmlContent = editor.getHTML()
       setContent(htmlContent)
-      if (title && htmlContent) await submit()
-      else {
+      if (title && htmlContent) {
+        await submit()
+        initEditor()
+      } else {
         alert('제목 또는 내용은 반드시 입력해야합니다')
       }
     }
+  }
+
+  const initEditor = () => {
+    setTitle('')
+    setContent('')
   }
 
   const submit = async () => {
@@ -75,7 +78,7 @@ const Editor = () => {
   }
 
   return (
-    <MGTEditor >
+    <MGTEditor>
       <label>제목</label>
       <input
         onChange={handleTitleChange}
@@ -85,7 +88,7 @@ const Editor = () => {
         <EditorBubbleMenu editor={editor}/>
       </div>
       <div className='menu-bar__wrapper'>
-        <EditorMenuBar editor={editor} />
+        <EditorMenuBar editor={editor}/>
       </div>
       <EditorContent
         className='editor__wrapper'
@@ -98,10 +101,19 @@ const Editor = () => {
 }
 
 const MGTEditor = styled.div`
+menu-bar__wrapper, .bubble-menu__wrapper {
+
+}
 .editor__wrapper {
 border: 1px solid black;
 border-radius: 4px;
 user-select: auto !important;
+button {
+&.is-active {
+background-color: black;
+color: white;
+}
+}
 & > * {
 padding: 1rem;
 &:focus {
