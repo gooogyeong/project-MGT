@@ -10,7 +10,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ history }) => {
 
   return (
     <div>
-      <Login history={history}/>
+      <Login />
     </div>
   )
 }

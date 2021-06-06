@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
 import TextAlign from '@tiptap/extension-text-align'
@@ -23,7 +24,6 @@ import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
 const Editor = () => {
 
   const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
 
   const editor = useEditor({
     extensions: [
@@ -49,31 +49,26 @@ const Editor = () => {
     // autofocus: true
   })
 
+  const history = useHistory()
+
   const handleSubmitClick = async () => {
     if (editor) {
-      const htmlContent = editor.getHTML()
-      setContent(htmlContent)
-      if (title && htmlContent) {
+      if (title && editor.getHTML()) {
         await submit()
-        initEditor()
+        alert('성공적으로 글을 등록했습니다.')
+        history.push('/')
       } else {
         alert('제목 또는 내용은 반드시 입력해야합니다')
       }
     }
   }
 
-  const initEditor = () => {
-    setTitle('')
-    setContent('')
-  }
-
   const submit = async () => {
     const payload = {
       title,
-      content,
+      content: editor ? editor.getHTML() : '',
       createdAt: new Date().toString()
     }
-    console.log(payload)
     try {
       await postPost(payload)
     } catch (error) {
