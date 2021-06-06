@@ -1,17 +1,15 @@
 import React, { useCallback, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { Redirect } from 'react-router'
 import { AuthContext } from '@/components/Auth'
 import { auth } from '@/services/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import styled from 'styled-components'
 import firebase from 'firebase/compat'
-import { History } from 'history'
 
-type LoginProps = {
-  history: History;
-}
+const Login = () => {
+  const history = useHistory()
 
-const Login: React.FC<LoginProps> = ({ history }) => {
   const handleLogin = useCallback(
     async event => {
       event.preventDefault()
