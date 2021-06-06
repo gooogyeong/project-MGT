@@ -55,51 +55,49 @@ const Editor = () => {
 
   const [title, setTitle] = useState('')
 
-  const handleSubmitClick = async () => {
-    if (editor) {
-      if (title && editor.getHTML()) {
-        await submit()
-        alert('성공적으로 글을 등록했습니다.')
-        history.push('/')
-      } else {
-        alert('제목 또는 내용은 반드시 입력해야합니다')
-      }
-    }
-  }
-
-  const submit = async () => {
-    const payload = {
-      title,
-      content: editor ? editor.getHTML() : '',
-      createdAt: new Date().toString()
-    }
-    try {
-      await postPost(payload)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // const toggleIsEditable = () => {
-  //   if (editor) editor.editable = !editor.editable
-  // }
-
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
 
   return useObserver(() => {
+    const authorNickName = store?.admin.admin?.nickName
+
+    const handleSubmitClick = async () => {
+      if (editor) {
+        if (title && editor.getHTML()) {
+          await submit()
+          alert('성공적으로 글을 등록했습니다.')
+          history.push('/')
+        } else {
+          alert('제목 또는 내용은 반드시 입력해야합니다')
+        }
+      }
+    }
+
+    const submit = async () => {
+      const payload = {
+        title,
+        content: editor ? editor.getHTML() : '',
+        createdAt: new Date().toString(),
+        author: authorNickName ? authorNickName : ''
+      }
+      try {
+        await postPost(payload)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
     return (
       <MGTEditor>
         <label>제목</label>
         <input
           onChange={handleTitleChange}
           spellCheck={false}
-          disabled={true}
         />
         <label>글쓴이</label>
         <span>
-          {store?.admin.admin?.nickName}
+          {authorNickName}
         </span>
         <div className='menu-bar__wrapper'>
           <EditorMenuBar editor={editor}/>
