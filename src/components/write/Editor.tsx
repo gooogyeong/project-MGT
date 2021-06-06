@@ -20,10 +20,14 @@ import { postPost } from '@/services/posts'
 import EditorMenuBar from '@/components/write/EditorMenuBar'
 import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
 import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
+import { useObserver } from 'mobx-react-lite'
+import { storeContext } from '@/stores/context'
 
 const Editor = () => {
 
-  const [title, setTitle] = useState('')
+  const store = React.useContext(storeContext)
+
+  const history = useHistory()
 
   const editor = useEditor({
     extensions: [
@@ -34,7 +38,7 @@ const Editor = () => {
       FontFamily,
       Highlight.configure({ multicolor: true }),
       Table.configure({
-        resizable: true,
+        resizable: true
       }),
       TableHeader,
       TableRow,
@@ -49,7 +53,7 @@ const Editor = () => {
     // autofocus: true
   })
 
-  const history = useHistory()
+  const [title, setTitle] = useState('')
 
   const handleSubmitClick = async () => {
     if (editor) {
@@ -84,33 +88,37 @@ const Editor = () => {
     setTitle(e.target.value)
   }
 
-  return (
-    <MGTEditor>
-      <label>제목</label>
-      <input
-        onChange={handleTitleChange}
-        spellCheck={false}
-      />
-      <div className='bubble-menu__wrapper'>
+  return useObserver(() => {
+    return (
+      <MGTEditor>
+        <label>제목</label>
+        <input
+          onChange={handleTitleChange}
+          spellCheck={false}
+          disabled={true}
+        />
+        <label>글쓴이</label>
+        <span>
+          {store?.admin.admin?.nickName}
+        </span>
+        <div className='menu-bar__wrapper'>
+          <EditorMenuBar editor={editor}/>
+        </div>
         <EditorBubbleMenu editor={editor}/>
-      </div>
-      <div className='menu-bar__wrapper'>
-        <EditorMenuBar editor={editor}/>
-      </div>
-      <EditorContent
-        className='editor__wrapper'
-        editor={editor}
-      />
-      <button onClick={handleSubmitClick}>submit</button>
-      {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
-    </MGTEditor>
-  )
+        <EditorContent
+          className='editor__wrapper'
+          editor={editor}
+        />
+        <button onClick={handleSubmitClick}>submit</button>
+        {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
+      </MGTEditor>
+    )
+  })
+
+
 }
 
 const MGTEditor = styled.div`
-menu-bar__wrapper, .bubble-menu__wrapper {
-
-}
 .editor__wrapper {
 border: 1px solid black;
 border-radius: 4px;
