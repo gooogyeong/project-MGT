@@ -37,9 +37,9 @@ const Feed: React.FC = () => {
       {posts.map((post, postIndex) => {
         return (
           <div key={postIndex}>
+            <div>author: {post.author}</div>
             <div>createdAt: {post.createdAt.toString()}</div>
             <div>title: {post.title}</div>
-            {/*<div>{getHtmlContent(post.content)}</div>*/}
             <div>{ReactHtmlParser(post.content).map((content => content))}</div>
           </div>
         )
@@ -62,7 +62,6 @@ const MGTMain = styled.div`
     th {
       min-width: 1em;
       border: 1px solid black;
-      //border: 2px solid #ced4da;
       padding: 3px 5px;
       vertical-align: top;
       box-sizing: border-box;
