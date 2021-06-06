@@ -135,11 +135,15 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
       >
         h6
       </button>
-      <button onClick={() => { toggleFontSizeOption('15px')} }
+      <button onClick={() => {
+        toggleFontSizeOption('15px')
+      }}
               className={editor.isActive('textStyle', { fontSize: '15px' }) ? 'is-active' : ''}>
         15px
       </button>
-      <button onClick={() => { toggleFontSizeOption('18px')} }
+      <button onClick={() => {
+        toggleFontSizeOption('18px')
+      }}
               className={editor.isActive('textStyle', { fontSize: '18px' }) ? 'is-active' : ''}>
         18px
       </button>
@@ -226,36 +230,6 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
         setIsOpenImageUploadModal(!isOpenImageUploadModal)
       }}>
         upload image
-      </button>
-      <button onClick={() => {
-        // @ts-ignore
-        editor.chain().focus().setSize({ size: 'small' }).run()}
-      }>
-        resize image - small
-      </button>
-      <button onClick={() => {
-        // @ts-ignore
-        editor.chain().focus().setSize({ size: 'medium' }).run()}
-      }>
-        resize image - medium
-      </button>
-      <button onClick={() => {
-        // @ts-ignore
-        editor.chain().focus().setPosition({ position: 'flex-start' }).run()}
-      }>
-        justify image - left
-      </button>
-      <button onClick={() => {
-        // @ts-ignore
-        editor.chain().focus().setPosition({ position: 'center' }).run()}
-      }>
-        justify image - center
-      </button>
-      <button onClick={() => {
-        // @ts-ignore
-        editor.chain().focus().setPosition({ position: 'flex-end' }).run()}
-      }>
-        justify image - right
       </button>
       <button onClick={() => {
         setIsOpenVideoUploadModal(!isOpenVideoUploadModal)

@@ -65,8 +65,6 @@ export default Image.extend({
           ...attributes
         }
 
-        console.log(options)
-
         const node = this.type.create(options)
 
         if (dispatch) {
@@ -100,8 +98,8 @@ export default Image.extend({
   renderHTML({ node, HTMLAttributes }) {
     const size = getWidth(node.attrs.size) // node.attrs.size
     const position = node.attrs.position
-    // HTMLAttributes.class = 'custom-image-' + size
-    if (size) HTMLAttributes.style = `${size}`
+
+    if (size) HTMLAttributes.style = size
 
     return ['div', { class: 'img__wrapper', style: `display: flex; justify-content: ${position};` }, [
       'img',
