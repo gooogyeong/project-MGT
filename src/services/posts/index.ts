@@ -34,7 +34,6 @@ export const getPosts = (payload: GetPostsPaylod) => {
         res.forEach((doc) => {
           posts.push(doc.data() as Post)
         })
-        console.log(posts)
         resolve(posts)
       })
       .catch((error) => {
