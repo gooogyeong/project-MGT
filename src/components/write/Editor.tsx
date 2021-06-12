@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
@@ -22,8 +22,11 @@ import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
 import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
 import { useObserver } from 'mobx-react-lite'
 import { storeContext } from '@/stores/context'
+import { createTag, getTags } from '@/services/tags'
+import { Tag as TagType } from '@/types/tags'
+import Tag from '@/components/fragmented/Tag'
 
-const Editor = () => {
+const Editor = (): JSX.Element => {
 
   const store = React.useContext(storeContext)
 
@@ -50,17 +53,41 @@ const Editor = () => {
       Video
     ],
     content: ''
-    // autofocus: true
   })
 
+  const author = store?.admin.admin
+
   const [title, setTitle] = useState('')
+  const [tags, setTags] = useState([] as TagType[])
+  const [postTags, setPostTags] = useState([] as TagType[])
+  const [tagName, setTagName] = useState('')
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
 
+  useEffect(() => {
+    const getTagList = async () => {
+      try {
+        const tags = await getTags()
+        setTags(tags as TagType[])
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getTagList()
+  }, [])
+
   return useObserver(() => {
-    const authorNickName = store?.admin.admin?.nickName
+
+    const handleTagCreate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        await createTag({ name: tagName })
+        const tags = await getTags()
+        setTags(tags as TagType[])
+        setTagName('')
+      }
+    }
 
     const handleSubmitClick = async () => {
       if (editor) {
@@ -79,7 +106,9 @@ const Editor = () => {
         title,
         content: editor ? editor.getHTML() : '',
         createdAt: new Date().toString(),
-        author: authorNickName ? authorNickName : ''
+        author: author ? author.nickName : '',
+        authorUid: author ? author.uid : '',
+        tags: postTags
       }
       try {
         await postPost(payload)
@@ -92,12 +121,12 @@ const Editor = () => {
       <MGTEditor>
         <label>제목</label>
         <input
-          onChange={handleTitleChange}
           spellCheck={false}
+          onChange={handleTitleChange}
         />
         <label>글쓴이</label>
         <span>
-          {authorNickName}
+          {author ? author.nickName : ''}
         </span>
         <div className='menu-bar__wrapper'>
           <EditorMenuBar editor={editor}/>
@@ -107,6 +136,14 @@ const Editor = () => {
           className='editor__wrapper'
           editor={editor}
         />
+        <div>
+         <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
+          <label>태그 입력</label>
+          <input value={tagName} onKeyDown={handleTagCreate}></input>
+          {tags.map((tag, tagIndex) => {
+            return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
+          })}
+        </div>
         <button onClick={handleSubmitClick}>submit</button>
         {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
       </MGTEditor>
