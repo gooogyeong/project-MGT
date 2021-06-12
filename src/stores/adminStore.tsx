@@ -1,26 +1,28 @@
-import { getUserInfo } from '@/services/admin'
+import { getAdminsInfo, getAdminInfo } from '@/services/admin'
 import { Admin } from '@/types/admin'
 
 export type AdminStore = {
+  admins: Admin[];
   admin: null | Admin;
-  setAdmin: (payload: Admin) => void;
   getAdmin: (uid: string) => Promise<Admin>;
+  getAdmins: () => Promise<Admin[]>;
 }
 
 export const adminStore = (): AdminStore => {
   const store: AdminStore = {
+    admins: [],
     admin: null,
 
-    setAdmin (admin: Admin) {
+    async getAdmin (uid: string) {
+      const admin = await getAdminInfo(uid)
       this.admin = admin
+      return admin
     },
 
-    async getAdmin (uid: string) {
-      console.log(uid)
-      const admin = await getUserInfo(uid)
-      console.log(admin)
-      this.setAdmin(admin)
-      return admin
+    async getAdmins () {
+      const admins = await getAdminsInfo()
+      this.admins = admins
+      return admins
     }
   }
   return store
