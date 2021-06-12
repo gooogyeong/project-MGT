@@ -102,18 +102,19 @@ const Feed = (): JSX.Element => {
           />
           <button onClick={handleSearchClick}>태그 검색</button>
         </div>
-        <h3>post lists:</h3>
-        <select onChange={handleCreatedAtOrderSelect}>
-          {/*TODO: enum으로 만들 것*/}
-          <option value={Order.DESC}>최신순</option>
-          <option value={Order.ASC}>오래된순</option>
-        </select>
+        <span>필터</span>
         <select onChange={handleAuthorSelect}>
           <option value="">전체 글쓴이</option>
           {admins.map((admin, adminIndex) => {
             return (<option value={admin.uid} key={adminIndex}>{admin.nickName}</option>)
           })}
         </select>
+        <span>정렬</span>
+        <select onChange={handleCreatedAtOrderSelect}>
+          <option value={Order.DESC}>최신순</option>
+          <option value={Order.ASC}>오래된순</option>
+        </select>
+        <h3>post lists:</h3>
         {posts.map((post, postIndex) => {
           return (
             <div key={postIndex}>
