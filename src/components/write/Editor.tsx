@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
@@ -20,10 +20,17 @@ import { postPost } from '@/services/posts'
 import EditorMenuBar from '@/components/write/EditorMenuBar'
 import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
 import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
+import { useObserver } from 'mobx-react-lite'
+import { storeContext } from '@/stores/context'
+import { createTag, getTags } from '@/services/tags'
+import { Tag as TagType } from '@/types/tags'
+import Tag from '@/components/fragmented/Tag'
 
-const Editor = () => {
+const Editor = (): JSX.Element => {
 
-  const [title, setTitle] = useState('')
+  const store = React.useContext(storeContext)
+
+  const history = useHistory()
 
   const editor = useEditor({
     extensions: [
@@ -34,7 +41,7 @@ const Editor = () => {
       FontFamily,
       Highlight.configure({ multicolor: true }),
       Table.configure({
-        resizable: true,
+        resizable: true
       }),
       TableHeader,
       TableRow,
@@ -46,71 +53,119 @@ const Editor = () => {
       Video
     ],
     content: ''
-    // autofocus: true
   })
 
-  const history = useHistory()
+  const author = store?.admin.admin
 
-  const handleSubmitClick = async () => {
-    if (editor) {
-      if (title && editor.getHTML()) {
-        await submit()
-        alert('성공적으로 글을 등록했습니다.')
-        history.push('/')
-      } else {
-        alert('제목 또는 내용은 반드시 입력해야합니다')
-      }
-    }
-  }
-
-  const submit = async () => {
-    const payload = {
-      title,
-      content: editor ? editor.getHTML() : '',
-      createdAt: new Date().toString()
-    }
-    try {
-      await postPost(payload)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // const toggleIsEditable = () => {
-  //   if (editor) editor.editable = !editor.editable
-  // }
+  const [title, setTitle] = useState('')
+  const [tags, setTags] = useState([] as TagType[])
+  const [postTags, setPostTags] = useState([] as TagType[])
+  const [tagName, setTagName] = useState('')
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
 
-  return (
-    <MGTEditor>
-      <label>제목</label>
-      <input
-        onChange={handleTitleChange}
-        spellCheck={false}
-      />
-      <div className='bubble-menu__wrapper'>
+  useEffect(() => {
+    const getTagList = async () => {
+      try {
+        const tags = await getTags()
+        setTags(tags as TagType[])
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getTagList()
+  }, [])
+
+  return useObserver(() => {
+
+    const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setTagName(e.target.value)
+    }
+
+    const handleTagCreate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        try {
+          if (!tagName) {
+            alert('태그명을 입력하지 않았습니다')
+            return
+          }
+          await createTag({ name: tagName })
+          const tags = await getTags()
+          setTags(tags as TagType[])
+          setTagName('')
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    }
+
+    const handleSubmitClick = async () => {
+      if (editor) {
+        if (title && editor.getHTML()) {
+          await submit()
+          alert('성공적으로 글을 등록했습니다.')
+          history.push('/')
+        } else {
+          alert('제목 또는 내용은 반드시 입력해야합니다')
+        }
+      }
+    }
+
+    const submit = async () => {
+      const payload = {
+        title,
+        content: editor ? editor.getHTML() : '',
+        createdAt: new Date().toString(),
+        author: author ? author.nickName : '',
+        authorUid: author ? author.uid : '',
+        tags: postTags
+      }
+      try {
+        await postPost(payload)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    return (
+      <MGTEditor>
+        <label>제목</label>
+        <input
+          spellCheck={false}
+          onChange={handleTitleChange}
+        />
+        <label>글쓴이</label>
+        <span>
+          {author ? author.nickName : ''}
+        </span>
+        <div className='menu-bar__wrapper'>
+          <EditorMenuBar editor={editor}/>
+        </div>
         <EditorBubbleMenu editor={editor}/>
-      </div>
-      <div className='menu-bar__wrapper'>
-        <EditorMenuBar editor={editor}/>
-      </div>
-      <EditorContent
-        className='editor__wrapper'
-        editor={editor}
-      />
-      <button onClick={handleSubmitClick}>submit</button>
-      {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
-    </MGTEditor>
-  )
+        <EditorContent
+          className='editor__wrapper'
+          editor={editor}
+        />
+        <div>
+         <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
+          <label>태그 입력</label>
+          <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
+          {tags.map((tag, tagIndex) => {
+            return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
+          })}
+        </div>
+        <button onClick={handleSubmitClick}>submit</button>
+        {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
+      </MGTEditor>
+    )
+  })
+
+
 }
 
 const MGTEditor = styled.div`
-menu-bar__wrapper, .bubble-menu__wrapper {
-
-}
 .editor__wrapper {
 border: 1px solid black;
 border-radius: 4px;
