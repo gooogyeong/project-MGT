@@ -40,7 +40,6 @@ export default Image.extend({
       // seemed to lose context, so I've just
       // copied it in here directly
       setImage: (options) => ({ tr, dispatch }) => {
-        // console.log(options)
         const { selection } = tr
         const node = this.type.create(options)
 

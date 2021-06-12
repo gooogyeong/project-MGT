@@ -1,15 +1,17 @@
 import React from 'react'
 import AppRouter from '@/routers'
 import { AuthProvider } from '@/components/Auth'
+import StoreProvider from '@/stores/context'
 
 function App () {
+
   return (
-    // <div className="App">
-    <AuthProvider>
-      <AppRouter/>
-    </AuthProvider>
-    // </div>
-  ) 
+    <StoreProvider>
+      <AuthProvider>
+        <AppRouter/>
+      </AuthProvider>
+    </StoreProvider>
+  )
 }
 
 export default App
