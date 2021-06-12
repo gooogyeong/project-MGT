@@ -80,12 +80,24 @@ const Editor = (): JSX.Element => {
 
   return useObserver(() => {
 
+    const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setTagName(e.target.value)
+    }
+
     const handleTagCreate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
-        await createTag({ name: tagName })
-        const tags = await getTags()
-        setTags(tags as TagType[])
-        setTagName('')
+        try {
+          if (!tagName) {
+            alert('태그명을 입력하지 않았습니다')
+            return
+          }
+          await createTag({ name: tagName })
+          const tags = await getTags()
+          setTags(tags as TagType[])
+          setTagName('')
+        } catch (error) {
+          console.log(error)
+        }
       }
     }
 
@@ -139,7 +151,7 @@ const Editor = (): JSX.Element => {
         <div>
          <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
           <label>태그 입력</label>
-          <input value={tagName} onKeyDown={handleTagCreate}></input>
+          <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
           {tags.map((tag, tagIndex) => {
             return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
           })}

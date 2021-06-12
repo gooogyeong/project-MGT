@@ -58,7 +58,6 @@ const Feed = (): JSX.Element => {
     const getTagList = async () => {
       try {
         const tags = await getTags()
-        console.log(tags)
         setTags(tags as TagType[])
       } catch (error) {
         console.log(error)
