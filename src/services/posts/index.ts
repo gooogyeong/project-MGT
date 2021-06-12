@@ -46,6 +46,8 @@ export const postPost = (payload: PostPayload) => {
   return new Promise((resolve, reject) => {
     addDoc(collection(db, 'posts'), payload)
       .then((res) => {
+        console.log(res)
+        console.log(res.data())
         resolve(res)
       }).catch((error) => {
       reject(error)
