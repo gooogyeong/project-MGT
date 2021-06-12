@@ -17,24 +17,12 @@ export const AuthProvider = (props: AuthProviderProps) => {
   const store = React.useContext(storeContext)
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user as (firebase.User | null))
+      if (user && store) await store.admin.getAdmin(user.uid)
       setPending(false)
     })
   }, [])
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        if (currentUser && store) {
-          await store.admin.getAdmin(currentUser.uid)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getUser()
-  }, [store, currentUser])
 
   if (pending) {
     return <>Loading...</>
