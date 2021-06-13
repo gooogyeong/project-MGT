@@ -1,5 +1,5 @@
 import React, { useState, useRef, Dispatch, SetStateAction } from 'react'
-import Modal from '@/components/fragmented/Modal'
+import Modal from '@/components/shared/Modal'
 
 type ImageUploadModalProps = {
   isOpen: boolean;
