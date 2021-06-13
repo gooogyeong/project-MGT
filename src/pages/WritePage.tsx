@@ -1,5 +1,5 @@
 import React from 'react'
-import Write from '@/components/write/Write'
+import Write from '@/components/Write'
 
 const WritePage: React.FC = () => {
 

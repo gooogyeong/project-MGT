@@ -16,18 +16,23 @@ import { FontSize } from '@/utils/tiptap/FontSize'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import StarterKit from '@tiptap/starter-kit'
-import { createTempPost, createPost } from '@/services/posts'
-import EditorMenuBar from '@/components/write/EditorMenuBar'
-import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
+import EditorMenuBar from '@/components/editor/EditorMenuBar'
+import EditorBubbleMenu from '@/components/editor/EditorBubbleMenu'
 import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
 import { useObserver } from 'mobx-react-lite'
 import { storeContext } from '@/stores/context'
 import { createTag, getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
 import Tag from '@/components/shared/Tag'
-import PreviewModal from '@/components/write/PreviewModal'
+import PreviewModal from '@/components/editor/PreviewModal'
+import { PostPayload } from '@/types/posts'
 
-const Editor = (): JSX.Element => {
+type EditorProps = {
+  handleSubmitClick: (payload: PostPayload) => Promise<void>;
+ //  handlePreviewClick?: () => Promise<void>;
+}
+
+const Editor = (props: EditorProps): JSX.Element => {
 
   const store = React.useContext(storeContext)
 
@@ -53,14 +58,14 @@ const Editor = (): JSX.Element => {
       Iframe,
       Video
     ],
-    content: ''
+    content: store?.post.currEditPost?.content || ''
   })
 
   const author = store?.admin.admin
 
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
-  const [postTags, setPostTags] = useState([] as TagType[])
+  const [postTags, setPostTags] = useState(store?.post.currEditPost?.tags || [] as TagType[])
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
 
@@ -80,34 +85,7 @@ const Editor = (): JSX.Element => {
     getTagList()
   }, [])
 
-  useEffect(() => {
-    const createPost = async () => {
-      try {
-        const payload = {
-          title,
-          content: '',
-          createdAt: new Date().toString(),
-          author: author ? author.nickName : '',
-          authorUid: author ? author.uid : '',
-          tags: []
-        }
-        const tempPostId = await createTempPost(payload)
-        if (store) store.post.setTempPostId(tempPostId)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    createPost()
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (store) store.post.deleteTempPost()
-    }
-  }, [])
-
   return useObserver(() => {
-
     const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
       setTagName(e.target.value)
     }
@@ -136,8 +114,6 @@ const Editor = (): JSX.Element => {
           title,
           content: editor ? editor.getHTML() : '',
           createdAt: new Date().toString(),
-          author: author ? author.nickName : '',
-          authorUid: author ? author.uid : '',
           tags: postTags
         }
         await store.post.updateTempPost(payload)
@@ -148,28 +124,21 @@ const Editor = (): JSX.Element => {
     const handleSubmitClick = async () => {
       if (editor) {
         if (title && editor.getHTML()) {
-          await submit()
+          const payload = {
+            authorUid: author ? author.uid : '',
+            author: author ? author.nickName : '',
+            title,
+            content: editor ? editor.getHTML() : '',
+            createdAt: new Date().toString(),
+            tags: postTags
+          }
+          await props.handleSubmitClick(payload)
+          // await submit()
           alert('성공적으로 글을 등록했습니다.')
           history.push('/')
         } else {
           alert('제목 또는 내용은 반드시 입력해야합니다')
         }
-      }
-    }
-
-    const submit = async () => {
-      try {
-        const payload = {
-          authorUid: author ? author.uid : '',
-          author: author ? author.nickName : '',
-          title,
-          content: editor ? editor.getHTML() : '',
-          createdAt: new Date().toString(),
-          tags: postTags
-        }
-        if (store) await createPost(store.post.tempPostId, payload)
-      } catch (error) {
-        console.log(error)
       }
     }
 
@@ -182,10 +151,11 @@ const Editor = (): JSX.Element => {
       <MGTEditor>
         <button onClick={() => {
           history.push('/')
-        }}>그냥 뒤로가기
+        }}>leave without save
         </button>
         <label>제목</label>
         <input
+          value={title}
           spellCheck={false}
           onChange={handleTitleChange}
         />
@@ -210,8 +180,7 @@ const Editor = (): JSX.Element => {
           })}
         </div>
         <button onClick={handlePreviewClick}>preview</button>
-        <button onClick={handleSubmitClick}>submit</button>
-        {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
+        <button onClick={handleSubmitClick}>완료</button>
       </MGTEditor>
       </div>
     )
