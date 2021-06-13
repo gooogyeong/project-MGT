@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import ReactHtmlParser from 'react-html-parser'
-import { getPosts, GetPostsPaylod } from '@/services/posts'
-import { Post } from '@/types/posts'
+import { useHistory } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import styled from 'styled-components'
@@ -9,7 +7,8 @@ import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
 import { Admin } from '@/types/admin'
 import { Order } from '@/utils/enum'
-import Tag from '@/components/fragmented/Tag'
+import Post from '@/components/shared/Post'
+import Tag from '@/components/shared/Tag'
 import { getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
 
@@ -17,27 +16,25 @@ const Feed = (): JSX.Element => {
 
   const store = React.useContext(storeContext)
 
+  const history = useHistory()
+
   const searchBarInput = useRef<HTMLInputElement>(null)
 
-  const [posts, setPosts] = useState([] as Post[])
   const [admins, setAdmins] = useState([] as Admin[])
-  const [getPostsPayload, setGetPostsPayload] = useState({
-    createdAt: 'desc',
-    authorUid: '',
-    tag: null
-  } as GetPostsPaylod)
+  const [tags, setTags] = useState([] as TagType[])
+  const [searchTag, setSearchTag] = useState(null as (null | TagType))
+
 
   useEffect(() => {
     const getPostList = async () => {
       try {
-        const posts = await getPosts(getPostsPayload)
-        setPosts(posts as Post[])
+        if (store) await store.post.getPosts()
       } catch (error) {
         console.log(error)
       }
     }
     getPostList()
-  }, [JSON.stringify(getPostsPayload)])
+  }, [])
 
   useEffect(() => {
     const getAdmins = async () => {
@@ -51,9 +48,6 @@ const Feed = (): JSX.Element => {
     getAdmins()
   }, [])
 
-  const [tags, setTags] = useState([] as TagType[])
-  const [searchTag, setSearchTag] = useState(null as (null | TagType))
-
   useEffect(() => {
     const getTagList = async () => {
       try {
@@ -66,32 +60,59 @@ const Feed = (): JSX.Element => {
     getTagList()
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (store) {
+        store.post.setGetPostsPayload({
+          createdAt: Order.DESC,
+          authorUid: '',
+          tag: null
+        })
+      }
+    }
+  }, [])
+
   return useObserver(() => {
     const handleSignOut = () => {
       signOut(auth)
         .then(() => {
           console.log('signout successful')
+          history.push('/login')
         })
         .catch((error) => {
           console.log(error)
         })
     }
 
-    const handleCreatedAtOrderSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setGetPostsPayload({ ...getPostsPayload, createdAt: e.target.value as Order })
+    const handleCreatedAtOrderSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (store) {
+        store.post.setGetPostsPayload({ createdAt: e.target.value as Order })
+        await store.post.getPosts()
+      }
     }
 
-    const handleAuthorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setGetPostsPayload({ ...getPostsPayload, authorUid: e.target.value as Order })
+    const handleAuthorSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (store) {
+        store.post.setGetPostsPayload({ authorUid: e.target.value as Order })
+        await store.post.getPosts()
+      }
     }
 
-    const handleSearchClick = () => {
-      setGetPostsPayload({ ...getPostsPayload, tag: searchTag })
+    const handleSearchClick = async () => {
+      if (store) {
+        store.post.setGetPostsPayload({ tag: searchTag })
+        await store.post.getPosts()
+      }
     }
+
 
     return (
       <MGTMain>
         <button onClick={handleSignOut}>sign out</button>
+        <button onClick={() => {
+          history.push('/write')
+        }}>글쓰러가기
+        </button>
         <div>
           {/*TODO: searchbar 분리*/}
           <div>태그: {tags.map((tag, tagIndex) => <Tag tag={tag} key={tagIndex} setTag={setSearchTag}/>)}</div>
@@ -115,71 +136,18 @@ const Feed = (): JSX.Element => {
           <option value={Order.ASC}>오래된순</option>
         </select>
         <h3>post lists:</h3>
-        {posts.map((post, postIndex) => {
+        {store ? store.post.posts.map((post, postIndex) => {
           return (
-            <div key={postIndex}>
-              <div>author: {post.author}</div>
-              <div>createdAt: {post.createdAt.toString()}</div>
-              <div>title: {post.title}</div>
-              <div>{ReactHtmlParser(post.content).map((content => content))}</div>
-              <div>태그: {post.tags.map((tag, tagIndex) => <Tag key={tagIndex} tag={tag}/>)}</div>
-            </div>
+            <Post post={post} key={postIndex}/>
           )
-        })}
+        }) : null}
       </MGTMain>
     )
   })
 }
 
 const MGTMain = styled.div`
-  // TODO: table 스타일 최대한 inline으로
-  // TODO: table style 공통으로 관리
-  table {
-    border-collapse: collapse;
-    table-layout: fixed;
-    width: 100%;
-    margin: 0;
-    overflow: hidden;
 
-    td,
-    th {
-      min-width: 1em;
-      border: 1px solid black;
-      padding: 3px 5px;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-
-      > * {
-        margin-bottom: 0;
-      }
-    }
-
-    th {
-      font-weight: bold;
-      text-align: left;
-      background-color: #f1f3f5;
-    }
-
-    .selectedCell:after {
-      z-index: 2;
-      position: absolute;
-      content: "";
-      left: 0; right: 0; top: 0; bottom: 0;
-      background: rgba(200, 200, 255, 0.4);
-      pointer-events: none;
-    }
-
-    .column-resize-handle {
-      position: absolute;
-      right: -2px;
-      top: 0;
-      bottom: -2px;
-      width: 4px;
-      background-color: #adf;
-      pointer-events: none;
-    }
-  }
 `
 
 export default Feed
