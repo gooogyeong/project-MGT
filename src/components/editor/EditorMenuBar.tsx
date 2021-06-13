@@ -1,7 +1,7 @@
 import { Editor as EditorType } from '@tiptap/react'
 import React, { useState } from 'react'
-import ImageUploadModal from '@/components/write/ImageUploadModal'
-import VideoUploadModal from '@/components/write/VideoUploadModal'
+import ImageUploadModal from '@/components/editor/ImageUploadModal'
+import VideoUploadModal from '@/components/editor/VideoUploadModal'
 import styled from 'styled-components'
 
 type MenuBarProps = {

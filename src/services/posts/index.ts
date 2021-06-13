@@ -5,7 +5,8 @@ import { Post, PostPayload, UpdatePostPayload } from '@/types/posts'
 import { Order } from '@/utils/enum'
 import { Tag } from '@/types/tags'
 
-export type GetPostsPaylod = {
+// TODO: type으로 이동
+export type GetPostsPayload = {
   createdAt: Order;
   authorUid: string;
   tag: null | Tag;
@@ -13,7 +14,7 @@ export type GetPostsPaylod = {
 
 const postRef = collection(db, 'posts')
 
-export const getPosts = (payload: GetPostsPaylod) => {
+export const getPosts = (payload: GetPostsPayload) => {
   return new Promise((resolve, reject) => {
     const orderByCreatedAt = orderBy('createdAt', payload.createdAt)
     let getPostsQuery
@@ -75,6 +76,18 @@ export const createPost = (tempPostId: string, payload: PostPayload): Promise<vo
       }).catch((error) => {
       reject(error)
     })
+  })
+}
+
+export const updatePost = (postId: string, payload: UpdatePostPayload) => {
+  return new Promise((resolve, reject) => {
+    updateDoc(doc(db, 'posts', postId), payload)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
   })
 }
 

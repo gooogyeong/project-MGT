@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import ReactHtmlParser from 'react-html-parser'
 import { Post as PostType } from '@/types/posts'
 import Tag from '@/components/shared/Tag'
@@ -14,7 +15,9 @@ type PostProps = {
 const Post = (props: PostProps) => {
   const store = useContext(storeContext)
 
-  const handleDeletePostClick = async () => {
+  const history = useHistory()
+
+  const handleDeleteClick = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       await deletePost(props.post.id)
       if (store) await store.post.getPosts()
@@ -22,11 +25,17 @@ const Post = (props: PostProps) => {
     }
   }
 
+  const handleEditClick = () => {
+    if (store) store.post.setCurrEditPost(props.post)
+    history.push(`/write/${props.post.id}`)
+  }
+
   return useObserver(() => {
     return (
       <MGTPost>
         <div>
-          <button onClick={handleDeletePostClick}>포스트 삭제</button>
+          <button onClick={handleDeleteClick}>삭제</button>
+          <button onClick={handleEditClick}>수정</button>
         </div>
         <div>author: {props.post.author}</div>
         {props.post.createdAt ? <div>createdAt: {props.post.createdAt.toString()}</div> : null}
