@@ -10,7 +10,7 @@
 
 # production
 /build
-.firebase/hosting.YnVpbGQ.cache
+.firebase/
 
 # misc
 .DS_Store
