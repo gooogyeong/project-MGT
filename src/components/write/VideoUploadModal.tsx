@@ -1,5 +1,5 @@
 import React, { useState, Dispatch, SetStateAction, ChangeEvent, useRef } from 'react'
-import Modal from '@/components/fragmented/Modal'
+import Modal from '@/components/shared/Modal'
 import { storage } from '@/services/firebase'
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage'
 

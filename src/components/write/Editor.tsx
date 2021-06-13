@@ -16,7 +16,7 @@ import { FontSize } from '@/utils/tiptap/FontSize'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import StarterKit from '@tiptap/starter-kit'
-import { postPost } from '@/services/posts'
+import { createTempPost, createPost } from '@/services/posts'
 import EditorMenuBar from '@/components/write/EditorMenuBar'
 import EditorBubbleMenu from '@/components/write/EditorBubbleMenu'
 import { TableCellExtension } from '@/utils/tiptap/TableCellExtension'
@@ -24,7 +24,8 @@ import { useObserver } from 'mobx-react-lite'
 import { storeContext } from '@/stores/context'
 import { createTag, getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
-import Tag from '@/components/fragmented/Tag'
+import Tag from '@/components/shared/Tag'
+import PreviewModal from '@/components/write/PreviewModal'
 
 const Editor = (): JSX.Element => {
 
@@ -61,6 +62,7 @@ const Editor = (): JSX.Element => {
   const [tags, setTags] = useState([] as TagType[])
   const [postTags, setPostTags] = useState([] as TagType[])
   const [tagName, setTagName] = useState('')
+  const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -76,6 +78,32 @@ const Editor = (): JSX.Element => {
       }
     }
     getTagList()
+  }, [])
+
+  useEffect(() => {
+    const createPost = async () => {
+      try {
+        const payload = {
+          title,
+          content: '',
+          createdAt: new Date().toString(),
+          author: author ? author.nickName : '',
+          authorUid: author ? author.uid : '',
+          tags: []
+        }
+        const tempPostId = await createTempPost(payload)
+        if (store) store.post.setTempPostId(tempPostId)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    createPost()
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (store) store.post.deleteTempPost()
+    }
   }, [])
 
   return useObserver(() => {
@@ -101,6 +129,22 @@ const Editor = (): JSX.Element => {
       }
     }
 
+    const handlePreviewClick = async () => {
+      if (store) {
+        // TODO: payload 하나의 state로 관리
+        const payload = {
+          title,
+          content: editor ? editor.getHTML() : '',
+          createdAt: new Date().toString(),
+          author: author ? author.nickName : '',
+          authorUid: author ? author.uid : '',
+          tags: postTags
+        }
+        await store.post.updateTempPost(payload)
+        setIsOpenPreviewModal(true)
+      }
+    }
+
     const handleSubmitClick = async () => {
       if (editor) {
         if (title && editor.getHTML()) {
@@ -114,23 +158,32 @@ const Editor = (): JSX.Element => {
     }
 
     const submit = async () => {
-      const payload = {
-        title,
-        content: editor ? editor.getHTML() : '',
-        createdAt: new Date().toString(),
-        author: author ? author.nickName : '',
-        authorUid: author ? author.uid : '',
-        tags: postTags
-      }
       try {
-        await postPost(payload)
+        const payload = {
+          authorUid: author ? author.uid : '',
+          author: author ? author.nickName : '',
+          title,
+          content: editor ? editor.getHTML() : '',
+          createdAt: new Date().toString(),
+          tags: postTags
+        }
+        if (store) await createPost(store.post.tempPostId, payload)
       } catch (error) {
         console.log(error)
       }
     }
 
     return (
+      <div>
+        <PreviewModal
+          isOpen={isOpenPreviewModal}
+          open={setIsOpenPreviewModal}
+        />
       <MGTEditor>
+        <button onClick={() => {
+          history.push('/')
+        }}>그냥 뒤로가기
+        </button>
         <label>제목</label>
         <input
           spellCheck={false}
@@ -149,16 +202,18 @@ const Editor = (): JSX.Element => {
           editor={editor}
         />
         <div>
-         <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
+          <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
           <label>태그 입력</label>
           <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
           {tags.map((tag, tagIndex) => {
             return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
           })}
         </div>
+        <button onClick={handlePreviewClick}>preview</button>
         <button onClick={handleSubmitClick}>submit</button>
         {/*<button onClick={toggleIsEditable}>toggle editable</button>*/}
       </MGTEditor>
+      </div>
     )
   })
 
