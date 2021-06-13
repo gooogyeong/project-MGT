@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getPosts, GetPostsPaylod } from '@/services/posts'
-import { Post as PostType } from '@/types/posts'
+import { useHistory } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import styled from 'styled-components'
@@ -17,29 +16,25 @@ const Feed = (): JSX.Element => {
 
   const store = React.useContext(storeContext)
 
+  const history = useHistory()
+
   const searchBarInput = useRef<HTMLInputElement>(null)
 
-  const [posts, setPosts] = useState([] as PostType[])
   const [admins, setAdmins] = useState([] as Admin[])
   const [tags, setTags] = useState([] as TagType[])
   const [searchTag, setSearchTag] = useState(null as (null | TagType))
-  const [getPostsPayload, setGetPostsPayload] = useState({
-    createdAt: 'desc',
-    authorUid: '',
-    tag: null
-  } as GetPostsPaylod)
+
 
   useEffect(() => {
     const getPostList = async () => {
       try {
-        const posts = await getPosts(getPostsPayload)
-        setPosts(posts as PostType[])
+        if (store) await store.post.getPosts()
       } catch (error) {
         console.log(error)
       }
     }
     getPostList()
-  }, [getPostsPayload.createdAt, getPostsPayload.authorUid, getPostsPayload.tag])
+  }, [])
 
   useEffect(() => {
     const getAdmins = async () => {
@@ -65,32 +60,59 @@ const Feed = (): JSX.Element => {
     getTagList()
   }, [])
 
+  useEffect(() => {
+    return () => {
+      if (store) {
+        store.post.setGetPostsPayload({
+          createdAt: Order.DESC,
+          authorUid: '',
+          tag: null
+        })
+      }
+    }
+  }, [])
+
   return useObserver(() => {
     const handleSignOut = () => {
       signOut(auth)
         .then(() => {
           console.log('signout successful')
+          history.push('/login')
         })
         .catch((error) => {
           console.log(error)
         })
     }
 
-    const handleCreatedAtOrderSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setGetPostsPayload({ ...getPostsPayload, createdAt: e.target.value as Order })
+    const handleCreatedAtOrderSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (store) {
+        store.post.setGetPostsPayload({ createdAt: e.target.value as Order })
+        await store.post.getPosts()
+      }
     }
 
-    const handleAuthorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setGetPostsPayload({ ...getPostsPayload, authorUid: e.target.value as Order })
+    const handleAuthorSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      if (store) {
+        store.post.setGetPostsPayload({ authorUid: e.target.value as Order })
+        await store.post.getPosts()
+      }
     }
 
-    const handleSearchClick = () => {
-      setGetPostsPayload({ ...getPostsPayload, tag: searchTag })
+    const handleSearchClick = async () => {
+      if (store) {
+        store.post.setGetPostsPayload({ tag: searchTag })
+        await store.post.getPosts()
+      }
     }
+
 
     return (
       <MGTMain>
         <button onClick={handleSignOut}>sign out</button>
+        <button onClick={() => {
+          history.push('/write')
+        }}>글쓰러가기
+        </button>
         <div>
           {/*TODO: searchbar 분리*/}
           <div>태그: {tags.map((tag, tagIndex) => <Tag tag={tag} key={tagIndex} setTag={setSearchTag}/>)}</div>
@@ -114,11 +136,11 @@ const Feed = (): JSX.Element => {
           <option value={Order.ASC}>오래된순</option>
         </select>
         <h3>post lists:</h3>
-        {posts.map((post, postIndex) => {
+        {store ? store.post.posts.map((post, postIndex) => {
           return (
-            <Post post={post} key={postIndex} />
+            <Post post={post} key={postIndex}/>
           )
-        })}
+        }) : null}
       </MGTMain>
     )
   })

@@ -32,7 +32,9 @@ export const getPosts = (payload: GetPostsPaylod) => {
       .then((res) => {
         const posts = [] as Post[]
         res.forEach((doc) => {
-          posts.push(doc.data() as Post)
+          const post = doc.data() as Omit<Post, 'id'>
+          (post as Post).id = doc.id
+          posts.push(post as Post)
         })
         resolve(posts)
       })
@@ -91,6 +93,17 @@ export const updateTempPost = (postId: string, payload: UpdatePostPayload) => {
 export const deleteTempPost = (tempPostId: string) => {
   return new Promise((resolve, reject) => {
     deleteDoc(doc(db, 'tempPost', tempPostId))
+      .then(res => {
+        resolve(res)
+      }).catch(error => {
+      reject(error)
+    })
+  })
+}
+
+export const deletePost = (postId: string) => {
+  return new Promise((resolve, reject) => {
+    deleteDoc(doc(db, 'posts', postId))
       .then(res => {
         resolve(res)
       }).catch(error => {

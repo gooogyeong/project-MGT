@@ -11,4 +11,6 @@ export type PostPayload = {
 
 export type UpdatePostPayload = Omit<PostPayload, 'author' | 'authorUid'>
 
-export type Post = PostPayload
+export type Post = PostPayload & {
+  id: string;
+}
