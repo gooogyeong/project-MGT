@@ -1,7 +1,7 @@
 import { db } from '@/services/firebase'
 import { query, orderBy, where } from 'firebase/firestore'
-import { collection, addDoc, getDocs } from 'firebase/firestore'
-import { Post, PostPayload } from '@/types/posts'
+import { collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, getDocs } from 'firebase/firestore'
+import { Post, PostPayload, UpdatePostPayload } from '@/types/posts'
 import { Order } from '@/utils/enum'
 import { Tag } from '@/types/tags'
 
@@ -42,14 +42,58 @@ export const getPosts = (payload: GetPostsPaylod) => {
   })
 }
 
-export const postPost = (payload: PostPayload) => {
+export const createTempPost = (payload: PostPayload): Promise<string> => {
   return new Promise((resolve, reject) => {
-    addDoc(collection(db, 'posts'), payload)
+    addDoc(collection(db, 'tempPost'), payload)
+      .then((docRef) => {
+        resolve(docRef.id)
+      }).catch((error) => {
+      reject(error)
+    })
+  })
+}
+
+export const getTempPost = (tempPostId: string) => {
+  return new Promise((resolve, reject) => {
+    getDoc(doc(db, 'tempPost', tempPostId))
       .then((res) => {
-        console.log(res)
-        console.log(res.data())
+        if (res.exists()) resolve(res.data() as Post)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+export const createPost = (tempPostId: string, payload: PostPayload): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    setDoc(doc(db, 'posts', tempPostId), payload)
+      .then(res=> {
         resolve(res)
       }).catch((error) => {
+      reject(error)
+    })
+  })
+}
+
+export const updateTempPost = (postId: string, payload: UpdatePostPayload) => {
+  return new Promise((resolve, reject) => {
+    updateDoc(doc(db, 'tempPost', postId), payload)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+export const deleteTempPost = (tempPostId: string) => {
+  return new Promise((resolve, reject) => {
+    deleteDoc(doc(db, 'tempPost', tempPostId))
+      .then(res => {
+        resolve(res)
+      }).catch(error => {
       reject(error)
     })
   })
