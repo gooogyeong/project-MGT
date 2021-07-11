@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import algoliasearch from "algoliasearch";
+import {Post} from "./types";
 
 admin.initializeApp();
 const env = functions.config();
@@ -39,6 +40,10 @@ exports.unindexPost = functions.firestore
       return index.deleteObject(objectID);
     });
 
+exports.setSearchSetting = functions.https.onCall(async (data) => {
+
+})
+
 exports.searchPost = functions.https.onCall(async (data) => {
   const {searchKeyword, searchOptions} = data;
   const result = await index.search(searchKeyword, searchOptions);
@@ -53,7 +58,7 @@ exports.searchPostByTag = functions.https.onCall(async (data) => {
       .limit(limit)
       .offset(offset)
       .get();
-  const res = [];
-  snapshot.forEach((doc) => res.push(doc.data()));
+  const res = [] as Post[];
+  snapshot.forEach((doc) => res.push(doc.data() as Post));
   return res;
 });
