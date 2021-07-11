@@ -17,9 +17,11 @@ const Write: React.FC = (): JSX.Element => {
         const payload = {
           title: '',
           content: '',
-          createdAt: new Date().toString(),
+          createdAt: Date.now().valueOf(),
           author: author ? author.nickName : '',
           authorUid: author ? author.uid : '',
+          categoryName: '',
+          categoryId: '',
           tags: []
         }
         const tempPostId = await createTempPost(payload)
