@@ -116,6 +116,11 @@ const Feed = (): JSX.Element => {
     }
 
     const handleSearchClick = async () => {
+      if (searchYear && !searchMonth) {
+        // TODO: 정책
+        alert('검색 월을 선택해주세요')
+        return
+      }
       if (store) {
         if (searchBarInput.current?.value || searchBarInput.current?.value === '') {
           store.post.setSearchKeyword(searchBarInput.current.value)
