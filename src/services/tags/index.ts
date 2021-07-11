@@ -28,7 +28,7 @@ export const createTag = ({ name }: CreateTagPayload) => {
     const tagRef = collection(db, 'tag')
     addDoc(tagRef, {
       name,
-      createdAt: new Date()
+      createdAt: new Date().valueOf()
     })
       .then((res) => {
         resolve(res)

@@ -5,15 +5,15 @@ import { Tag as TagType } from '@/types/tags'
 type TagProps = {
   tag: TagType;
   postTags?: TagType[];
-  setTag?: React.Dispatch<React.SetStateAction<null | TagType>>;
+  onTagClick?: () => void | React.Dispatch<React.SetStateAction<null | TagType>>;
   setTags?: React.Dispatch<React.SetStateAction<TagType[]>>;
 }
 
 const Tag: React.FC<TagProps> = (props: TagProps) => {
 
-  const handleTagClick = () => {
-    if (props.setTag) {
-      props.setTag(props.tag)
+  const handleTagClick = async () => {
+    if (props.onTagClick) {
+      props.onTagClick()
     } else if (props.setTags && props.postTags) {
       let isIncluded = false
       props.postTags.some((tag) => {
@@ -36,4 +36,5 @@ export default Tag
 const MGTTag = styled.span`
 border: 1px solid black;
 border-radius: 4px;
+cursor: pointer;
 `
