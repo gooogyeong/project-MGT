@@ -1,43 +1,39 @@
-import { db } from '@/services/firebase'
-import { query, orderBy, where } from 'firebase/firestore'
-import { collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, getDocs } from 'firebase/firestore'
+import { db, functions } from '@/services/firebase'
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc
+} from 'firebase/firestore'
 import { Post, PostPayload, UpdatePostPayload } from '@/types/posts'
-import { Order } from '@/utils/enum'
+import { RequestOptions } from '@algolia/transporter'
+import { SearchOptions } from '@algolia/client-search'
 import { Tag } from '@/types/tags'
+import { httpsCallable } from 'firebase/functions'
 
-// TODO: type으로 이동
-export type GetPostsPayload = {
-  createdAt: Order;
-  authorUid: string;
-  tag: null | Tag;
+export const getPosts = (searchKeyword: string, searchOptions: RequestOptions & SearchOptions) => {
+  return new Promise((resolve, reject) => {
+    const searchPost = httpsCallable(functions, 'searchPost')
+    searchPost({ searchKeyword, searchOptions })
+      .then((result) => {
+        resolve(result.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
 }
 
-const postRef = collection(db, 'posts')
-
-export const getPosts = (payload: GetPostsPayload) => {
+export const getPostsByTag = (payload: { tag: Tag; offset: number; limit: number }): Promise<{ posts: Post[] }> => {
   return new Promise((resolve, reject) => {
-    const orderByCreatedAt = orderBy('createdAt', payload.createdAt)
-    let getPostsQuery
-    if (payload.authorUid || payload.tag) {
-      const whereAuthorUid = where('authorUid', '==', payload.authorUid)
-      const whereTag = where('tags', 'array-contains', payload.tag)
-      if (payload.authorUid && payload.tag) {
-        getPostsQuery = query(postRef, whereAuthorUid, whereTag, orderByCreatedAt)
-      } else {
-        getPostsQuery = query(postRef, payload.authorUid ? whereAuthorUid : whereTag, orderByCreatedAt)
-      }
-    } else {
-      getPostsQuery = query(postRef, orderByCreatedAt)
-    }
-    getDocs(getPostsQuery)
+    const searchPostByTag = httpsCallable(functions, 'searchPostByTag')
+    const { tag, offset, limit } = payload
+    searchPostByTag({ tag, offset, limit })
       .then((res) => {
-        const posts = [] as Post[]
-        res.forEach((doc) => {
-          const post = doc.data() as Omit<Post, 'id'>
-          (post as Post).id = doc.id
-          posts.push(post as Post)
-        })
-        resolve(posts)
+        resolve({ posts: res.data as Post[] })
       })
       .catch((error) => {
         reject(error)
@@ -71,7 +67,7 @@ export const getTempPost = (tempPostId: string) => {
 export const createPost = (tempPostId: string, payload: PostPayload): Promise<void> => {
   return new Promise((resolve, reject) => {
     setDoc(doc(db, 'posts', tempPostId), payload)
-      .then(res=> {
+      .then(res => {
         resolve(res)
       }).catch((error) => {
       reject(error)

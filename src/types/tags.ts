@@ -4,5 +4,5 @@ export type CreateTagPayload = {
 
 export type Tag = {
   id: string;
-  createdAt: string;
+  createdAt: number;
 } & CreateTagPayload
