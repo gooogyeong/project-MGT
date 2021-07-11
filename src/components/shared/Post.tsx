@@ -7,6 +7,8 @@ import styled from 'styled-components'
 import { deletePost } from '@/services/posts'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
+import { format } from 'date-fns'
+import { HHmm, yyMMddDot } from '@/utils/date'
 
 type PostProps = {
   post: PostType;
@@ -38,7 +40,8 @@ const Post = (props: PostProps) => {
           <button onClick={handleEditClick}>수정</button>
         </div>
         <div>author: {props.post.author}</div>
-        {props.post.createdAt ? <div>createdAt: {props.post.createdAt.toString()}</div> : null}
+        {props.post.categoryName ? <div>카테고리: {props.post.categoryName}</div> : null}
+        {props.post.createdAt ? <div>createdAt: {format(new Date(props.post.createdAt), `${yyMMddDot} ${HHmm}`)}</div> : null}
         <div>title: {props.post.title}</div>
         <div>{ReactHtmlParser(props.post.content).map((content => content))}</div>
         {props.post.tags.map((tag, tagIndex) => <Tag key={tagIndex} tag={tag}/>)}
