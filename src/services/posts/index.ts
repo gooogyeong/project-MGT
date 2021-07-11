@@ -13,13 +13,14 @@ import { RequestOptions } from '@algolia/transporter'
 import { SearchOptions } from '@algolia/client-search'
 import { Tag } from '@/types/tags'
 import { httpsCallable } from 'firebase/functions'
+import { SearchResponse } from '@algolia/client-search'
 
 export const getPosts = (searchKeyword: string, searchOptions: RequestOptions & SearchOptions) => {
   return new Promise((resolve, reject) => {
     const searchPost = httpsCallable(functions, 'searchPost')
     searchPost({ searchKeyword, searchOptions })
       .then((result) => {
-        resolve(result.data)
+        resolve(result.data as SearchResponse<unknown>)
       })
       .catch(error => {
         reject(error)
