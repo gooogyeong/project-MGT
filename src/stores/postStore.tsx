@@ -1,3 +1,4 @@
+import { SearchResponse } from '@algolia/client-search'
 import {
   createPost as createPostService,
   deleteTempPost as deleteTempPostService,
@@ -79,7 +80,7 @@ export const postStore = (): PostStore => {
           this.searchKeyword,
           getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage)
         )
-        const hits = res
+        const { hits, page } = res as SearchResponse<unknown>
         this.posts = hits as Post[]
       } catch (error) {
         console.log(error)
