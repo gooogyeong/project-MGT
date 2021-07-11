@@ -11,6 +11,9 @@ import Post from '@/components/shared/Post'
 import Tag from '@/components/shared/Tag'
 import { getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
+import Category from '@/components/shared/Category'
+import { months, years } from '@/utils/date'
+import { addMonths } from 'date-fns'
 
 const Feed = (): JSX.Element => {
 
@@ -22,13 +25,17 @@ const Feed = (): JSX.Element => {
 
   const [admins, setAdmins] = useState([] as Admin[])
   const [tags, setTags] = useState([] as TagType[])
-  const [searchTag, setSearchTag] = useState(null as (null | TagType))
-
+  const [searchYear, setSearchYear] = useState(0)
+  const [searchMonth, setSearchMonth] = useState(0)
 
   useEffect(() => {
     const getPostList = async () => {
+      // TODO: 새 글 작성후 바로 업데이트 안되는 버그
       try {
-        if (store) await store.post.getPosts()
+        if (store) {
+          store.post.initSearchOption()
+          await store.post.getPosts()
+        }
       } catch (error) {
         console.log(error)
       }
@@ -76,7 +83,6 @@ const Feed = (): JSX.Element => {
     const handleSignOut = () => {
       signOut(auth)
         .then(() => {
-          console.log('signout successful')
           history.push('/login')
         })
         .catch((error) => {
@@ -84,27 +90,56 @@ const Feed = (): JSX.Element => {
         })
     }
 
-    const handleCreatedAtOrderSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleAuthorSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
       if (store) {
-        store.post.setGetPostsPayload({ createdAt: e.target.value as Order })
-        await store.post.getPosts()
+        store.post.addSearchOption({
+          authorUid: e.target.value as Order
+        })
       }
     }
 
-    const handleAuthorSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleCategorySelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedCategory = store?.category.categories[parseInt(e.target.value)]
       if (store) {
-        store.post.setGetPostsPayload({ authorUid: e.target.value as Order })
-        await store.post.getPosts()
+        store.post.addSearchOption({
+          categoryId: selectedCategory ? selectedCategory.categoryId : ''
+        })
+      }
+    }
+
+    const handleTagSelect = async (tag: TagType) => {
+      if (store) {
+        store.post.initSearchOption()
+        store.post.addSearchOption({ tag })
+        await store.post.getPostsByTag(tag)
       }
     }
 
     const handleSearchClick = async () => {
       if (store) {
-        store.post.setGetPostsPayload({ tag: searchTag })
-        await store.post.getPosts()
+        if (searchBarInput.current?.value || searchBarInput.current?.value === '') {
+          store.post.setSearchKeyword(searchBarInput.current.value)
+          await store.post.getPosts()
+        }
       }
     }
 
+    const handleSearchYearSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSearchYear(parseInt(e.target.value))
+    }
+
+    const handleSearchMonthSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSearchMonth(parseInt(e.target.value))
+      if (store) {
+        const month = parseInt(e.target.value) - 1
+        store.post.addSearchOption({
+          searchRange: {
+            from: new Date(searchYear, month, 1).valueOf(),
+            to: addMonths(new Date(searchYear, month, 1), 1).valueOf()
+          }
+        })
+      }
+    }
 
     return (
       <MGTMain>
@@ -115,13 +150,16 @@ const Feed = (): JSX.Element => {
         </button>
         <div>
           {/*TODO: searchbar 분리*/}
-          <div>태그: {tags.map((tag, tagIndex) => <Tag tag={tag} key={tagIndex} setTag={setSearchTag}/>)}</div>
+          <div>태그: {tags.map((tag, tagIndex) => {
+            return <Tag tag={tag} key={tagIndex} onTagClick={() => {
+              handleTagSelect(tag)
+            }}/>
+          })}</div>
           <input
             ref={searchBarInput}
             spellCheck={false}
-            defaultValue={searchTag ? searchTag.name : ''}
           />
-          <button onClick={handleSearchClick}>태그 검색</button>
+          <button onClick={handleSearchClick}>그냥 검색</button>
         </div>
         <span>필터</span>
         <select onChange={handleAuthorSelect}>
@@ -130,10 +168,18 @@ const Feed = (): JSX.Element => {
             return (<option value={admin.uid} key={adminIndex}>{admin.nickName}</option>)
           })}
         </select>
-        <span>정렬</span>
-        <select onChange={handleCreatedAtOrderSelect}>
-          <option value={Order.DESC}>최신순</option>
-          <option value={Order.ASC}>오래된순</option>
+        <Category handleCategorySelect={handleCategorySelect}/>
+        <select onChange={handleSearchYearSelect}>
+          <option value="0">년도</option>
+          {years.map((year, yearIdx) => {
+            return (<option value={year} key={yearIdx}>{`${year}년`}</option>)
+          })}
+        </select>
+        <select disabled={!searchYear} onChange={handleSearchMonthSelect}>
+          <option value="0">월</option>
+          {months.map((month, monthIdx) => {
+            return (<option value={month} key={monthIdx}>{`${month}월`}</option>)
+          })}
         </select>
         <h3>post lists:</h3>
         {store ? store.post.posts.map((post, postIndex) => {

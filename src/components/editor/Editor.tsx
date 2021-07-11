@@ -26,10 +26,11 @@ import { Tag as TagType } from '@/types/tags'
 import Tag from '@/components/shared/Tag'
 import PreviewModal from '@/components/editor/PreviewModal'
 import { PostPayload } from '@/types/posts'
+import { Category as CategoryType } from '@/types/category'
+import Category from '@/components/shared/Category'
 
 type EditorProps = {
   handleSubmitClick: (payload: PostPayload) => Promise<void>;
- //  handlePreviewClick?: () => Promise<void>;
 }
 
 const Editor = (props: EditorProps): JSX.Element => {
@@ -65,12 +66,18 @@ const Editor = (props: EditorProps): JSX.Element => {
 
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
+  const [postCategory, setPostCategory] = useState(null as (null | CategoryType))
   const [postTags, setPostTags] = useState(store?.post.currEditPost?.tags || [] as TagType[])
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
+  }
+
+  const handleCategorySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCategory = store?.category.categories[parseInt(e.target.value)]
+    if (selectedCategory) setPostCategory(selectedCategory)
   }
 
   useEffect(() => {
@@ -113,8 +120,10 @@ const Editor = (props: EditorProps): JSX.Element => {
         const payload = {
           title,
           content: editor ? editor.getHTML() : '',
-          createdAt: new Date().toString(),
-          tags: postTags
+          createdAt: Date.now().valueOf(),
+          tags: postTags,
+          categoryName: postCategory ? postCategory.name : '',
+          categoryId: postCategory ? postCategory.categoryId : ''
         }
         await store.post.updateTempPost(payload)
         setIsOpenPreviewModal(true)
@@ -122,23 +131,29 @@ const Editor = (props: EditorProps): JSX.Element => {
     }
 
     const handleSubmitClick = async () => {
+      // TODO: post validation 분리
       if (editor) {
-        if (title && editor.getHTML()) {
-          const payload = {
-            authorUid: author ? author.uid : '',
-            author: author ? author.nickName : '',
-            title,
-            content: editor ? editor.getHTML() : '',
-            createdAt: new Date().toString(),
-            tags: postTags
-          }
-          await props.handleSubmitClick(payload)
-          // await submit()
-          alert('성공적으로 글을 등록했습니다.')
-          history.push('/')
-        } else {
+        if (!(title && editor.getHTML())) {
           alert('제목 또는 내용은 반드시 입력해야합니다')
+          return
         }
+        if (!postCategory) {
+          alert('카테고리를 선택해주세요')
+          return
+        }
+        const payload = {
+          authorUid: author ? author.uid : '',
+          author: author ? author.nickName : '',
+          categoryName: postCategory.name,
+          categoryId: postCategory.categoryId,
+          title,
+          content: editor ? editor.getHTML() : '',
+          createdAt: Date.now().valueOf(),
+          tags: postTags
+        }
+        await props.handleSubmitClick(payload)
+        alert('성공적으로 글을 등록했습니다.')
+        history.push('/')
       }
     }
 
@@ -148,40 +163,45 @@ const Editor = (props: EditorProps): JSX.Element => {
           isOpen={isOpenPreviewModal}
           open={setIsOpenPreviewModal}
         />
-      <MGTEditor>
-        <button onClick={() => {
-          history.push('/')
-        }}>leave without save
-        </button>
-        <label>제목</label>
-        <input
-          value={title}
-          spellCheck={false}
-          onChange={handleTitleChange}
-        />
-        <label>글쓴이</label>
-        <span>
+        <MGTEditor>
+          <button onClick={() => {
+            history.push('/')
+          }}>leave without save
+          </button>
+          <label>제목</label>
+          <input
+            value={title}
+            spellCheck={false}
+            onChange={handleTitleChange}
+          />
+          <div>
+            <label>글쓴이</label>
+            <span>
           {author ? author.nickName : ''}
         </span>
-        <div className='menu-bar__wrapper'>
-          <EditorMenuBar editor={editor}/>
-        </div>
-        <EditorBubbleMenu editor={editor}/>
-        <EditorContent
-          className='editor__wrapper'
-          editor={editor}
-        />
-        <div>
-          <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
-          <label>태그 입력</label>
-          <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
-          {tags.map((tag, tagIndex) => {
-            return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
-          })}
-        </div>
-        <button onClick={handlePreviewClick}>preview</button>
-        <button onClick={handleSubmitClick}>완료</button>
-      </MGTEditor>
+          </div>
+          <div>
+            <Category handleCategorySelect={handleCategorySelect}/>
+          </div>
+          <div className='menu-bar__wrapper'>
+            <EditorMenuBar editor={editor}/>
+          </div>
+          <EditorBubbleMenu editor={editor}/>
+          <EditorContent
+            className='editor__wrapper'
+            editor={editor}
+          />
+          <div>
+            <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
+            <label>태그 입력</label>
+            <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
+            {tags.map((tag, tagIndex) => {
+              return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
+            })}
+          </div>
+          <button onClick={handlePreviewClick}>preview</button>
+          <button onClick={handleSubmitClick}>완료</button>
+        </MGTEditor>
       </div>
     )
   })
@@ -218,7 +238,6 @@ outline: none !important;
     th {
       min-width: 1em;
       border: 1px solid black;
-      //border: 2px solid #ced4da;
       padding: 3px 5px;
       vertical-align: top;
       box-sizing: border-box;
