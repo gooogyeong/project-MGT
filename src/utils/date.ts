@@ -1,4 +1,4 @@
-import { getYear } from 'date-fns'
+import { getYear, format } from 'date-fns'
 
 export const months = new Array(12).fill(true).map((month, monthIdx) => {
   return monthIdx + 1
@@ -12,5 +12,6 @@ export const years = new Array(thisYear - 2021 + 1).fill(true).map((year, yearId
 
 export const yyMMddDash = 'yy-MM-dd'
 export const yyMMddDot = 'yy.MM.dd'
+export const yyyyMMddDot = 'yyyy.MM.dd'
 
 export const HHmm = 'HH:mm'
