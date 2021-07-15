@@ -9,7 +9,6 @@ import { Admin } from '@/types/admin'
 import { Order } from '@/utils/enum'
 import Post from '@/components/shared/Post'
 import Tag from '@/components/shared/Tag'
-import { getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
 import Category from '@/components/shared/Category'
 import { months, years } from '@/utils/date'
@@ -56,15 +55,16 @@ const Feed = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
-    const getTagList = async () => {
-      try {
-        const tags = await getTags()
-        setTags(tags as TagType[])
-      } catch (error) {
-        console.log(error)
+    if (store && !store.tag.tags.length) {
+      const getTagList = async () => {
+        try {
+          await store.tag.getTags()
+        } catch (error) {
+          console.log(error)
+        }
       }
+      getTagList()
     }
-    getTagList()
   }, [])
 
   useEffect(() => {
@@ -155,7 +155,7 @@ const Feed = (): JSX.Element => {
         </button>
         <div>
           {/*TODO: searchbar 분리*/}
-          <div>태그: {tags.map((tag, tagIndex) => {
+          <div>태그: {store?.tag.tags.map((tag, tagIndex) => {
             return <Tag tag={tag} key={tagIndex} onTagClick={() => {
               handleTagSelect(tag)
             }}/>
