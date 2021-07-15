@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 const MGTHeader = styled.div`
 display: flex;
 justify-content: space-between;
-border: 1px dotted red;
+border-bottom: 1px dotted red;
 text-align: center;
 .header {
 &__center {
