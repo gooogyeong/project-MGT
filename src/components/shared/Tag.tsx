@@ -27,14 +27,14 @@ const Tag: React.FC<TagProps> = (props: TagProps) => {
   }
 
   return (
-    <MGTTag onClick={handleTagClick}>{props.tag.name}</MGTTag>
+    <MGTTag className="tag" onClick={handleTagClick}>#{props.tag.name}</MGTTag>
   )
 }
 
 export default Tag
 
 const MGTTag = styled.span`
-border: 1px solid black;
 border-radius: 4px;
 cursor: pointer;
+color: red;
 `
