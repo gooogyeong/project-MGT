@@ -28,6 +28,31 @@ export const getPosts = (searchKeyword: string, searchOptions: RequestOptions & 
   })
 }
 
+export const getPost = (postId: string): Promise<Post> => {
+  return new Promise((resolve, reject) => {
+    getDoc(doc(db, 'posts', postId))
+      .then((res) => {
+        if (res.exists()) resolve(res.data() as Post)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+export const getLatestPostByAuthor = (searchOptions: RequestOptions & SearchOptions) => {
+  return new Promise((resolve, reject) => {
+    const searchPost = httpsCallable(functions, 'searchPost')
+    searchPost({ searchOptions })
+      .then((result) => {
+        resolve(result.data as SearchResponse<unknown>)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export const getPostsByTag = (payload: { tag: Tag; offset: number; limit: number }): Promise<{ posts: Post[] }> => {
   return new Promise((resolve, reject) => {
     const searchPostByTag = httpsCallable(functions, 'searchPostByTag')
