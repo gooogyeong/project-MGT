@@ -3,36 +3,49 @@ import caligoliteSeal from '@/assets/caligolite-seal.svg'
 import instagram from '@/assets/instagram.svg'
 import twitter from '@/assets/twitter.svg'
 import facebook from '@/assets/facebook.svg'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
 import Tag from '@/components/shared/Tag'
 import { Tag as TagType } from '@/types/tags'
+import { thisYear } from '@/utils/date'
+
+const spacedThisYear = thisYear.toString().split('').join(' ')
 
 const Footer = () => {
 
   const store = React.useContext(storeContext)
 
-  return useObserver(() => {
-    const getRandomTags = () => {
-      if (store) {
-        return store.tag.tags
-      }
-    }
+  const [randomTags, setRandomTags] = useState([] as TagType[])
 
-    const handleTagSelect = async (tag: TagType) => {
-      if (store) {
-        store.post.initSearchOption()
-        store.post.addSearchOption({ tag })
-        await store.post.getPostsByTag(tag)
+  useEffect(() => {
+    if (store && !store.tag.tags.length) {
+      const getTagList = async () => {
+        try {
+          await store.tag.getTags()
+          // TODO: 랜덤태그 생성 로직 추가
+          setRandomTags(store.tag.tags)
+        } catch (error) {
+          console.log(error)
+        }
       }
+      getTagList()
+    }
+  }, [])
+
+  return useObserver(() => {
+    const handleTagClick = async (tag: TagType) => {
+      store?.post.setSearchTag(tag)
+      store?.post.initSearchOption()
+      store?.post.addSearchOption({ tag })
+      await store?.post.getPostsByTag()
     }
 
     return (
       <MGTFooter className="footer">
         <div className="footer__copyright">
           <div className="footer__copyright__content">
-            <div>© 2 0 2 1 칼 리 고 라 이 트</div>
+            <div>{`© ${spacedThisYear} 칼 리 고 라 이 트`}</div>
             <div className="seal"><img src={caligoliteSeal}/></div>
           </div>
         </div>
@@ -71,17 +84,15 @@ const Footer = () => {
             </div>
             <div className="sub-row">
               <div className="label">랜덤태그</div>
-              <div className="content">{getRandomTags()?.map((tag, tagIdx) => {
-                return (<Tag tag={tag} key={tagIdx} onTagClick={() => {
-                  handleTagSelect(tag)
-                }}/>)
+              <div className="content">{randomTags.map((tag, tagIdx) => {
+                return (<Tag tag={tag} key={tagIdx} onTagClick={() => handleTagClick(tag)}/>)
               })}</div>
             </div>
           </div>
           <div className="footer__contribution__row">
             <div className="sub-row">
               <div className="label">시행</div>
-              <div>모그타편집부-494982535(2021.6.22.)</div>
+              <div className="content">모그타편집부-494982535(2021.6.22.)</div>
             </div>
             <div className="sub-row">
               <div className="label">접수</div>
@@ -118,6 +129,7 @@ const Footer = () => {
 
 const MGTFooter = styled.div`
 border-top: 1px dotted red;
+font-family: 'Noto Sans KR';
 .footer {
 &__copyright {
 display: flex;
