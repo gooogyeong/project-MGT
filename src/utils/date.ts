@@ -1,10 +1,10 @@
-import { getYear, format } from 'date-fns'
+import { getYear } from 'date-fns'
 
 export const months = new Array(12).fill(true).map((month, monthIdx) => {
   return monthIdx + 1
 })
 
-const thisYear = getYear(new Date())
+export const thisYear = getYear(new Date())
 
 export const years = new Array(thisYear - 2021 + 1).fill(true).map((year, yearIdx) => {
   return 2021 + yearIdx

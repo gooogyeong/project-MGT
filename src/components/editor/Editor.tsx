@@ -27,8 +27,7 @@ import Tag from '@/components/shared/Tag'
 import PreviewModal from '@/components/editor/PreviewModal'
 import { PostPayload } from '@/types/posts'
 import { Category as CategoryType } from '@/types/category'
-import Category from '@/components/shared/Category'
-
+import CategoryDropdown from '@/components/shared/CategoryDropdown'
 type EditorProps = {
   handleSubmitClick: (payload: PostPayload) => Promise<void>;
 }
@@ -181,7 +180,7 @@ const Editor = (props: EditorProps): JSX.Element => {
         </span>
           </div>
           <div>
-            <Category handleCategorySelect={handleCategorySelect}/>
+            <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
           </div>
           <div className='menu-bar__wrapper'>
             <EditorMenuBar editor={editor}/>

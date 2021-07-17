@@ -5,7 +5,7 @@ import { Tag as TagType } from '@/types/tags'
 type TagProps = {
   tag: TagType;
   postTags?: TagType[];
-  onTagClick?: () => void | React.Dispatch<React.SetStateAction<null | TagType>>;
+  onTagClick?: (() => void) | (() => Promise<void>) | (React.Dispatch<React.SetStateAction<null | TagType>>);
   setTags?: React.Dispatch<React.SetStateAction<TagType[]>>;
 }
 
@@ -13,7 +13,7 @@ const Tag: React.FC<TagProps> = (props: TagProps) => {
 
   const handleTagClick = async () => {
     if (props.onTagClick) {
-      props.onTagClick()
+      props.onTagClick(props.tag)
     } else if (props.setTags && props.postTags) {
       let isIncluded = false
       props.postTags.some((tag) => {

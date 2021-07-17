@@ -1,7 +1,7 @@
 import React from 'react'
 import Edit from '@/components/Edit'
 
-const EditPage: React.FC = () => {
+const EditView: React.FC = () => {
 
   return (
     <div>
@@ -10,4 +10,4 @@ const EditPage: React.FC = () => {
   )
 }
 
-export default EditPage
+export default EditView
