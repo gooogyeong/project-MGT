@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
 import { Post as PostType } from '@/types/posts'
-import Post from '@/components/shared/Post'
+import Post from '@/components/post/Post'
 
 type PreviewModalProps = {
   isOpen: boolean;
