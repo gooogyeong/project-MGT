@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/services/firebase'
 import styled from 'styled-components'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
-import { Admin } from '@/types/admin'
 import { Order } from '@/utils/enum'
-import Post from '@/components/shared/Post'
+import ContentHeader from '@/components/shared/ContentHeader'
+import { thisYear, yyyyMMddDot } from '@/utils/date'
+import { Post } from '@/types/posts'
+import ReactHtmlParser from 'react-html-parser'
+import Button from '@/components/shared/Button'
 import Tag from '@/components/shared/Tag'
-import { Tag as TagType } from '@/types/tags'
-import Category from '@/components/shared/Category'
-import { months, years } from '@/utils/date'
-import { addMonths } from 'date-fns'
+import { format } from 'date-fns'
 
 const Feed = (): JSX.Element => {
 
@@ -20,51 +20,21 @@ const Feed = (): JSX.Element => {
 
   const history = useHistory()
 
-  const searchBarInput = useRef<HTMLInputElement>(null)
-
-  const [admins, setAdmins] = useState([] as Admin[])
-  const [tags, setTags] = useState([] as TagType[])
-  const [searchYear, setSearchYear] = useState(0)
-  const [searchMonth, setSearchMonth] = useState(0)
-
   useEffect(() => {
-    const getPostList = async () => {
-      // TODO: 새 글 작성후 바로 업데이트 안되는 버그
+    const getMainPost = async () => {
       try {
-        if (store) {
-          store.post.initSearchOption()
-          await store.post.getPosts()
+        if (!store?.post.authorLatestPosts.length) {
+          if (!store?.admin.admins.length) await store?.admin.getAdmins()
+          const res = await Promise.all(store?.admin.admins.map((admin) => {
+            return store?.post.getLatestPostByAuthor(admin.uid)
+          }) as Promise<Post>[])
+          store?.post.setAuthorLatestPosts(res)
         }
       } catch (error) {
         console.log(error)
       }
     }
-    getPostList()
-  }, [])
-
-  useEffect(() => {
-    const getAdmins = async () => {
-      try {
-        const res = await store?.admin.getAdmins()
-        setAdmins(res as Admin[])
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getAdmins()
-  }, [])
-
-  useEffect(() => {
-    if (store && !store.tag.tags.length) {
-      const getTagList = async () => {
-        try {
-          await store.tag.getTags()
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      getTagList()
-    }
+    getMainPost()
   }, [])
 
   useEffect(() => {
@@ -79,6 +49,12 @@ const Feed = (): JSX.Element => {
     }
   }, [])
 
+  const goToPostDetail = (idx: number) => {
+    const post = store?.post.authorLatestPosts[idx] as Post
+    store?.post.setCurrPostDetail(post)
+    history.push(`/post/${post.objectID}`)
+  }
+
   return useObserver(() => {
     const handleSignOut = () => {
       signOut(auth)
@@ -90,115 +66,132 @@ const Feed = (): JSX.Element => {
         })
     }
 
-    const handleAuthorSelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-      if (store) {
-        store.post.addSearchOption({
-          authorUid: e.target.value as Order
-        })
-      }
-    }
-
-    const handleCategorySelect = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedCategory = store?.category.categories[parseInt(e.target.value)]
-      if (store) {
-        store.post.addSearchOption({
-          categoryId: selectedCategory ? selectedCategory.categoryId : ''
-        })
-      }
-    }
-
-    const handleTagSelect = async (tag: TagType) => {
-      if (store) {
-        store.post.initSearchOption()
-        store.post.addSearchOption({ tag })
-        await store.post.getPostsByTag(tag)
-      }
-    }
-
-    const handleSearchClick = async () => {
-      if (searchYear && !searchMonth) {
-        // TODO: 정책
-        alert('검색 월을 선택해주세요')
-        return
-      }
-      if (store) {
-        if (searchBarInput.current?.value || searchBarInput.current?.value === '') {
-          store.post.setSearchKeyword(searchBarInput.current.value)
-          await store.post.getPosts()
-        }
-      }
-    }
-
-    const handleSearchYearSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setSearchYear(parseInt(e.target.value))
-    }
-
-    const handleSearchMonthSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setSearchMonth(parseInt(e.target.value))
-      if (store) {
-        const month = parseInt(e.target.value) - 1
-        store.post.addSearchOption({
-          searchRange: {
-            from: new Date(searchYear, month, 1).valueOf(),
-            to: addMonths(new Date(searchYear, month, 1), 1).valueOf()
-          }
-        })
-      }
-    }
-
     return (
       <MGTMain>
-        <button onClick={handleSignOut}>sign out</button>
-        <button onClick={() => {
-          history.push('/write')
-        }}>글쓰러가기
-        </button>
-        <div>
-          {/*TODO: searchbar 분리*/}
-          <div>태그: {store?.tag.tags.map((tag, tagIndex) => {
-            return <Tag tag={tag} key={tagIndex} onTagClick={() => {
-              handleTagSelect(tag)
-            }}/>
-          })}</div>
-          <input
-            ref={searchBarInput}
-            spellCheck={false}
-          />
-          <button onClick={handleSearchClick}>그냥 검색</button>
+        <ContentHeader text={`"${thisYear}년 그로테스크의 해"`}/>
+        <div className="main__body">
+          <div className="content__wrapper">
+            <div className="label">{store?.post.authorLatestPosts[0]?.author}</div>
+            <div className="post">
+              <div className="post__title">{store?.post.authorLatestPosts[0]?.title}</div>
+              <div className="post__content">
+                <div className="post__content__header">
+                <span>
+                {store?.post.authorLatestPosts[1]?.createdAt ? format(new Date(store?.post.authorLatestPosts[1]?.createdAt), yyyyMMddDot) : null}
+                </span>
+                  <span>
+                {store?.post.authorLatestPosts[1]?.tags.map((tag, tagIdx) => {
+                  return <Tag key={tagIdx} tag={tag}/>
+                })}
+                </span>
+                </div>
+                <div>{ReactHtmlParser(store?.post.authorLatestPosts[0]?.content as string)}</div>
+                <div className="button__container">
+                  <Button buttonText="더 봐" onClick={() => goToPostDetail(0)}/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="content__wrapper">
+            <div className="label">{store?.post.authorLatestPosts[1]?.author}</div>
+            <div className="post">
+              <div className="post__title">{store?.post.authorLatestPosts[1]?.title}</div>
+              <div className="post__content">
+                <div className="post__content__header">
+                <span>
+                {store?.post.authorLatestPosts[1]?.createdAt ? format(new Date(store?.post.authorLatestPosts[1]?.createdAt), yyyyMMddDot) : null}
+                </span>
+                  <span>
+                {store?.post.authorLatestPosts[1]?.tags.map((tag, tagIdx) => {
+                  return <Tag tag={tag}/>
+                })}
+                </span>
+                </div>
+                <div>{ReactHtmlParser(store?.post.authorLatestPosts[1]?.content as string)}</div>
+                <div className="button__container">
+                  <Button buttonText="더 봐" onClick={() => goToPostDetail(1)}/>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <span>필터</span>
-        <select onChange={handleAuthorSelect}>
-          <option value="">전체 글쓴이</option>
-          {admins.map((admin, adminIndex) => {
-            return (<option value={admin.uid} key={adminIndex}>{admin.nickName}</option>)
-          })}
-        </select>
-        <Category handleCategorySelect={handleCategorySelect}/>
-        <select onChange={handleSearchYearSelect}>
-          <option value="0">년도</option>
-          {years.map((year, yearIdx) => {
-            return (<option value={year} key={yearIdx}>{`${year}년`}</option>)
-          })}
-        </select>
-        <select disabled={!searchYear} onChange={handleSearchMonthSelect}>
-          <option value="0">월</option>
-          {months.map((month, monthIdx) => {
-            return (<option value={month} key={monthIdx}>{`${month}월`}</option>)
-          })}
-        </select>
-        <h3>post lists:</h3>
-        {store ? store.post.posts.map((post, postIndex) => {
-          return (
-            <Post post={post} key={postIndex}/>
-          )
-        }) : null}
+        {/*TODO: 복구*/}
+        {/*<button onClick={handleSignOut}>sign out</button>*/}
       </MGTMain>
     )
   })
 }
 
 const MGTMain = styled.div`
+.content__header {
+border-top: 1rem solid blue;
+}
+.main__body {
+display: flex;
+& > div {
+&.content__wrapper {
+flex-basis: 50%;
+&:not(:last-child) {
+border-right: 1px dotted red;
+}
+.label {
+text-align: center;
+font-size: 2.6rem;
+}
+.post {
+font-size: 2rem;
+&__title {
+margin-top: 0.3rem;
+background-color: blue;
+padding: 0.5rem 0;
+color: white;
+text-align: center;
+}
+&__content {
+padding: 0.7rem 0.8rem;
+&__header {
+display: flex;
+justify-content: space-between;
+.created-at, .tag {
+font-size: 1.8rem;
+}
+.tag {
+cursor: default;
+&:not(:last-child) {
+margin-right: 0.4rem;
+}
+}
+}
+.button__container {
+display: flex;
+justify-content: flex-end;
+}
+}
+}
+}
+&:first-child {
+.label {
+background: linear-gradient(180deg, ${props => props.theme.beigeLight} 0%, rgba(250, 244, 211, 0.2) 48.96%, ${props => props.theme.beigeLight} 100%);
+}
+.button {
+.layer {
+background-color: ${props => props.theme.beigeLight};
+}
+}
+}
+&:nth-child(2) {
+.label {
+background: linear-gradient(180deg, #D4FBF9 0%, rgba(212, 251, 249, 0.2) 48.96%, ${props => props.theme.turquoiseLight} 100%);
+}
+.button {
+.layer {
+background-color: ${props => props.theme.turquoiseLight};
+}
+}
+}
 
+}
+}
 `
 
 export default Feed
