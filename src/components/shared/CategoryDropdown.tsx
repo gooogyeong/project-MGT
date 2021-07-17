@@ -6,7 +6,9 @@ type CategoryProps = {
   handleCategorySelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const Category = (props: CategoryProps) => {
+// TODO: delete
+
+const CategoryDropdown = (props: CategoryProps) => {
   const store = useContext(storeContext)
 
   useEffect(() => {
@@ -32,4 +34,4 @@ const Category = (props: CategoryProps) => {
   })
 }
 
-export default Category
+export default CategoryDropdown
