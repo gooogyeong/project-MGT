@@ -33,3 +33,11 @@ export const getSearchOptions = (searchOptionFlags: Record<PostPayloadKey, strin
   })
   return searchOptions
 }
+
+export const kebabize = (str: string): string => {
+  return str.split('').map((letter, idx) => {
+    return letter.toUpperCase() === letter
+      ? `${idx !== 0 ? '-' : ''}${letter.toLowerCase()}`
+      : letter
+  }).join('')
+}
