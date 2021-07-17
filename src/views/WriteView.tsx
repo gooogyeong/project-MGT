@@ -1,13 +1,13 @@
 import React from 'react'
 import Write from '@/components/Write'
 
-const WritePage: React.FC = () => {
+const WriteView: React.FC = () => {
 
   return (
-    <div>
+    <>
       <Write />
-    </div>
+    </>
   )
 }
 
-export default WritePage
+export default WriteView

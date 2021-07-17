@@ -1,24 +1,28 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import MainPage from '@/pages/MainPage'
-import LoginPage from '@/pages/LoginPage'
-import WritePage from '@/pages/WritePage'
-import EditPage from '@/pages/EditPage'
-import PrivateRoute from '@/routers/privateRoute'
 import MainLayout from '@/layouts/MainLayout'
+import MainView from '@/views/MainView'
+import PostListView from '@/views/post/PostListView'
+import PostDetailView from '@/views/post/PostDetailView'
+import LoginView from '@/views/LoginView'
+import WriteView from '@/views/WriteView'
+import EditView from '@/views/EditView'
+import PrivateRoute from '@/routers/privateRoute'
 
 function AppRouter (): JSX.Element {
   return (
-    <MainLayout>
-      <Router>
+    <Router>
+      <MainLayout>
         <Switch>
-          <Route exact path="/" component={MainPage}/>
-          <Route path="/login" component={LoginPage}/>
-          <PrivateRoute exact path="/write" component={WritePage}/>
-          <PrivateRoute exact path="/write/:postId" component={EditPage}/>
+          <Route exact path="/" component={MainView}/>
+          <Route exact path="/post/list" component={PostListView}/>
+          <Route exact path="/post/:id" component={PostDetailView}/>
+          <Route path="/login" component={LoginView}/>
+          <PrivateRoute exact path="/write" component={WriteView}/>
+          <PrivateRoute exact path="/write/:postId" component={EditView}/>
         </Switch>
-      </Router>
-    </MainLayout>
+      </MainLayout>
+    </Router>
   )
 }
 
