@@ -1,6 +1,47 @@
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { yyyyMMddDot } from '@/utils/date'
 import { format } from 'date-fns'
+
+const Header = () => {
+  const history = useHistory()
+  const goToMain = () => {
+    history.push('/')
+  }
+  return (
+    <MGTHeader className="header">
+      <div className="header__top-left">
+        <table>
+          <div>
+            <th>발행</th>
+            <tr>
+              <td>이혜원</td>
+              <td>녹트 몰</td>
+            </tr>
+          </div>
+          <div>
+            <th>개발</th>
+            <tr>
+              <td>이민경</td>
+            </tr>
+          </div>
+        </table>
+      </div>
+      <div className="header__center" onClick={goToMain}>
+        <div>모던 그로테스크 타임스</div>
+        <div>Modern Grotesque Times</div>
+      </div>
+      <div>
+        <div className="header__top-right">
+          <div>{format(new Date(), yyyyMMddDot)}</div>
+          {/*TODO: 증시 가져오는 API*/}
+          <div>Nasdaq 14,069.42</div>
+          <div>+49.09 (+0.35%)</div>
+        </div>
+      </div>
+    </MGTHeader>
+  )
+}
 
 const MGTHeader = styled.div`
 display: flex;
@@ -11,6 +52,7 @@ text-align: center;
 &__center {
 font-size: 7.5rem;
 letter-spacing: -0.015rem;
+cursor: pointer;
 }
 &__top-left, &__top-right {
 font-size: 1.6rem;
@@ -51,41 +93,5 @@ color: blue;
 }
 }
 `
-
-const Header = () => {
-  return (
-    <MGTHeader className="header">
-      <div className="header__top-left">
-        <table>
-          <div>
-            <th>발행</th>
-            <tr>
-              <td>이혜원</td>
-              <td>녹트 몰</td>
-            </tr>
-          </div>
-          <div>
-            <th>개발</th>
-            <tr>
-              <td>이민경</td>
-            </tr>
-          </div>
-        </table>
-      </div>
-      <div className="header__center">
-        <div>모던 그로테스크 타임스</div>
-        <div>Modern Grotesque Times</div>
-      </div>
-      <div>
-        <div className="header__top-right">
-          <div>{format(new Date(), yyyyMMddDot)}</div>
-          {/*TODO: 증시 가져오는 API*/}
-          <div>Nasdaq 14,069.42</div>
-          <div>+49.09 (+0.35%)</div>
-        </div>
-      </div>
-    </MGTHeader>
-  )
-}
 
 export default Header

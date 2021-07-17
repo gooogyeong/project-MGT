@@ -1,5 +1,67 @@
 import styled from 'styled-components'
-import SearchBar from '@/components/SearchBar'
+import SearchBar from '@/components/shared/SearchBar'
+import { useHistory } from 'react-router-dom'
+import React, { useRef } from 'react'
+import { storeContext } from '@/stores/context'
+
+const menus = [
+  {
+    key: 'intro',
+    menuText: '소개'
+  },
+  {
+    key: 'posts',
+    menuText: '글'
+  },
+  {
+    key: 'subscription',
+    menuText: '구독'
+  },
+  {
+    key: 'shop',
+    menuText: '구매'
+  },
+  {
+    key: 'contact',
+    menuText: '연락처'
+  }
+]
+
+const NavBar = () => {
+  const history = useHistory()
+
+  const store = React.useContext(storeContext)
+
+  const goToMenu = (menu: string) => {
+    switch (menu) {
+      case 'posts':
+        history.push('/post/list')
+        break
+      default:
+        return
+    }
+  }
+
+  const handleSearchButtonClick = async () => {
+    await store?.post.getPosts()
+  }
+
+  return (
+    <MGTNavBar className="navbar">
+      <div className="navbar__logo">logo</div>
+      <div className="navbar__menu">
+        {menus.map((menu, menuIdx) => {
+          return (
+            <div key={menuIdx} onClick={() => goToMenu(menu.key)}>{menu.menuText}</div>
+          )
+        })}
+      </div>
+      <div className="navbar__searchbar">
+        <SearchBar handleSearchButtonClick={handleSearchButtonClick}/>
+      </div>
+    </MGTNavBar>
+  )
+}
 
 const MGTNavBar = styled.div`
 display: flex;
@@ -26,23 +88,9 @@ display: flex;
 justify-content: space-between;
 font-size: 2.6rem;
 width: 50%;
+cursor: pointer;
 }
 }
 `
-
-const NavBar = () => {
-  const menus = ['소개', '글', '구독', '구매', '연락처']
-  return (
-    <MGTNavBar className="navbar">
-      <div className="navbar__logo">logo</div>
-      <div className="navbar__menu">
-        {menus.map((menu, menuIdx) => <div key={menuIdx}>{menu}</div>)}
-      </div>
-      <div className="navbar__searchbar">
-        <SearchBar/>
-      </div>
-    </MGTNavBar>
-  )
-}
 
 export default NavBar
