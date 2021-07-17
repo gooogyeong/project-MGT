@@ -40,10 +40,6 @@ exports.unindexPost = functions.firestore
       return index.deleteObject(objectID);
     });
 
-exports.setSearchSetting = functions.https.onCall(async (data) => {
-
-})
-
 exports.searchPost = functions.https.onCall(async (data) => {
   const {searchKeyword, searchOptions} = data;
   const result = await index.search(searchKeyword, searchOptions);
