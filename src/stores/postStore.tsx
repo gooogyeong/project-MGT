@@ -146,7 +146,6 @@ export const postStore = (): PostStore => {
 
     async getPostsByTag () {
       try {
-        // TODO: 추후에 set page 함수 추가
         const { posts } = await getPostsByTagService({
           tag: this.searchTag as Tag,
           offset: (this.currPage - 1) * this.postsPerPage,
