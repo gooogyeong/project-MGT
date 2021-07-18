@@ -103,7 +103,7 @@ const Feed = (): JSX.Element => {
                 </span>
                   <span>
                 {store?.post.authorLatestPosts[1]?.tags.map((tag, tagIdx) => {
-                  return <Tag tag={tag}/>
+                  return <Tag key={tagIdx} tag={tag}/>
                 })}
                 </span>
                 </div>
