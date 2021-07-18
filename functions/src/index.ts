@@ -55,6 +55,6 @@ exports.searchPostByTag = functions.https.onCall(async (data) => {
       .offset(offset)
       .get();
   const res = [] as Post[];
-  snapshot.forEach((doc) => res.push(doc.data() as Post));
+  snapshot.forEach((doc) => res.push({...doc.data(), objectID: doc.id} as Post));
   return res;
 });
