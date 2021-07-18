@@ -20,9 +20,10 @@ const Post = (props: PostProps) => {
 
   const handleDeleteClick = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
-      await deletePost(props.post.id)
+      await deletePost(props.post.objectID as string)
       if (store) await store.post.getPosts()
       alert('삭제되었습니다')
+      history.push('/post/list')
     }
   }
 
