@@ -8,6 +8,7 @@ import { yyyyMMddDot } from '@/utils/date'
 import { format } from 'date-fns'
 import { Post, PostPayloadKey } from '@/types/posts'
 import { kebabize } from '@/utils'
+import { Category as CategoryEnum } from '@/types/category/enum'
 
 const PostList = (): JSX.Element => {
 
@@ -31,14 +32,13 @@ const PostList = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
+    // TODO: 그냥 store에 default값을 두면 되지 않을까?
     return () => {
-      if (store) {
-        store.post.setGetPostsPayload({
-          createdAt: Order.DESC,
-          authorUid: '',
-          tag: null
-        })
-      }
+      store?.post.setGetPostsPayload({
+        createdAt: Order.DESC,
+        authorUid: '',
+        tag: null
+      })
     }
   }, [])
 
@@ -72,10 +72,12 @@ const PostList = (): JSX.Element => {
     }
 
     const goToPostDetail = (post: Post) => {
-      const postId = post.objectID || post.id
+      const postId = post.objectID
       store?.post.setCurrPostDetail(post)
       history.push(`/post/${postId}`)
     }
+
+    const postList = store?.post.posts
 
     return (
       <MGTBoard>
@@ -87,9 +89,10 @@ const PostList = (): JSX.Element => {
         </tr>
         </thead>
         <tbody>
-        {store ? store.post.posts.map((post, postIdx) => {
+        {store ? postList?.map((post, postIdx) => {
           return (
-            <tr key={postIdx}>
+            <tr key={postIdx}
+                className={post.categoryName === CategoryEnum.notice && !!post.isPinned ? 'category' : ''}>
               {labels.map((label, labelIdx) => {
                 return (
                   <td key={labelIdx} className={kebabize(label.key)} onClick={() => {
@@ -131,6 +134,11 @@ tbody {
 cursor: pointer;
 tr {
 max-height: 5.8rem;
+&.category {
+background-color: ${props => props.theme.beigeLight};
+color: red;
+};
+}
 td {
 &:not(.title) {
 text-align: center;

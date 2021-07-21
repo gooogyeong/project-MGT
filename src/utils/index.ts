@@ -3,7 +3,7 @@ import { SearchOptions } from '@algolia/client-search'
 import { PostPayloadKey } from '@/types/posts'
 import { SearchRange } from '@/types/posts'
 
-const getFilterStr = (searchOptionFlags: Record<string, string | SearchRange>) => {
+const getFilterStr = (searchOptionFlags: Record<string, string | SearchRange>, isPinnedNotice: boolean) => {
   let filterStr = ''
   if (searchOptionFlags.authorUid) {
     filterStr += `${PostPayloadKey.authorUid}:"${searchOptionFlags.authorUid}"`
@@ -18,15 +18,22 @@ const getFilterStr = (searchOptionFlags: Record<string, string | SearchRange>) =
   if (searchOptionFlags.searchRange) {
     filterStr += `${filterStr.length ? ' AND' : ''} createdAt:${(searchOptionFlags.searchRange as SearchRange).from} TO ${(searchOptionFlags.searchRange as SearchRange).to}`
   }
+  // TODO: boolean 타입 처리하는 법 알았으면 좋겠음
+  filterStr += `${filterStr.length ? ' AND ' : ''}${isPinnedNotice ? '' : 'NOT '}isPinned=1`
   return filterStr
 }
 
 // TODO: 타입 정교화
-export const getSearchOptions = (searchOptionFlags: Record<PostPayloadKey, string>, page: number, hitsPerPage: number): RequestOptions & SearchOptions => {
+export const getSearchOptions = (
+  searchOptionFlags: Record<PostPayloadKey, string>,
+  page: number,
+  hitsPerPage: number,
+  isPinnedNotice?: boolean
+): RequestOptions & SearchOptions => {
   const searchOptions = {
-    filters: getFilterStr(searchOptionFlags),
+    filters: getFilterStr(searchOptionFlags, !!isPinnedNotice),
     page: page - 1,
-    hitsPerPage
+    hitsPerPage: !isPinnedNotice ? hitsPerPage : 0
   } as Partial<RequestOptions & SearchOptions>
   Object.keys(searchOptions).forEach((key) => {
     if (key !== 'page' && !searchOptions[key]) delete searchOptions[key]

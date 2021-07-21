@@ -32,7 +32,7 @@ export const getPost = (postId: string): Promise<Post> => {
   return new Promise((resolve, reject) => {
     getDoc(doc(db, 'posts', postId))
       .then((res) => {
-        if (res.exists()) resolve(res.data() as Post)
+        if (res.exists()) resolve({ ...res.data(), objectID: res.id } as Post)
       })
       .catch(error => {
         reject(error)

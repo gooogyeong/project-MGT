@@ -43,6 +43,7 @@ const NavBar = () => {
   }
 
   const handleSearchButtonClick = async () => {
+    if (history.location.pathname !== '/post/list') history.push('/post/list')
     await store?.post.getPosts()
   }
 
