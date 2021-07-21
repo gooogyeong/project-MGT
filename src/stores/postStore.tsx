@@ -103,12 +103,28 @@ export const postStore = (): PostStore => {
 
     async getPosts () {
       try {
-        const res = await getPostsService(
-          this.searchKeyword,
-          getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage)
-        )
-        const { hits, page } = res as SearchResponse<unknown>
-        this.posts = hits as Post[]
+        if (this.currPage === 1) {
+          const isPinnedNotice = this.currPage === 1
+          const [pinnedNotices, posts] = await Promise.all([
+            getPostsService(
+              this.searchKeyword,
+              getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage, isPinnedNotice)
+            ),
+            getPostsService(
+              this.searchKeyword,
+              getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage)
+            )
+          ])
+          const pinnedNoticesAndPosts = ((pinnedNotices as SearchResponse<unknown>).hits as Post[]).concat((posts as SearchResponse<unknown>).hits as Post[])
+          this.posts = pinnedNoticesAndPosts
+        } else {
+          const res = await getPostsService(
+            this.searchKeyword,
+            getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage)
+          )
+          const { hits } = res as SearchResponse<unknown>
+          this.posts = hits as Post[]
+        }
       } catch (error) {
         console.log(error)
       }
