@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
@@ -27,8 +27,12 @@ import Tag from '@/components/shared/Tag'
 import PreviewModal from '@/components/editor/PreviewModal'
 import { PostPayload } from '@/types/posts'
 import { Category as CategoryType } from '@/types/category'
+import { Category as CategoryEnum } from '@/types/category/enum'
 import CategoryDropdown from '@/components/shared/CategoryDropdown'
+
 type EditorProps = {
+  isNotice: boolean;
+  setIsNotice: Dispatch<SetStateAction<boolean>>;
   handleSubmitClick: (payload: PostPayload) => Promise<void>;
 }
 
@@ -69,6 +73,7 @@ const Editor = (props: EditorProps): JSX.Element => {
   const [postTags, setPostTags] = useState(store?.post.currEditPost?.tags || [] as TagType[])
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
+  const [isPinned, setIsPinned] = useState(0)
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -76,7 +81,10 @@ const Editor = (props: EditorProps): JSX.Element => {
 
   const handleCategorySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCategory = store?.category.categories[parseInt(e.target.value)]
-    if (selectedCategory) setPostCategory(selectedCategory)
+    if (selectedCategory) {
+      if (selectedCategory.name === CategoryEnum.notice) props.setIsNotice(true)
+      setPostCategory(selectedCategory)
+    }
   }
 
   useEffect(() => {
@@ -91,7 +99,12 @@ const Editor = (props: EditorProps): JSX.Element => {
     getTagList()
   }, [])
 
+  const handleIsPinnedSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPinned(e.target.checked ? 1 : 0)
+  }
+
   return useObserver(() => {
+    // TODO: 위로 올려도 될듯
     const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
       setTagName(e.target.value)
     }
@@ -150,6 +163,8 @@ const Editor = (props: EditorProps): JSX.Element => {
           createdAt: Date.now().valueOf(),
           tags: postTags
         }
+        // 꼭 props로 받아야하는지 재고 필요
+        if (props.isNotice) (payload as PostPayload).isPinned = isPinned
         await props.handleSubmitClick(payload)
         alert('성공적으로 글을 등록했습니다.')
         history.push('/')
@@ -181,6 +196,12 @@ const Editor = (props: EditorProps): JSX.Element => {
           </div>
           <div>
             <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
+            {props.isNotice ? (
+              <>
+                <input type="checkbox" onChange={handleIsPinnedSelect}/>
+                <label>상단에 고정</label>
+              </>
+            ) : null}
           </div>
           <div className='menu-bar__wrapper'>
             <EditorMenuBar editor={editor}/>

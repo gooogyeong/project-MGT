@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Editor from '@/components/editor/Editor'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
@@ -10,6 +10,8 @@ const Write: React.FC = (): JSX.Element => {
   const store = React.useContext(storeContext)
 
   const author = store?.admin.admin
+
+  const [isNotice, setIsNotice] = useState(false)
 
   useEffect(() => {
     const createPost = async () => {
@@ -42,7 +44,7 @@ const Write: React.FC = (): JSX.Element => {
 
   const submit = async (payload: PostPayload) => {
     try {
-      if (store) await store.post.createPost(payload)
+      await store?.post.createPost(payload)
     } catch (error) {
       console.log(error)
     }
@@ -51,7 +53,11 @@ const Write: React.FC = (): JSX.Element => {
   return useObserver(() => {
     return (
       <div>
-        <Editor handleSubmitClick={submit} />
+        <Editor
+          isNotice={isNotice}
+          setIsNotice={setIsNotice}
+          handleSubmitClick={submit}
+        />
       </div>
     )
   })

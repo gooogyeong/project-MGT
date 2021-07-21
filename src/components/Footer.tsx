@@ -1,3 +1,4 @@
+import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import caligoliteSeal from '@/assets/caligolite-seal.svg'
 import instagram from '@/assets/instagram.svg'
@@ -15,6 +16,9 @@ const spacedThisYear = thisYear.toString().split('').join(' ')
 const Footer = () => {
 
   const store = React.useContext(storeContext)
+
+  const history = useHistory()
+  // const location = useLocation()
 
   const [randomTags, setRandomTags] = useState([] as TagType[])
 
@@ -38,6 +42,8 @@ const Footer = () => {
       store?.post.setSearchTag(tag)
       store?.post.initSearchOption()
       store?.post.addSearchOption({ tag })
+      // TODO: turn pathname into enum
+      if (history.location.pathname !== '/post/list') history.push('/post/list')
       await store?.post.getPostsByTag()
     }
 
