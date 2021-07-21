@@ -17,6 +17,7 @@ export type PostPayload = {
   content: string;
   createdAt: number;
   tags: Tag[];
+  isPinned?: number;
 }
 
 export enum PostPayloadKey {
@@ -27,7 +28,8 @@ export enum PostPayloadKey {
   title = 'title',
   content = 'content',
   createdAt = 'createdAt',
-  tags = 'tags'
+  tags = 'tags',
+  isPinned = 'isPinned'
 }
 
 export type UpdatePostPayload = Omit<PostPayload, 'author' | 'authorUid'>
