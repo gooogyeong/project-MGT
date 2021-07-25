@@ -40,7 +40,11 @@ const Edit: React.FC = (): JSX.Element => {
   return useObserver(() => {
     return (
       <div>
-        <Editor handleSubmitClick={update}/>
+        <div>Editor</div>
+        {/*TODO: Edit view, write view 통합*/}
+        {/*<Editor */}
+        {/*  handleSubmitClick={update}*/}
+        {/*/>*/}
       </div>
     )
   })

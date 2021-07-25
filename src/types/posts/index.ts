@@ -8,6 +8,12 @@ export type GetPostsPayload = {
   tag: null | Tag;
 }
 
+export type Footnote = {
+  id: string;
+  count?: number;
+  content: string;
+}
+
 export type PostPayload = {
   author: string;
   authorUid: string;
@@ -18,6 +24,7 @@ export type PostPayload = {
   createdAt: number;
   tags: Tag[];
   isPinned?: number;
+  footnote?: Footnote[];
 }
 
 export enum PostPayloadKey {
