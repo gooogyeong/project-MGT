@@ -6,6 +6,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
 import FontFamily from '@tiptap/extension-font-family'
 import Highlight from '@tiptap/extension-highlight'
+import Footnote from '@/utils/tiptap/Footnote'
 import Table from '@tiptap/extension-table'
 import TableRow from '@tiptap/extension-table-row'
 import TableCell from '@tiptap/extension-table-cell'
@@ -25,7 +26,7 @@ import { createTag, getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
 import Tag from '@/components/shared/Tag'
 import PreviewModal from '@/components/editor/PreviewModal'
-import { PostPayload } from '@/types/posts'
+import { PostPayload, Footnote as FootnoteType } from '@/types/posts'
 import { Category as CategoryType } from '@/types/category'
 import { Category as CategoryEnum } from '@/types/category/enum'
 import CategoryDropdown from '@/components/shared/CategoryDropdown'
@@ -53,6 +54,7 @@ const Editor = (props: EditorProps): JSX.Element => {
       Table.configure({
         resizable: true
       }),
+      Footnote,
       TableHeader,
       TableRow,
       TableCell,
@@ -74,6 +76,7 @@ const Editor = (props: EditorProps): JSX.Element => {
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
   const [isPinned, setIsPinned] = useState(0)
+  const [footnoteArr, setFootnoteArr] = useState([] as FootnoteType[])
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -153,6 +156,19 @@ const Editor = (props: EditorProps): JSX.Element => {
           alert('카테고리를 선택해주세요')
           return
         }
+
+        let formattedFootnoteArr = [] as FootnoteType[]
+        if (footnoteArr.length) {
+          footnoteArr.forEach((footnote, footnoteIdx) => {
+            const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
+            const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
+            if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
+              ...footnote,
+              count: formattedFootnoteArr.length + 1
+            } as FootnoteType)
+          })
+        }
+
         const payload = {
           authorUid: author ? author.uid : '',
           author: author ? author.nickName : '',
@@ -161,14 +177,21 @@ const Editor = (props: EditorProps): JSX.Element => {
           title,
           content: editor ? editor.getHTML() : '',
           createdAt: Date.now().valueOf(),
-          tags: postTags
+          tags: postTags,
+          footnote: formattedFootnoteArr // footnoteArr
         }
         // 꼭 props로 받아야하는지 재고 필요
         if (props.isNotice) (payload as PostPayload).isPinned = isPinned
         await props.handleSubmitClick(payload)
         alert('성공적으로 글을 등록했습니다.')
-        history.push('/')
+        history.push('/post/list')
       }
+    }
+
+    const handleFootnoteContentInput = (footnoteIdx: number, e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const newFootnoteArr = [...footnoteArr]
+      newFootnoteArr.splice(footnoteIdx, 1, { ...newFootnoteArr[footnoteIdx], content: e.target.value })
+      setFootnoteArr(newFootnoteArr)
     }
 
     return (
@@ -204,13 +227,27 @@ const Editor = (props: EditorProps): JSX.Element => {
             ) : null}
           </div>
           <div className='menu-bar__wrapper'>
-            <EditorMenuBar editor={editor}/>
+            <EditorMenuBar
+              editor={editor}
+              footnoteArr={footnoteArr}
+              setFootnoteArr={setFootnoteArr}
+            />
           </div>
           <EditorBubbleMenu editor={editor}/>
           <EditorContent
             className='editor__wrapper'
             editor={editor}
           />
+          <div className="footnote-list__wrapper">
+            {footnoteArr.map((footnote, footnoteIdx) => {
+              return (
+                <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
+                  <span className="footnote__count"></span>
+                  <textarea value={footnote.content} onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
+                </div>
+              )
+            })}
+          </div>
           <div>
             <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
             <label>태그 입력</label>
@@ -234,6 +271,16 @@ const MGTEditor = styled.div`
 border: 1px solid black;
 border-radius: 4px;
 user-select: auto !important;
+counter-reset: footnote-label;
+footnote {
+cursor: pointer;
+&:after {
+content: counter(footnote-label);
+vertical-align: super;
+font-size: 75%;
+counter-increment: footnote-label; 
+}
+}
 button {
 &.is-active {
 background-color: black;
@@ -308,6 +355,23 @@ outline: none !important;
     padding-left: 1rem;
     border-left: 3px solid black;
   }
+}
+.footnote-list__wrapper {
+counter-reset: footnote-content;
+}
+.footnote__wrapper {
+// TODO: scroll X -> flex height
+display: flex;
+.footnote__count {
+  &:after {
+  content: counter(footnote-content)")";
+  counter-increment: footnote-content;
+}
+}
+textarea {
+width: 100%;
+border: none;
+}
 }
 `
 
