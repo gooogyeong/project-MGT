@@ -1,14 +1,18 @@
 import { Editor as EditorType } from '@tiptap/react'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import ImageUploadModal from '@/components/editor/ImageUploadModal'
 import VideoUploadModal from '@/components/editor/VideoUploadModal'
 import styled from 'styled-components'
+import { Footnote } from '@/types/posts'
+import { generateId } from '@/utils'
 
 type MenuBarProps = {
   editor: EditorType | null;
+  footnoteArr: Footnote[];
+  setFootnoteArr: Dispatch<SetStateAction<Footnote[]>>;
 }
 
-const EditorMenuBar = ({ editor }: MenuBarProps) => {
+const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) => {
   if (!editor) {
     return null
   }
@@ -21,6 +25,33 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
 
   const addImageToEditor = (imageSrc: string) => {
     editor.chain().focus().setImage({ src: imageSrc }).run()
+  }
+
+  const addFootnote = () => {
+    let footnotesArr = Array.from(document.getElementsByTagName('footnote'))
+    let footnoteLabelIdMap = footnotesArr.map(footnote => {
+      return footnote.className.split(' ')[1]
+    })
+    const id = generateId()
+    if (footnoteLabelIdMap.indexOf(id) < 0) {
+      editor.chain().focus().setFootnoteComponent({ id: id }).run()
+      footnotesArr = Array.from(document.getElementsByTagName('footnote'))
+      const newFootnote = footnotesArr.find(footnote => footnote.className === '')
+      if (newFootnote) newFootnote.className = `footnote--label ${id}`
+      footnoteLabelIdMap = footnotesArr.map(footnote => {
+        return footnote.className.split(' ')[1]
+      })
+      const newFootnoteWrapperIdx = footnoteLabelIdMap.indexOf(id)
+      const newFootnoteWrapperObj = {
+        id,
+        count: -1,
+        content: ''
+      }
+
+      const newFootnoteArr = [...footnoteArr]
+      newFootnoteArr.splice(newFootnoteWrapperIdx, 0, newFootnoteWrapperObj)
+      setFootnoteArr(newFootnoteArr)
+    }
   }
 
   const addVideoToEditor = (videoSrc: string) => {
@@ -212,6 +243,9 @@ const EditorMenuBar = ({ editor }: MenuBarProps) => {
         className={editor.isActive('blockquote') ? 'is-active' : ''}
       >
         blockquote
+      </button>
+      <button onClick={addFootnote}>
+        footnote
       </button>
       <button onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
         insertTable
