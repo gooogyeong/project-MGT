@@ -48,3 +48,7 @@ export const kebabize = (str: string): string => {
       : letter
   }).join('')
 }
+
+export const generateId = (): string => {
+  return '_' + Math.random().toString(36).substr(2, 9)
+}
