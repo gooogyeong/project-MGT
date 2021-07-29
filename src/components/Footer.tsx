@@ -1,9 +1,9 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import caligoliteSeal from '@/assets/caligolite-seal.svg'
-import instagram from '@/assets/instagram.svg'
-import twitter from '@/assets/twitter.svg'
-import facebook from '@/assets/facebook.svg'
+import instagram from '@/assets/icon/instagram.svg'
+import facebookBlue from '@/assets/icon/facebook-blue.svg'
+import twitterBlue from '@/assets/icon/twitter-blue.svg'
 import React, { useEffect, useState } from 'react'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
@@ -18,7 +18,6 @@ const Footer = () => {
   const store = React.useContext(storeContext)
 
   const history = useHistory()
-  // const location = useLocation()
 
   const [randomTags, setRandomTags] = useState([] as TagType[])
 
@@ -58,15 +57,15 @@ const Footer = () => {
         <div className="footer__social-media">
           <div className="footer__social-media__icon-wrapper">
             <img src={instagram}/>
-            <img src={twitter}/>
-            <img src={facebook}/>
+            <img src={twitterBlue} />
+            <img src={facebookBlue} />
           </div>
         </div>
         <div className="footer__contribution">
           <div className="footer__contribution__row">
             <div className="sub-row">
               <div className="label">칼리고라이트 본부장</div>
-              <div className="content">녹트 몰</div>
+              <div className="content">한아임</div>
             </div>
             <div className="sub-row">
               <div className="label">칼리고라이트 본부장</div>
@@ -174,6 +173,9 @@ padding: 2.2rem 0;
 width: 20%;
 display: flex;
 justify-content: space-between;
+img {
+filter: invert(19%) sepia(98%) saturate(7499%) hue-rotate(1deg) brightness(97%) contrast(118%);
+}
 }
 }
 &__contribution {

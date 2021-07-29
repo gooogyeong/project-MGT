@@ -16,7 +16,7 @@ const Header = () => {
             <th>발행</th>
             <tr>
               <td>이혜원</td>
-              <td>녹트 몰</td>
+              <td>한아임</td>
             </tr>
           </div>
           <div>
@@ -35,8 +35,10 @@ const Header = () => {
         <div className="header__top-right">
           <div>{format(new Date(), yyyyMMddDot)}</div>
           {/*TODO: 증시 가져오는 API*/}
-          <div>Nasdaq 14,069.42</div>
-          <div>+49.09 (+0.35%)</div>
+          <div className="nasdaq">
+            <div>Nasdaq 14,069.42</div>
+            <div>+49.09 (+0.35%)</div>
+          </div>
         </div>
       </div>
     </MGTHeader>
@@ -70,11 +72,16 @@ border-bottom: 1px dotted red;
 }
 }
 th {
+width: 2.5rem;
 border-right: 1px dotted red;
 }
 tr {
 display: flex;
 flex-direction: column;
+justify-content: center;
+td {
+min-width: 100%;
+}
 }
 }
 }
@@ -85,9 +92,14 @@ border-bottom: 1px dotted red;
 > div {
 &:nth-child(1) {
 border-bottom: 1px dotted red;
+font-size: 1.6rem;
+padding: 0.1rem;
 }
-&:nth-child(3) {
+&.nasdaq {
+padding: 1rem 0.7rem;
+div:nth-child(2) {
 color: blue;
+}
 }
 }
 }
