@@ -1,29 +1,34 @@
 import styled from 'styled-components'
 import SearchBar from '@/components/shared/SearchBar'
 import { useHistory } from 'react-router-dom'
-import React, { useRef } from 'react'
+import React from 'react'
 import { storeContext } from '@/stores/context'
 
 const menus = [
   {
     key: 'intro',
-    menuText: '소개'
+    menuText: '소개',
+    uri: '/intro'
   },
   {
     key: 'posts',
-    menuText: '글'
+    menuText: '글',
+    uri: '/post/list'
   },
   {
     key: 'subscription',
-    menuText: '구독'
+    menuText: '구독',
+    uri: '/sub'
   },
   {
     key: 'shop',
-    menuText: '구매'
+    menuText: '구매',
+    uri: '/shop'
   },
   {
     key: 'contact',
-    menuText: '연락처'
+    menuText: '연락처',
+    uri: '/contact'
   }
 ]
 
@@ -32,14 +37,8 @@ const NavBar = () => {
 
   const store = React.useContext(storeContext)
 
-  const goToMenu = (menu: string) => {
-    switch (menu) {
-      case 'posts':
-        history.push('/post/list')
-        break
-      default:
-        return
-    }
+  const goToMenu = (uri: string) => {
+    if (uri) history.push(uri)
   }
 
   const handleSearchButtonClick = async () => {
@@ -53,7 +52,7 @@ const NavBar = () => {
       <div className="navbar__menu">
         {menus.map((menu, menuIdx) => {
           return (
-            <div key={menuIdx} onClick={() => goToMenu(menu.key)}>{menu.menuText}</div>
+            <div key={menuIdx} onClick={() => goToMenu(menu.uri)}>{menu.menuText}</div>
           )
         })}
       </div>
