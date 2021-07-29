@@ -8,6 +8,10 @@ import { deletePost } from '@/services/posts'
 import { storeContext } from '@/stores/context'
 import { format } from 'date-fns'
 import { yyyyMMddDot } from '@/utils/date'
+import linkBlue from '@/assets/icon/link-blue.svg'
+import kakaotalkBlue from '@/assets/icon/kakaotalk-blue.svg'
+import facebookBlue from '@/assets/icon/facebook-blue.svg'
+import twitterBlue from '@/assets/icon/twitter-blue.svg'
 
 type PostProps = {
   post: PostType;
@@ -84,7 +88,10 @@ const Post = (props: PostProps) => {
         </div>
         <div className="post__main-text">
           <div className="content">
-            <div className="content__created-at">{format(new Date(props.post.createdAt), yyyyMMddDot)}</div>
+            <div className="content__sub-header">
+              <div>{format(new Date(props.post.createdAt), yyyyMMddDot)}</div>
+              <div>{props.post.author}</div>
+            </div>
             <div className="content__text">
               {ReactHtmlParser(props.post.content).map((content => content))}</div>
             {store?.admin.admin ? (
@@ -105,21 +112,37 @@ const Post = (props: PostProps) => {
           </div>
         </div>
       </div>
-      <div className="post__footer--reference">
-        <div className="label">참고</div>
-        <div></div>
-        <div></div>
-      </div>
-      <div className="post__footer--share">
-        <div className="label">태그</div>
-        <div className="content">
-          {props.post.tags.map((tag, tagIndex) => <Tag
-            key={tagIndex}
-            tag={tag}
-          />)}
+      {props.post.reference ? (
+        <div className="post__footer--reference">
+          <div className="label">참고</div>
+          <div className="content">
+            <div className="reference__wrapper">{props.post.reference}</div>
+          </div>
+          <div></div>
         </div>
-        <div></div>
-      </div>
+      ) : null}
+      {props.post.tags.length ? (
+        <div className="post__footer--share">
+          <div className="label">태그</div>
+          <div className="content">
+            <div className="tag__wrapper">
+              {props.post.tags.map((tag, tagIndex) => <Tag
+                key={tagIndex}
+                tag={tag}
+              />)}
+            </div>
+          </div>
+          <div className="content">
+            <div className="label">공유하기</div>
+            <div className="social-media__wrapper">
+              <img src={twitterBlue} className="red"/>
+              <img src={facebookBlue}/>
+              <img src={kakaotalkBlue}/>
+              <img src={linkBlue}/>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </MGTPost>
   )
 }
@@ -148,15 +171,24 @@ background-color: white;
 font-size: 0.75rem;
 transform: translateY(-7px);
 }
+.content {
+font-size: 1.8rem;
+}
 .label {
+font-size: 2.6rem;
 text-align: center;
 padding: 1.1rem 0;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 .post {
 &__body {
 .post__main-text {
 .content {
-&__created-at {
+&__sub-header {
+display: flex;
+justify-content: space-between;
 margin-top: 0.8rem;
 background-color: blue;
 color: white;
@@ -185,6 +217,37 @@ color: blue;
 font-size: 1.8rem;
 &:not(:last-child) {
 margin-bottom: 2.2rem;
+}
+}
+}
+}
+}
+&__footer {
+&--reference {
+.content {
+align-items: center;
+padding: 1.3rem 0;
+.reference__wrapper {
+width: calc(100% - 2.6rem);
+max-width: calc(100% - 2.6rem);
+white-space: pre;
+line-height: 1.5rem;
+}
+}
+}
+&--share {
+.content {
+justify-content: center;
+align-items: center;
+.tag__wrapper {
+width: calc(100% - 2.6rem);
+max-width: calc(100% - 2.6rem);
+}
+.social-media__wrapper {
+display: flex;
+padding-bottom: 1.3rem;
+img:not(:last-child) {
+margin-right: 1.1rem;
 }
 }
 }
