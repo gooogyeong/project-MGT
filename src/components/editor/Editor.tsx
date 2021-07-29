@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor, EditorContent } from '@tiptap/react'
 import styled from 'styled-components'
@@ -68,6 +68,8 @@ const Editor = (props: EditorProps): JSX.Element => {
   })
 
   const author = store?.admin.admin
+
+  const reference = useRef<HTMLTextAreaElement>(null)
 
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
@@ -178,7 +180,8 @@ const Editor = (props: EditorProps): JSX.Element => {
           content: editor ? editor.getHTML() : '',
           createdAt: Date.now().valueOf(),
           tags: postTags,
-          footnote: formattedFootnoteArr // footnoteArr
+          footnote: formattedFootnoteArr,
+          reference: reference.current?.value || ''
         }
         // 꼭 props로 받아야하는지 재고 필요
         if (props.isNotice) (payload as PostPayload).isPinned = isPinned
@@ -243,10 +246,17 @@ const Editor = (props: EditorProps): JSX.Element => {
               return (
                 <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
                   <span className="footnote__count"></span>
-                  <textarea value={footnote.content} onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
+                  <textarea
+                    ref={reference}
+                    value={footnote.content}
+                    onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
                 </div>
               )
             })}
+          </div>
+          <div>
+            <label>참고 문헌</label>
+            <textarea ref={reference}></textarea>
           </div>
           <div>
             <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>

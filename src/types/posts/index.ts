@@ -24,9 +24,12 @@ export type PostPayload = {
   createdAt: number;
   tags: Tag[];
   isPinned?: number;
+  // TODO: footnote, reference 필드 required? 추가 !?
   footnote?: Footnote[];
+  reference?: string;
 }
 
+// TODO: ex. categoryName -> CATEGORY_NAME
 export enum PostPayloadKey {
   author = 'author',
   authorUid = 'authorUid',
@@ -36,7 +39,9 @@ export enum PostPayloadKey {
   content = 'content',
   createdAt = 'createdAt',
   tags = 'tags',
-  isPinned = 'isPinned'
+  isPinned = 'isPinned',
+  footnote = 'footnote',
+  reference = 'reference'
 }
 
 export type UpdatePostPayload = Omit<PostPayload, 'author' | 'authorUid'>
