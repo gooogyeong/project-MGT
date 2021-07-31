@@ -160,6 +160,7 @@ flex-basis: 23.3%;
 }
 &:nth-child(2) {
 flex-basis: 53.4%;
+max-width: 52%;
 }
 &:not(:last-child) {
 border-right: 1px dotted blue;
@@ -198,6 +199,9 @@ padding: 0.6rem 1.8rem;
 &__text {
 font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
+img {
+max-width: 100%;
+}
 }
 }
 }
@@ -230,8 +234,8 @@ padding: 1.3rem 0;
 .reference__wrapper {
 width: calc(100% - 2.6rem);
 max-width: calc(100% - 2.6rem);
-white-space: pre;
-line-height: 1.5rem;
+white-space: pre-line;
+line-height: 2rem;
 }
 }
 }
