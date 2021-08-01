@@ -12,6 +12,7 @@ import linkBlue from '@/assets/icon/link-blue.svg'
 import kakaotalkBlue from '@/assets/icon/kakaotalk-blue.svg'
 import facebookBlue from '@/assets/icon/facebook-blue.svg'
 import twitterBlue from '@/assets/icon/twitter-blue.svg'
+import config from '../../../env.json'
 
 type PostProps = {
   post: PostType;
@@ -97,6 +98,25 @@ const Post = (props: PostProps) => {
     history.push(`/post/${objectID}`)
   }
 
+  const shareTwitter = () => {
+    const sendText = props.post.title
+    const sendUrl = `${config.baseURL}/post/${props.post.objectID}`
+    window.open('https://twitter.com/intent/tweet?text=' + sendText + '&url=' + sendUrl)
+  }
+
+  const shareFacebook = () => {
+    const sendURL = `${config.baseURL}/post/${props.post.objectID}`
+    window.open('http://www.facebook.com/sharer/sharer.php?u=' + sendURL)
+  }
+
+  const shareKakaotalk = () => {
+
+  }
+
+  const shareLink = () => {
+
+  }
+
   return (
     <MGTPost className="post">
       <div className="post__header">
@@ -165,10 +185,18 @@ const Post = (props: PostProps) => {
           <div className="content">
             <div className="label">공유하기</div>
             <div className="social-media__wrapper">
-              <img src={twitterBlue} className="red"/>
-              <img src={facebookBlue}/>
-              <img src={kakaotalkBlue}/>
-              <img src={linkBlue}/>
+              <div onClick={shareTwitter}>
+                <img src={twitterBlue} className="red"/>
+              </div>
+              <div onClick={shareFacebook}>
+                <img src={facebookBlue}/>
+              </div>
+              <div onClick={shareKakaotalk}>
+                <img src={kakaotalkBlue}/>
+              </div>
+              <div onClick={shareLink}>
+                <img src={linkBlue}/>
+              </div>
             </div>
           </div>
         </div>
@@ -187,9 +215,10 @@ const Post = (props: PostProps) => {
         <div className="label">관련 게시글</div>
         <div className="rel-posts__container">
           <div className="rel-posts__left">{
-            props.relPosts ? props.relPosts.slice(0, 4).map((post) => {
+            props.relPosts ? props.relPosts.slice(0, 4).map((post, postIdx) => {
                 return (
                   <div
+                    key={postIdx}
                     className="title__wrapper"
                     onClick={() => goToRelPost(post.objectID as string)}
                   >
@@ -200,9 +229,10 @@ const Post = (props: PostProps) => {
               })
               : null}</div>
           <div className="rel-posts__right">{
-            props.relPosts ? props.relPosts.slice(4, 8).map((post) => {
+            props.relPosts ? props.relPosts.slice(4, 8).map((post, postIdx) => {
                 return (
                   <div
+                    key={postIdx}
                     className="title__wrapper"
                     onClick={() => goToRelPost(post.objectID as string)}
                   >
@@ -321,8 +351,10 @@ max-width: calc(100% - 2.6rem);
 .social-media__wrapper {
 display: flex;
 padding-bottom: 1.3rem;
-img:not(:last-child) {
+& > div {
+&:not(:last-child) {
 margin-right: 1.1rem;
+}
 }
 }
 }
