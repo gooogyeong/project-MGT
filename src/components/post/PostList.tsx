@@ -18,10 +18,12 @@ const PostList = (): JSX.Element => {
 
   useEffect(() => {
     const getPostList = async () => {
-      // TODO: 새 글 작성후 바로 업데이트 안되는 버그
+      // TODO: 새 글 작성후 바로 algolia에 업데이트 되기 전에 리스트를 받아오는 문제
       try {
         if (store) {
-          store.post.initSearchOption()
+          // TODO: 정책.
+          // TODO: 대신 '글' 눌렀을 떄 refresh !?
+          // store.post.initSearchOption()
           await store.post.getPosts()
         }
       } catch (error) {

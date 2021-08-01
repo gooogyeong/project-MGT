@@ -18,6 +18,12 @@ const getFilterStr = (searchOptionFlags: Record<string, string | SearchRange>, i
   if (searchOptionFlags.searchRange) {
     filterStr += `${filterStr.length ? ' AND' : ''} createdAt:${(searchOptionFlags.searchRange as SearchRange).from} TO ${(searchOptionFlags.searchRange as SearchRange).to}`
   }
+  if (searchOptionFlags.searchBefore) {
+    filterStr += `${filterStr.length ? ' AND' : ''} createdAt < ${searchOptionFlags.searchBefore}`
+  }
+  if (searchOptionFlags.searchAfter) {
+    filterStr += `${filterStr.length ? ' AND' : ''} createdAt > ${searchOptionFlags.searchAfter}`
+  }
   // TODO: boolean 타입 처리하는 법 알았으면 좋겠음
   filterStr += `${filterStr.length ? ' AND ' : ''}${isPinnedNotice ? '' : 'NOT '}isPinned=1`
   return filterStr
