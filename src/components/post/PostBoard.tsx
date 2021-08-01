@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PostSearch from '@/components/post/PostSearch'
 import PostList from '@/components/post/PostList'
-import PostPagination from '@/views/post/PostPagination'
+import PostPagination from '@/components/post/PostPagination'
 import ContentHeader from '@/components/shared/ContentHeader'
 
 const PostBoard = () => {
