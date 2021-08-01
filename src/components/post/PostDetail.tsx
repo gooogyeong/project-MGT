@@ -17,6 +17,7 @@ const PostDetail = () => {
   const [nextPost, setNextPost] = useState(null as null | PostType)
   const [isPageFirstPost, setIsPageFirstPost] = useState(false)
   const [isPageLastPost, setIsPageLastPost] = useState(false)
+  const [relPosts, setRelPosts] = useState([] as PostType[])
 
   useEffect(() => {
     const getPost = async () => {
@@ -78,6 +79,22 @@ const PostDetail = () => {
     getNeighborPosts()
   }, [params.id])
 
+  useEffect(() => {
+    const getCurrRelPosts = async () => {
+      if (store?.post.searchOptions.categoryId) {
+        setRelPosts(store?.post.posts.slice(0, 8))
+      } else {
+        const currPostCategoryId = store?.post.currPostDetail?.categoryId
+        store?.post.addSearchOption({
+          categoryId: currPostCategoryId  || ''
+        })
+        const relPosts = await store?.post.getPosts(1, true)
+        if (relPosts) setRelPosts(relPosts.slice(0, 8))
+      }
+    }
+    getCurrRelPosts()
+  }, [params.id])
+
   return useObserver(() => {
     return (
       <div>
@@ -90,6 +107,7 @@ const PostDetail = () => {
               nextPost={nextPost as PostType}
               isPageFirstPost={isPageFirstPost}
               isPageLastPost={isPageLastPost}
+              relPosts={relPosts}
             />
           </div>
         ) : null}
