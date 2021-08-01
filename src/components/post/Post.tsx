@@ -15,6 +15,11 @@ import twitterBlue from '@/assets/icon/twitter-blue.svg'
 
 type PostProps = {
   post: PostType;
+  prevPost?: PostType;
+  nextPost?: PostType;
+  toNextPost?: (payload: PostType) => void;
+  isPageFirstPost?: boolean;
+  isPageLastPost?: boolean;
 }
 
 const Post = (props: PostProps) => {
@@ -40,32 +45,52 @@ const Post = (props: PostProps) => {
   }
 
   useEffect(() => {
-    // TODO: 원인파악 필요
-    if (!leftFootnote.length && !rightFootnote.length) {
-      const leftFootnoteArr = [] as Footnote[]
-      const rightFootnoteArr = [] as Footnote[]
-      props.post.footnote?.forEach((footnote, footnoteIdx) => {
-        if (footnoteIdx % 2) rightFootnoteArr.push(footnote)
-        else leftFootnoteArr.push(footnote)
-      })
-      setLeftFootnote(leftFootnoteArr)
-      setRightFootnote(rightFootnoteArr)
-    }
-  }, [props.post.footnote?.length])
-
-  useEffect(() => {
-    const footnotes = document.getElementsByTagName('footnote')
-    Array.from(footnotes).forEach((footnote, footnoteIdx) => {
-      footnote.innerHTML = (footnoteIdx + 1).toString()
-      const footnoteButton = document.createElement('button')
-      footnoteButton.innerHTML = `[${footnoteIdx + 1}]`
-      footnoteButton.className = 'footnote'
-      footnoteButton.addEventListener('click', (e) => {
-        console.log('footnote button clicked!')
-      })
-      footnote.parentNode?.replaceChild(footnoteButton, footnote)
+    const leftFootnoteArr = [] as Footnote[]
+    const rightFootnoteArr = [] as Footnote[]
+    props.post.footnote?.forEach((footnote, footnoteIdx) => {
+      if (footnoteIdx % 2) rightFootnoteArr.push(footnote)
+      else leftFootnoteArr.push(footnote)
     })
-  }, [])
+    setLeftFootnote(leftFootnoteArr)
+    setRightFootnote(rightFootnoteArr)
+  }, [props.post.objectID])
+
+  // TODO: add event listener to footnote
+  // useEffect(() => {
+  //   process.nextTick(() => {
+  //     const footnotes = document.getElementsByTagName('footnote')
+  //     Array.from(footnotes).forEach((footnote, footnoteIdx) => {
+  //       footnote.innerHTML = (footnoteIdx + 1).toString()
+  //       const footnoteButton = document.createElement('button')
+  //       footnoteButton.innerHTML = `[${footnoteIdx + 1}]`
+  //       footnoteButton.className = 'footnote'
+  //       footnoteButton.addEventListener('click', (e) => {
+  //         console.log('footnote button clicked!')
+  //       })
+  //       footnote.parentNode?.replaceChild(footnoteButton, footnote)
+  //     })
+  //   })
+  // }, [params.id])
+
+  const toPrevPost = async () => {
+    if (props.prevPost) {
+      if (props.isPageFirstPost) {
+        store?.post.setCurrPage(store?.post.currPage - 1)
+        await store?.post.getPosts()
+      }
+      history.push(`/post/${props.prevPost?.objectID}`)
+    }
+  }
+
+  const toNextPost = async () => {
+    if (props.nextPost) {
+      if (props.isPageLastPost) {
+        store?.post.setCurrPage(store?.post.currPage + 1)
+        await store?.post.getPosts()
+      }
+      history.push(`/post/${props.nextPost.objectID}`)
+    }
+  }
 
   return (
     <MGTPost className="post">
@@ -143,6 +168,22 @@ const Post = (props: PostProps) => {
           </div>
         </div>
       ) : null}
+      <div className="post__footer--navigator">
+        <div>
+          {props.prevPost ? <button className="label" onClick={toPrevPost}>← 이전 게시글</button> : null}
+        </div>
+        <div></div>
+        <div>
+          {props.nextPost ? <button className="label" onClick={toNextPost}>다음 게시글 →</button> : null}
+        </div>
+      </div>
+      <div className="post__footer--rel-posts">
+        <div className="label">관련 게시글</div>
+        <div className="rel-posts__container">
+          <div className="rel-posts__left">어쩌구</div>
+          <div className="rel-posts__right">저쩌구</div>
+        </div>
+      </div>
     </MGTPost>
   )
 }
@@ -252,6 +293,37 @@ display: flex;
 padding-bottom: 1.3rem;
 img:not(:last-child) {
 margin-right: 1.1rem;
+}
+}
+}
+}
+&--navigator {
+justify-content: space-between;
+& > div {
+border: none !important;
+button {
+font-family: 'Noto Serif KR';
+color: blue;
+background-color: white;
+}
+}
+}
+&--rel-posts {
+flex-direction: column;
+.label {
+border-right: none;
+color: blue;
+border-bottom: 1px dotted red;
+}
+.rel-posts__container {
+display: flex;
+flex-direction: row;
+min-width: 100%;
+& > div {
+flex-basis: 50%;
+max-width: 50%;
+&:not(:last-child) {
+border-right: 1px dotted red;
 }
 }
 }

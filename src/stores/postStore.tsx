@@ -39,12 +39,12 @@ export type PostStore = {
   addSearchOption: (payload: Record<string, string | Tag | SearchRange>) => void;
   initSearchOption: () => void;
   getTempPost: () => Promise<Post | undefined>;
-  getPosts: () => Promise<void>;
+  getPosts: (payload?: number, noSet?: boolean) => Promise<void | Post[]>;
   getPost: (payload: string) => Promise<void>;
   getLatestPostByAuthor: (payload: string) => Promise<Post | undefined>;
   authorLatestPosts: Post[];
   setAuthorLatestPosts: (payload: Post[]) => void;
-  getPostsByTag: () => Promise<void>;
+  getPostsByTag: (payload?: number, noSet?: boolean) => Promise<void | Post[]>;
   createPost: (payload: PostPayload) => Promise<void>;
   updateTempPost: (payload: UpdatePostPayload) => Promise<void>;
   updatePost: (payload: UpdatePostPayload) => Promise<void>;
@@ -101,9 +101,10 @@ export const postStore = (): PostStore => {
 
     posts: [],
 
-    async getPosts () {
+    // TODO: params 받는 방식 개선
+    async getPosts (page, noSet) {
       try {
-        if (this.currPage === 1) {
+        if (this.currPage === 1 && !page) {
           const isPinnedNotice = this.currPage === 1
           const [pinnedNotices, posts] = await Promise.all([
             getPostsService(
@@ -116,14 +117,16 @@ export const postStore = (): PostStore => {
             )
           ])
           const pinnedNoticesAndPosts = ((pinnedNotices as SearchResponse<unknown>).hits as Post[]).concat((posts as SearchResponse<unknown>).hits as Post[])
-          this.posts = pinnedNoticesAndPosts
+          if (!noSet) this.posts = pinnedNoticesAndPosts
+          if (noSet) return pinnedNoticesAndPosts
         } else {
           const res = await getPostsService(
             this.searchKeyword,
-            getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage)
+            getSearchOptions(this.searchOptions, page || this.currPage, this.postsPerPage)
           )
           const { hits } = res as SearchResponse<unknown>
-          this.posts = hits as Post[]
+          if (!noSet) this.posts = hits as Post[]
+          if (noSet) return hits as Post[]
         }
       } catch (error) {
         console.log(error)
@@ -160,14 +163,15 @@ export const postStore = (): PostStore => {
       }
     },
 
-    async getPostsByTag () {
+    async getPostsByTag (page, noSet) {
       try {
         const { posts } = await getPostsByTagService({
           tag: this.searchTag as Tag,
-          offset: (this.currPage - 1) * this.postsPerPage,
+          offset: ((page || this.currPage) - 1) * this.postsPerPage,
           limit: this.postsPerPage
         })
-        this.posts = posts as Post[]
+        if (!noSet) this.posts = posts as Post[]
+        if (noSet) return posts as Post[]
       } catch (error) {
         console.log(error)
       }
