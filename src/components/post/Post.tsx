@@ -20,6 +20,7 @@ type PostProps = {
   toNextPost?: (payload: PostType) => void;
   isPageFirstPost?: boolean;
   isPageLastPost?: boolean;
+  relPosts?: PostType[];
 }
 
 const Post = (props: PostProps) => {
@@ -90,6 +91,10 @@ const Post = (props: PostProps) => {
       }
       history.push(`/post/${props.nextPost.objectID}`)
     }
+  }
+
+  const goToRelPost = (objectID: string) => {
+    history.push(`/post/${objectID}`)
   }
 
   return (
@@ -177,13 +182,38 @@ const Post = (props: PostProps) => {
           {props.nextPost ? <button className="label" onClick={toNextPost}>다음 게시글 →</button> : null}
         </div>
       </div>
-      <div className="post__footer--rel-posts">
+      {/*TODO: 관련게시글 컴포넌트 분리 또는 chunkArr 유틸 만들어서 반복 없도록*/}
+      {props.relPosts && props.relPosts.length ? <div className="post__footer--rel-posts">
         <div className="label">관련 게시글</div>
         <div className="rel-posts__container">
-          <div className="rel-posts__left">어쩌구</div>
-          <div className="rel-posts__right">저쩌구</div>
+          <div className="rel-posts__left">{
+            props.relPosts ? props.relPosts.slice(0, 4).map((post) => {
+                return (
+                  <div
+                    className="title__wrapper"
+                    onClick={() => goToRelPost(post.objectID as string)}
+                  >
+                    <div className="title">◦{post.title}</div>
+                    <div className="created-at">____ {format(new Date(post.createdAt), yyyyMMddDot)}</div>
+                  </div>
+                )
+              })
+              : null}</div>
+          <div className="rel-posts__right">{
+            props.relPosts ? props.relPosts.slice(4, 8).map((post) => {
+                return (
+                  <div
+                    className="title__wrapper"
+                    onClick={() => goToRelPost(post.objectID as string)}
+                  >
+                    <div className="title">◦{post.title}</div>
+                    <div className="created-at">____ {format(new Date(post.createdAt), yyyyMMddDot)}</div>
+                  </div>
+                )
+              })
+              : null}</div>
         </div>
-      </div>
+      </div> : null}
     </MGTPost>
   )
 }
@@ -322,8 +352,27 @@ min-width: 100%;
 & > div {
 flex-basis: 50%;
 max-width: 50%;
+color: red;
+display: flex;
+flex-direction: column;
+padding: 5rem 0;
+font-size: 1.8rem;
+line-height: 3rem;
 &:not(:last-child) {
 border-right: 1px dotted red;
+}
+.title__wrapper {
+padding-left: 3.2rem;
+max-height: 3rem;
+cursor: pointer;
+display: flex;
+.title {
+overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;
+max-width: calc(100% - 17.2rem);
+margin-right: 0.5rem;
+}
 }
 }
 }
