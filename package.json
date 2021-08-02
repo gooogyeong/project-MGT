@@ -23,6 +23,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "algoliasearch": "^4.10.2",
+    "bitly-react": "^6.0.12",
     "craco-alias": "^3.0.1",
     "date-fns": "^2.22.1",
     "firebase": "^9.0.0-beta.1",
