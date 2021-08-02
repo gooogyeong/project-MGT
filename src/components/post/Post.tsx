@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ReactHtmlParser from 'react-html-parser'
+import { bitly } from '@/services/bitly'
 import { Footnote, Post as PostType } from '@/types/posts'
 import Tag from '@/components/shared/Tag'
+import Modal from '@/components/shared/Modal'
 import styled from 'styled-components'
 import { deletePost } from '@/services/posts'
 import { storeContext } from '@/stores/context'
@@ -31,6 +33,8 @@ const Post = (props: PostProps) => {
 
   const [leftFootnote, setLeftFootnote] = useState([] as Footnote[])
   const [rightFootnote, setRightFootnote] = useState([] as Footnote[])
+  const [shortenURL, setShortenURL] = useState('')
+  const [isOpenLinkModal, setIsOpenLinkModal] = useState(false)
 
   const handleDeleteClick = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
@@ -99,6 +103,7 @@ const Post = (props: PostProps) => {
   }
 
   const shareTwitter = () => {
+    // TODO: sendURL -> useEffect ? const ?
     const sendText = props.post.title
     const sendUrl = `${config.baseURL}/post/${props.post.objectID}`
     window.open('https://twitter.com/intent/tweet?text=' + sendText + '&url=' + sendUrl)
@@ -113,8 +118,15 @@ const Post = (props: PostProps) => {
 
   }
 
-  const shareLink = () => {
+  const shareLink = async () => {
+    setIsOpenLinkModal(true)
+    const { url } = await bitly.shorten(`${config.baseURL}/post/${props.post.objectID}`)
+    setShortenURL(url)
+  }
 
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(shortenURL)
+    console.log('copied')
   }
 
   return (
@@ -244,6 +256,17 @@ const Post = (props: PostProps) => {
               : null}</div>
         </div>
       </div> : null}
+      {isOpenLinkModal ? (
+        <Modal
+          isOpen={isOpenLinkModal}
+          open={setIsOpenLinkModal}
+        >
+          <div>
+            <div>share link: {shortenURL}</div>
+            <button onClick={copyToClipboard}>copy to clipboard</button>
+          </div>
+        </Modal>
+      ) : null}
     </MGTPost>
   )
 }

@@ -5,9 +5,9 @@ type ModalProps = {
   open: Dispatch<SetStateAction<boolean>>;
   isOpen: boolean;
   children: ReactNode;
-  confirmButtonText: string;
+  confirmButtonText?: string;
   isHideCancelButton?: boolean;
-  onConfirmButtonClick: () => void;
+  onConfirmButtonClick?: () => void;
   onCancelButtonClick?: () => void;
   isConfirmButtonDisabled?: boolean;
 }
@@ -36,7 +36,7 @@ const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
               <button
                 disabled={props.isConfirmButtonDisabled}
                 onClick={() => {
-                  props.onConfirmButtonClick()
+                  if (props.onConfirmButtonClick) props.onConfirmButtonClick()
                 }}
                 className="success"
               >
