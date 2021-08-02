@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ReactHtmlParser from 'react-html-parser'
+import { bitly } from '@/services/bitly'
 import { Footnote, Post as PostType } from '@/types/posts'
 import Tag from '@/components/shared/Tag'
+import Modal from '@/components/shared/Modal'
 import styled from 'styled-components'
 import { deletePost } from '@/services/posts'
 import { storeContext } from '@/stores/context'
@@ -12,6 +14,7 @@ import linkBlue from '@/assets/icon/link-blue.svg'
 import kakaotalkBlue from '@/assets/icon/kakaotalk-blue.svg'
 import facebookBlue from '@/assets/icon/facebook-blue.svg'
 import twitterBlue from '@/assets/icon/twitter-blue.svg'
+import config from '../../../env.json'
 
 type PostProps = {
   post: PostType;
@@ -30,6 +33,8 @@ const Post = (props: PostProps) => {
 
   const [leftFootnote, setLeftFootnote] = useState([] as Footnote[])
   const [rightFootnote, setRightFootnote] = useState([] as Footnote[])
+  const [shortenURL, setShortenURL] = useState('')
+  const [isOpenLinkModal, setIsOpenLinkModal] = useState(false)
 
   const handleDeleteClick = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
@@ -95,6 +100,33 @@ const Post = (props: PostProps) => {
 
   const goToRelPost = (objectID: string) => {
     history.push(`/post/${objectID}`)
+  }
+
+  const shareTwitter = () => {
+    // TODO: sendURL -> useEffect ? const ?
+    const sendText = props.post.title
+    const sendUrl = `${config.baseURL}/post/${props.post.objectID}`
+    window.open('https://twitter.com/intent/tweet?text=' + sendText + '&url=' + sendUrl)
+  }
+
+  const shareFacebook = () => {
+    const sendURL = `${config.baseURL}/post/${props.post.objectID}`
+    window.open('http://www.facebook.com/sharer/sharer.php?u=' + sendURL)
+  }
+
+  const shareKakaotalk = () => {
+
+  }
+
+  const shareLink = async () => {
+    setIsOpenLinkModal(true)
+    const { url } = await bitly.shorten(`${config.baseURL}/post/${props.post.objectID}`)
+    setShortenURL(url)
+  }
+
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(shortenURL)
+    console.log('copied')
   }
 
   return (
@@ -165,10 +197,18 @@ const Post = (props: PostProps) => {
           <div className="content">
             <div className="label">공유하기</div>
             <div className="social-media__wrapper">
-              <img src={twitterBlue} className="red"/>
-              <img src={facebookBlue}/>
-              <img src={kakaotalkBlue}/>
-              <img src={linkBlue}/>
+              <div onClick={shareTwitter}>
+                <img src={twitterBlue} alt="share-via-twitter" className="red"/>
+              </div>
+              <div onClick={shareFacebook}>
+                <img src={facebookBlue} alt="share-via-facebook"/>
+              </div>
+              <div onClick={shareKakaotalk}>
+                <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
+              </div>
+              <div onClick={shareLink}>
+                <img src={linkBlue} alt="share-via-link"/>
+              </div>
             </div>
           </div>
         </div>
@@ -187,9 +227,10 @@ const Post = (props: PostProps) => {
         <div className="label">관련 게시글</div>
         <div className="rel-posts__container">
           <div className="rel-posts__left">{
-            props.relPosts ? props.relPosts.slice(0, 4).map((post) => {
+            props.relPosts ? props.relPosts.slice(0, 4).map((post, postIdx) => {
                 return (
                   <div
+                    key={postIdx}
                     className="title__wrapper"
                     onClick={() => goToRelPost(post.objectID as string)}
                   >
@@ -200,9 +241,10 @@ const Post = (props: PostProps) => {
               })
               : null}</div>
           <div className="rel-posts__right">{
-            props.relPosts ? props.relPosts.slice(4, 8).map((post) => {
+            props.relPosts ? props.relPosts.slice(4, 8).map((post, postIdx) => {
                 return (
                   <div
+                    key={postIdx}
                     className="title__wrapper"
                     onClick={() => goToRelPost(post.objectID as string)}
                   >
@@ -214,6 +256,17 @@ const Post = (props: PostProps) => {
               : null}</div>
         </div>
       </div> : null}
+      {isOpenLinkModal ? (
+        <Modal
+          isOpen={isOpenLinkModal}
+          open={setIsOpenLinkModal}
+        >
+          <div>
+            <div>share link: {shortenURL}</div>
+            <button onClick={copyToClipboard}>copy to clipboard</button>
+          </div>
+        </Modal>
+      ) : null}
     </MGTPost>
   )
 }
@@ -321,8 +374,10 @@ max-width: calc(100% - 2.6rem);
 .social-media__wrapper {
 display: flex;
 padding-bottom: 1.3rem;
-img:not(:last-child) {
+& > div {
+&:not(:last-child) {
 margin-right: 1.1rem;
+}
 }
 }
 }

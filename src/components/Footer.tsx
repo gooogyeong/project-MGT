@@ -51,14 +51,14 @@ const Footer = () => {
         <div className="footer__copyright">
           <div className="footer__copyright__content">
             <div>{`© ${spacedThisYear} 칼 리 고 라 이 트`}</div>
-            <div className="seal"><img src={caligoliteSeal}/></div>
+            <div className="seal"><img src={caligoliteSeal} alt="seal"/></div>
           </div>
         </div>
         <div className="footer__social-media">
           <div className="footer__social-media__icon-wrapper">
-            <img src={instagram}/>
-            <img src={twitterBlue} />
-            <img src={facebookBlue} />
+            <img src={instagram} alt="instagram-link"/>
+            <img src={twitterBlue} alt="twitter-link"/>
+            <img src={facebookBlue} alt="facebook-link"/>
           </div>
         </div>
         <div className="footer__contribution">
