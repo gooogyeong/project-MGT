@@ -198,16 +198,16 @@ const Post = (props: PostProps) => {
             <div className="label">공유하기</div>
             <div className="social-media__wrapper">
               <div onClick={shareTwitter}>
-                <img src={twitterBlue} className="red"/>
+                <img src={twitterBlue} alt="share-via-twitter" className="red"/>
               </div>
               <div onClick={shareFacebook}>
-                <img src={facebookBlue}/>
+                <img src={facebookBlue} alt="share-via-facebook"/>
               </div>
               <div onClick={shareKakaotalk}>
-                <img src={kakaotalkBlue}/>
+                <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
               </div>
               <div onClick={shareLink}>
-                <img src={linkBlue}/>
+                <img src={linkBlue} alt="share-via-link"/>
               </div>
             </div>
           </div>
