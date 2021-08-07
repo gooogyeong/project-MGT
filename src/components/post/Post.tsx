@@ -35,6 +35,7 @@ const Post = (props: PostProps) => {
   const [rightFootnote, setRightFootnote] = useState([] as Footnote[])
   const [shortenURL, setShortenURL] = useState('')
   const [isOpenLinkModal, setIsOpenLinkModal] = useState(false)
+  const [isShowCopiedMsg, setIsShowCopiedMsg] = useState(false)
 
   const handleDeleteClick = async () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
@@ -115,7 +116,26 @@ const Post = (props: PostProps) => {
   }
 
   const shareKakaotalk = () => {
-
+    window.Kakao.Link.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: props.post.title,
+        description: '',
+        imageUrl: '',
+        link: {
+          mobileWebUrl: `${config.baseURL}/post/${props.post.objectID}`,
+          androidExecParams: 'test'
+        }
+      },
+      buttons: [
+        {
+          title: '웹으로 이동',
+          link: {
+            mobileWebUrl: `${config.baseURL}/post/${props.post.objectID}`
+          }
+        }
+      ]
+    })
   }
 
   const shareLink = async () => {
@@ -126,7 +146,7 @@ const Post = (props: PostProps) => {
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(shortenURL)
-    console.log('copied')
+    setIsShowCopiedMsg(true)
   }
 
   return (
@@ -204,6 +224,7 @@ const Post = (props: PostProps) => {
                 <img src={facebookBlue} alt="share-via-facebook"/>
               </div>
               <div onClick={shareKakaotalk}>
+                {/*TODO: 모바일 테스트*/}
                 <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
               </div>
               <div onClick={shareLink}>
@@ -260,10 +281,16 @@ const Post = (props: PostProps) => {
         <Modal
           isOpen={isOpenLinkModal}
           open={setIsOpenLinkModal}
+          confirmButtonText="복사"
+          cancelButtonText="닫기"
+          onConfirmButtonClick={copyToClipboard}
+          onCancelButtonClick={() => {
+            setIsShowCopiedMsg(false)
+          }}
         >
-          <div>
-            <div>share link: {shortenURL}</div>
-            <button onClick={copyToClipboard}>copy to clipboard</button>
+          <div className="share-modal__wrapper">
+            <div className={`copied ${isShowCopiedMsg ? '' : 'hidden'}`}>복사되었습니다</div>
+            <div className="link">링크: {shortenURL}</div>
           </div>
         </Modal>
       ) : null}
@@ -374,6 +401,7 @@ max-width: calc(100% - 2.6rem);
 .social-media__wrapper {
 display: flex;
 padding-bottom: 1.3rem;
+cursor: pointer;
 & > div {
 &:not(:last-child) {
 margin-right: 1.1rem;
@@ -431,6 +459,33 @@ margin-right: 0.5rem;
 }
 }
 }
+}
+}
+}
+.modal__content {
+padding: 1.7rem;
+background-color: ${props => props.theme.beigeLight} !important;
+width: 43rem !important;
+.copied {
+color: blue;
+font-size: 1.8rem;
+font-weight: bold;
+transition: opacity .4s;
+&.hidden {
+opacity: 0;
+}
+}
+.link {
+font-size: 2.6rem;
+font-weight: bold;
+margin: 0.9rem 0 1.6rem;
+}
+button {
+&.confirm {
+background-color: blue;
+}
+&.cancel {
+background-color: red;
 }
 }
 }
