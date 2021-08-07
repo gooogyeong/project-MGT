@@ -6,6 +6,7 @@ type ModalProps = {
   isOpen: boolean;
   children: ReactNode;
   confirmButtonText?: string;
+  cancelButtonText?: string;
   isHideCancelButton?: boolean;
   onConfirmButtonClick?: () => void;
   onCancelButtonClick?: () => void;
@@ -27,25 +28,29 @@ const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
   }
 
   return (
-    <MGTModal onClick={close}>
+    <MGTModal onClick={close} className="modal__wrapper">
       {props.isOpen ? <div>
         <div className="modal">
-          <div className="modal-content">
+          <div className="modal__content">
             <div>{props.children}</div>
-            <div className="modal-footer">
+            <div className="modal__footer">
               <button
                 disabled={props.isConfirmButtonDisabled}
                 onClick={() => {
                   if (props.onConfirmButtonClick) props.onConfirmButtonClick()
                 }}
-                className="success"
+                className="confirm"
               >
                 {props.confirmButtonText}
               </button>
-              {!props.isHideCancelButton ? <button onClick={() => {
-                handleCancelButtonClick()
-              }}>cancel
-              </button> : null}
+              {!props.isHideCancelButton ? (
+                <button
+                  className="cancel"
+                  onClick={() => {
+                    handleCancelButtonClick()
+                  }}>
+                  {props.cancelButtonText || '취소'}
+                </button>) : null}
             </div>
           </div>
         </div>
@@ -66,14 +71,18 @@ top: 0;
 left: 0;
 bottom: 0;
 right: 0;
-background-color: rgba(0, 0, 0, 0.5);
-}
+//background-color: rgba(0, 0, 0, 0.5);
 
-.modal-content {
+&__content {
 width: 90%;
 background-color: #fff;
 padding: 30px;
-border-radius: 8px;
+border: 1px dotted blue;
+}
+&__footer {
+display: flex;
+justify-content: flex-end;
+}
 }
 
 label {
@@ -82,33 +91,15 @@ margin: 0.25em 0;
 }
 
 button {
-font-family: inherit;
 font-size: 100%;
 padding: 0.5em 1em;
 color: white;
-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-border: 1px solid #999;
-border: transparent;
-background-color: #e6e6e6;
-text-decoration: none;
-border-radius: 2px;
-cursor: pointer;
-}
-
-button.danger {
-background: rgb(202, 60, 60);
-}
-
-button.success {
-background: rgb(28, 184, 65);
-}
-
-button:disabled {
+&:disabled {
 opacity: 0.3;
 }
-
-button + button {
+& + button {
 margin-left: 10px;
+}
 }
 
 .tab-header {
