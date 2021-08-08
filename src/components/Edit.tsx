@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import Editor from '@/components/editor/Editor'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
@@ -14,10 +15,14 @@ const Edit: React.FC = (): JSX.Element => {
 
   // TODO: 리다이렉트 후 useEffect() 에러
   // const history = useHistory()
-  //
-  // if (!store?.post.currEditPost) {
-  //   history.push('/')
-  // }
+  // const params = useParams<{ id: string }>()
+  // //
+  // useEffect(() => {
+  //   if (!store?.post.currEditPost) {
+  //     console.log(params.id)
+  //     history.push('/')
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (store) {
@@ -42,7 +47,6 @@ const Edit: React.FC = (): JSX.Element => {
   return useObserver(() => {
     return (
       <div>
-        {/*TODO: Edit view, write view 통합*/}
         <Editor
           isEdit={true}
           isNotice={isNotice}

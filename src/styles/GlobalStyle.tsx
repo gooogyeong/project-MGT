@@ -31,6 +31,11 @@ outline: none;
 
 textarea {
 font-family: inherit;
+border: none;
+resize: none;
+&:focus {
+outline: none;
+}
 }
 `
 
