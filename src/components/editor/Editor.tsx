@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState, useRef } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
@@ -221,7 +221,7 @@ const Editor = (props: EditorProps): JSX.Element => {
               onChange={handleTitleChange}
             />
           </ContentHeader>
-          <div>
+          <div className="edit-menu-wrapper">
             <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
             {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
               <>
@@ -280,9 +280,10 @@ const Editor = (props: EditorProps): JSX.Element => {
 }
 
 const MGTEditor = styled.div`
+.edit-menu-wrapper {
+border-top: 1px dotted blue !important;
+}
 .editor__wrapper {
-border: 1px solid black;
-border-radius: 4px;
 user-select: auto !important;
 counter-reset: footnote-label;
 footnote {
@@ -307,6 +308,7 @@ outline: none !important;
 }
 }
 .ProseMirror {
+padding: 0;
   .iframe-wrapper {
   display: flex;
   justify-content: center;
@@ -375,7 +377,7 @@ outline: none !important;
 }
 .footnote-list__wrapper {
 counter-reset: footnote-content;
-}
+padding: 1.3rem;
 .footnote__wrapper {
 // TODO: scroll X -> flex height
 display: flex;
@@ -388,6 +390,16 @@ display: flex;
 textarea {
 width: 100%;
 border: none;
+}
+}
+}
+
+.post {
+&__footer--reference {
+textarea {
+width: calc(100% - 2.6rem);
+height: 100%;
+}
 }
 }
 `

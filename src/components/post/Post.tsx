@@ -241,12 +241,11 @@ const Post = (props: PostProps) => {
           <div className="content">
             {!props.isEdit && !props.isWrite ?
               (<div className="reference__wrapper">{props.post.reference}</div>) :
-              (
-                <textarea
-                  value={props.editReference}
-                  onChange={props.handleReferenceChange}
-                />
-              )
+              (<textarea
+                spellCheck={false}
+                value={props.editReference}
+                onChange={props.handleReferenceChange}
+              />)
             }
           </div>
           <div></div>
