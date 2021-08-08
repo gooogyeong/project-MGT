@@ -15,6 +15,7 @@ import kakaotalkBlue from '@/assets/icon/kakaotalk-blue.svg'
 import facebookBlue from '@/assets/icon/facebook-blue.svg'
 import twitterBlue from '@/assets/icon/twitter-blue.svg'
 import config from '../../../env.json'
+import Button from '@/components/shared/Button'
 
 type PostProps = {
   post: PostType;
@@ -176,10 +177,10 @@ const Post = (props: PostProps) => {
             </div>
             <div className="content__text">
               {ReactHtmlParser(props.post.content).map((content => content))}</div>
-            {store?.admin.admin ? (
-              <div>
-                <button onClick={handleDeleteClick}>삭제</button>
-                <button onClick={handleEditClick}>수정</button>
+            {store?.admin.admin?.nickName === props.post.author ? (
+              <div className="btn-container">
+                <Button variant="red" buttonText="삭제" onClick={handleDeleteClick} />
+                <Button variant="red" buttonText="수정" onClick={handleEditClick} />
               </div>
             ) : null}
           </div>
@@ -352,6 +353,14 @@ font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
 img {
 max-width: 100%;
+}
+}
+.btn-container {
+display: flex;
+justify-content: flex-end;
+padding: 1.3rem;
+.button:not(:last-child) {
+margin-right: 1.3rem;
 }
 }
 }

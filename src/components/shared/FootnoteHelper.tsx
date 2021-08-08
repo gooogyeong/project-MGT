@@ -9,7 +9,7 @@ export default class FootnoteComponent {
   destroy () {
     try {
       const footnoteContent = document.getElementById(this.id) as HTMLElement
-      footnoteContent.remove()
+      if (footnoteContent) footnoteContent.remove()
     } catch (error) {
       console.log(error)
     }
