@@ -3,7 +3,7 @@ import Editor from '@/components/editor/Editor'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
 import { createTempPost } from '@/services/posts'
-import { PostPayload } from '@/types/posts'
+import { PostPayload, UpdatePostPayload } from '@/types/posts'
 
 const Write: React.FC = (): JSX.Element => {
 
@@ -42,9 +42,9 @@ const Write: React.FC = (): JSX.Element => {
   }, [])
 
 
-  const submit = async (payload: PostPayload) => {
+  const submit = async (payload: PostPayload | UpdatePostPayload) => {
     try {
-      await store?.post.createPost(payload)
+      await store?.post.createPost(payload as PostPayload)
     } catch (error) {
       console.log(error)
     }
@@ -54,6 +54,7 @@ const Write: React.FC = (): JSX.Element => {
     return (
       <div>
         <Editor
+          isWrite={true}
           isNotice={isNotice}
           setIsNotice={setIsNotice}
           handleSubmitClick={submit}

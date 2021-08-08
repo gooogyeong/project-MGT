@@ -23,9 +23,14 @@ outline: none;
 }
 
 input {
+font-family: inherit;
 &:focus {
 outline: none;
 }
+}
+
+textarea {
+font-family: inherit;
 }
 `
 
