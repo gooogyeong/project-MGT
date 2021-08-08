@@ -27,7 +27,15 @@ const CategoryDropdown = (props: CategoryProps) => {
       <select onChange={props.handleCategorySelect}>
         <option value="">카테고리</option>
         {store?.category.categories.map((category, categoryIndex) => {
-          return (<option value={categoryIndex} key={categoryIndex}>{category.name}</option>)
+          return (
+            <option
+              key={categoryIndex}
+              value={categoryIndex}
+              selected={category.name === store?.post.currEditPost?.categoryName}
+            >
+              {category.name}
+            </option>
+          )
         })}
       </select>
     )

@@ -194,8 +194,8 @@ export const postStore = (): PostStore => {
 
     async updatePost (payload: UpdatePostPayload) {
       try {
-        if (this.currEditPost?.id) {
-          await updatePostService(this.currEditPost.id, payload)
+        if (this.currEditPost?.objectID) {
+          await updatePostService(this.currEditPost.objectID, payload)
         }
       } catch (error) {
         console.log(error)

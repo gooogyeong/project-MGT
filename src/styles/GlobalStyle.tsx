@@ -16,12 +16,23 @@ display: none; // Chrome, Safari, Opera
 button {
 cursor: pointer;
 border: none;
+font-family: inherit;
 &:focus {
 outline: none;
 }
 }
 
 input {
+font-family: inherit;
+&:focus {
+outline: none;
+}
+}
+
+textarea {
+font-family: inherit;
+border: none;
+resize: none;
 &:focus {
 outline: none;
 }

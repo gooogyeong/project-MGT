@@ -7,7 +7,7 @@ import PostListView from '@/views/post/PostListView'
 import PostDetailView from '@/views/post/PostDetailView'
 import LoginView from '@/views/LoginView'
 import WriteView from '@/views/WriteView'
-// import EditView from '@/views/EditView'
+import EditView from '@/views/EditView'
 import PrivateRoute from '@/routers/privateRoute'
 
 function AppRouter (): JSX.Element {
@@ -21,8 +21,7 @@ function AppRouter (): JSX.Element {
           <Route exact path="/post/:id" component={PostDetailView}/>
           <Route path="/login" component={LoginView}/>
           <PrivateRoute exact path="/write" component={WriteView}/>
-          <PrivateRoute exact path="/write/:postId" component={WriteView}/>
-          {/*<PrivateRoute exact path="/write/:postId" component={EditView}/>*/}
+          <PrivateRoute exact path="/write/:postId" component={EditView}/>
         </Switch>
       </MainLayout>
     </Router>

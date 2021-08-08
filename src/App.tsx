@@ -10,7 +10,13 @@ import config from '../env.json'
 function App () {
 
   useEffect(() => {
-    window.Kakao.init(config.kakakoJSKey)
+    try {
+      if (!window.Kakao.isInitialized()) {
+        window.Kakao.init(config.kakakoJSKey)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }, [])
 
   return (

@@ -44,8 +44,9 @@ export enum PostPayloadKey {
   reference = 'reference'
 }
 
-export type UpdatePostPayload = Omit<PostPayload, 'author' | 'authorUid'>
+export type UpdatePostPayload = Partial<Omit<Post, 'author' | 'authorUid' | 'createdAt'>>
 
+// TODO: id -> objectID
 export type Post = PostPayload & {
   id: string;
 } & Partial<Pick<Hit<PostPayload>, 'objectID' | '_highlightResult'>>

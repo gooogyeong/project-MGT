@@ -3,13 +3,13 @@ export default class FootnoteComponent {
   constructor (id: string) {
     this.id = id
     const footnote = document.createElement('div')
-    footnote.className = `footnote__wrapper`
+    footnote.className = `footnote__wrapper ${id}`
   }
 
   destroy () {
     try {
       const footnoteContent = document.getElementById(this.id) as HTMLElement
-      footnoteContent.remove()
+      if (footnoteContent) footnoteContent.remove()
     } catch (error) {
       console.log(error)
     }

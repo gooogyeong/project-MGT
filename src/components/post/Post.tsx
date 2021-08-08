@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import ReactHtmlParser from 'react-html-parser'
 import { bitly } from '@/services/bitly'
 import { Footnote, Post as PostType } from '@/types/posts'
@@ -15,6 +15,8 @@ import kakaotalkBlue from '@/assets/icon/kakaotalk-blue.svg'
 import facebookBlue from '@/assets/icon/facebook-blue.svg'
 import twitterBlue from '@/assets/icon/twitter-blue.svg'
 import config from '../../../env.json'
+import Button from '@/components/shared/Button'
+import { Editor, EditorContent } from '@tiptap/react'
 
 type PostProps = {
   post: PostType;
@@ -24,12 +26,24 @@ type PostProps = {
   isPageFirstPost?: boolean;
   isPageLastPost?: boolean;
   relPosts?: PostType[];
+  // TODO: edit props 하나의 객체로 관리
+  isPreview?: boolean;
+  isEdit?: boolean;
+  editor?: Editor | null;
+  editPostTags?: PostType['tags'];
+  editFootnote?: PostType['footnote'];
+  editReference?: PostType['reference'];
+  handleSubmitClick?: () => Promise<void>;
+  handleReferenceChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  leaveWithoutSave?: () => void;
+  isWrite?: boolean;
 }
 
 const Post = (props: PostProps) => {
   const store = useContext(storeContext)
 
   const history = useHistory()
+  const params = useParams<{ id: string }>()
 
   const [leftFootnote, setLeftFootnote] = useState([] as Footnote[])
   const [rightFootnote, setRightFootnote] = useState([] as Footnote[])
@@ -46,38 +60,54 @@ const Post = (props: PostProps) => {
     }
   }
 
-  const handleEditClick = () => {
-    store?.post.setCurrEditPost(props.post)
-    history.push(`/write/${props.post.objectID}`)
+  const handleSubmitClick = async () => {
+    if (!props.isEdit && !props.isWrite) {
+      store?.post.setCurrEditPost(props.post)
+      history.push(`/write/${props.post.objectID}`)
+    } else {
+      if (props.handleSubmitClick) await props.handleSubmitClick()
+    }
   }
 
   useEffect(() => {
+    const footnoteArr = (!props.isEdit && !props.isWrite && props.post.footnote ? props.post.footnote : props.editFootnote ? props.editFootnote : []) as Footnote[]
     const leftFootnoteArr = [] as Footnote[]
     const rightFootnoteArr = [] as Footnote[]
-    props.post.footnote?.forEach((footnote, footnoteIdx) => {
+    footnoteArr.forEach((footnote, footnoteIdx) => {
       if (footnoteIdx % 2) rightFootnoteArr.push(footnote)
       else leftFootnoteArr.push(footnote)
     })
     setLeftFootnote(leftFootnoteArr)
     setRightFootnote(rightFootnoteArr)
-  }, [props.post.objectID])
+  }, [props.post?.objectID, props.editFootnote])
 
   // TODO: add event listener to footnote
-  // useEffect(() => {
-  //   process.nextTick(() => {
-  //     const footnotes = document.getElementsByTagName('footnote')
-  //     Array.from(footnotes).forEach((footnote, footnoteIdx) => {
-  //       footnote.innerHTML = (footnoteIdx + 1).toString()
-  //       const footnoteButton = document.createElement('button')
-  //       footnoteButton.innerHTML = `[${footnoteIdx + 1}]`
-  //       footnoteButton.className = 'footnote'
-  //       footnoteButton.addEventListener('click', (e) => {
-  //         console.log('footnote button clicked!')
-  //       })
-  //       footnote.parentNode?.replaceChild(footnoteButton, footnote)
-  //     })
-  //   })
-  // }, [params.id])
+  useEffect(() => {
+    if (!props.isWrite && !props.isEdit) {
+      const footnotes = document.getElementsByTagName('footnote')
+      Array.from(footnotes).forEach((footnote, footnoteIdx) => {
+        footnote.innerHTML = (footnoteIdx + 1).toString()
+        const footnoteButton = document.createElement('button')
+        footnoteButton.innerHTML = `[${footnoteIdx + 1}]`
+        footnoteButton.className = 'footnote'
+        footnoteButton.addEventListener('click', (e) => {
+          console.log('footnote button clicked!')
+        })
+        footnote.parentNode?.replaceChild(footnoteButton, footnote)
+      })
+    }
+  }, [params.id])
+
+  useEffect(() => {
+    // TODO: 생성시에 className 부여할 수 있는게 가장 좋음
+    if (props.isEdit) {
+      const footnotes = store?.post.currEditPost?.footnote || []
+      const footnoteTags = document.getElementsByTagName('footnote')
+      Array.from(footnoteTags).forEach((footnote, footnoteIdx) => {
+        footnote.className = `footnote--label ${footnotes[footnoteIdx].id}`
+      })
+    }
+  }, [params.id])
 
   const toPrevPost = async () => {
     if (props.prevPost) {
@@ -116,6 +146,7 @@ const Post = (props: PostProps) => {
   }
 
   const shareKakaotalk = () => {
+    // TODO: util이나 service로 분리
     window.Kakao.Link.sendDefault({
       objectType: 'feed',
       content: {
@@ -171,17 +202,27 @@ const Post = (props: PostProps) => {
         <div className="post__main-text">
           <div className="content">
             <div className="content__sub-header">
-              <div>{format(new Date(props.post.createdAt), yyyyMMddDot)}</div>
-              <div>{props.post.author}</div>
+              <div>{format(props.post ? new Date(props.post.createdAt) : new Date(), yyyyMMddDot)}</div>
+              <div>{props.post?.author || store?.admin.admin?.nickName}</div>
             </div>
             <div className="content__text">
-              {ReactHtmlParser(props.post.content).map((content => content))}</div>
-            {store?.admin.admin ? (
-              <div>
-                <button onClick={handleDeleteClick}>삭제</button>
-                <button onClick={handleEditClick}>수정</button>
-              </div>
-            ) : null}
+              {!props.isEdit && !props.isWrite ?
+                ReactHtmlParser(props.post.content).map((content => content)) :
+                props.editor ? (
+                  <EditorContent
+                    className='editor__wrapper'
+                    editor={props.editor}
+                  />) : null}
+            </div>
+            <div className="btn-container">
+              {!props.isEdit && !props.isWrite ?
+                <Button variant="red" buttonText="삭제" onClick={handleDeleteClick}/> : null}
+              {props.isWrite || (props.post && store?.admin.admin?.nickName === props.post.author) ?
+                <Button variant="blue" buttonText={!props.isWrite ? '수정' : '등록'} onClick={handleSubmitClick}/> : null}
+              {props.isEdit || props.isWrite ? <Button variant="red" buttonText="취소" onClick={() => {
+                if (props.leaveWithoutSave) props.leaveWithoutSave()
+              }}/> : null}
+            </div>
           </div>
         </div>
         <div className="post__footnote--right">
@@ -194,24 +235,36 @@ const Post = (props: PostProps) => {
           </div>
         </div>
       </div>
-      {props.post.reference ? (
+      {props.isWrite || props.isEdit || props.post?.reference ? (
         <div className="post__footer--reference">
           <div className="label">참고</div>
           <div className="content">
-            <div className="reference__wrapper">{props.post.reference}</div>
+            {!props.isEdit && !props.isWrite ?
+              (<div className="reference__wrapper">{props.post.reference}</div>) :
+              (<textarea
+                spellCheck={false}
+                value={props.editReference}
+                onChange={props.handleReferenceChange}
+              />)
+            }
           </div>
           <div></div>
         </div>
       ) : null}
-      {props.post.tags.length ? (
+      {props.isWrite || props.isEdit || props.post?.tags.length ? (
         <div className="post__footer--share">
           <div className="label">태그</div>
           <div className="content">
             <div className="tag__wrapper">
-              {props.post.tags.map((tag, tagIndex) => <Tag
+              {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
                 key={tagIndex}
                 tag={tag}
-              />)}
+              />) : (
+                props.editPostTags?.map((tag, tagIndex) => <Tag
+                  key={tagIndex}
+                  tag={tag}
+                />)
+              )}
             </div>
           </div>
           <div className="content">
@@ -298,7 +351,7 @@ const Post = (props: PostProps) => {
   )
 }
 
-const MGTPost = styled.div`
+export const MGTPost = styled.div`
 & > div {
 display: flex;
 border-top: 1px dotted blue;
@@ -350,8 +403,21 @@ padding: 0.6rem 1.8rem;
 &__text {
 font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
+.iframe-wrapper {
+display: flex;
+justify-content: center;
+}
 img {
 max-width: 100%;
+}
+
+}
+.btn-container {
+display: flex;
+justify-content: flex-end;
+padding: 1.3rem;
+.button:not(:last-child) {
+margin-right: 1.3rem;
 }
 }
 }
