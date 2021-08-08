@@ -134,12 +134,9 @@ const Feed = (): JSX.Element => {
                         </div>
                       ) : null}
                       <div className="button__container">
-                        <Button buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>
+                        <Button isDouble={true} buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>
                       </div>
                     </div>
-                    {/*<div className="button__container">*/}
-                    {/*  <Button buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>*/}
-                    {/*</div>*/}
                   </div>
                 </div>
               </div>

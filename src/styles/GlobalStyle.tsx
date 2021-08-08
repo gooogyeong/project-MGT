@@ -16,6 +16,7 @@ display: none; // Chrome, Safari, Opera
 button {
 cursor: pointer;
 border: none;
+font-family: inherit;
 &:focus {
 outline: none;
 }

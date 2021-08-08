@@ -3,14 +3,23 @@ import styled from 'styled-components'
 type ButtonProps = {
   buttonText: string;
   onClick: () => void;
+  isDouble?: boolean;
+  variant?: string;
+  className?: string;
+  disabled?: boolean;
 }
 
 const Button = (props: ButtonProps) => {
+
+  const handleClick = () => {
+    if (!props.disabled) props.onClick()
+  }
+
   return (
-    <MGTButton onClick={props.onClick} className="button">
-      <div className="layer">
+    <MGTButton onClick={handleClick} className={`button ${props.isDouble ? 'double' : ''} ${props.variant || ''} ${props.className || ''}`}>
+      {props.isDouble ? <div className="layer">
         <span>{props.buttonText}</span>
-      </div>
+      </div> : null}
       <div className="layer">
         <span>{props.buttonText}</span>
       </div>
@@ -21,23 +30,32 @@ const Button = (props: ButtonProps) => {
 const MGTButton = styled.div`
 position: relative;
 cursor: pointer;
-width: 15rem;
-height: 5.5rem;
+&.red {
+background-color: red;
+}
+&.blue {
+background-color: blue;
+}
 .layer {
-font-family: 'Noto Serif KR';
+color: white;
+padding: 1rem 2rem;
+}
+&.double {
+.layer {
+color: black;
 font-size: 2.6rem;
 border: 1px solid blue;
 z-index: 2;
 font-weight: 600;
-width: 100%;
-height: 100%;
 display: flex;
 justify-content: center;
 align-items: center;
+padding: 0.9rem 3.4rem;
 &:nth-child(1) {
 position: absolute;
 top: -0.4rem;
-left: -0.4rem;
+left: -0.4rem; 
+}
 }
 }
 `

@@ -69,8 +69,6 @@ const Editor = (props: EditorProps): JSX.Element => {
 
   const author = store?.admin.admin
 
-  const reference = useRef<HTMLTextAreaElement>(null)
-
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
   const [postCategory, setPostCategory] = useState(null as (null | CategoryType))
@@ -78,10 +76,15 @@ const Editor = (props: EditorProps): JSX.Element => {
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
   const [isPinned, setIsPinned] = useState(0)
-  const [footnoteArr, setFootnoteArr] = useState([] as FootnoteType[])
+  const [reference, setReference] = useState('')
+  const [footnoteArr, setFootnoteArr] = useState(store?.post.currEditPost?.footnote || [] as FootnoteType[])
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
+  }
+
+  const handleReferenceChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReference(e.target.value)
   }
 
   const handleCategorySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -107,6 +110,19 @@ const Editor = (props: EditorProps): JSX.Element => {
   const handleIsPinnedSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsPinned(e.target.checked ? 1 : 0)
   }
+
+  useEffect(() => {
+    if (store?.post.currEditPost) {
+      const post = store.post.currEditPost
+      const category = store?.category.categories.find(c => c.categoryId === post.categoryId)
+      if (category) {
+        setPostCategory(category)
+        if (category.name === CategoryEnum.notice && post.isPinned) setIsPinned(post.isPinned)
+      }
+      if (post.footnote) setFootnoteArr(post.footnote)
+      if (post.reference) setReference(post.reference)
+    }
+  }, [])
 
   return useObserver(() => {
     // TODO: 위로 올려도 될듯
@@ -181,12 +197,12 @@ const Editor = (props: EditorProps): JSX.Element => {
           createdAt: Date.now().valueOf(),
           tags: postTags,
           footnote: formattedFootnoteArr,
-          reference: reference.current?.value || ''
+          reference
         }
         // 꼭 props로 받아야하는지 재고 필요
         if (props.isNotice) (payload as PostPayload).isPinned = isPinned
         await props.handleSubmitClick(payload)
-        alert('성공적으로 글을 등록했습니다.')
+        alert(`성공적으로 글을 ${store?.post.currEditPost ? '수정' : '등록'}했습니다.`)
         history.push('/post/list')
       }
     }
@@ -222,9 +238,13 @@ const Editor = (props: EditorProps): JSX.Element => {
           </div>
           <div>
             <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
-            {props.isNotice ? (
+            {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
               <>
-                <input type="checkbox" onChange={handleIsPinnedSelect}/>
+                <input
+                  type="checkbox"
+                  checked={!!isPinned}
+                  onChange={handleIsPinnedSelect}
+                />
                 <label>상단에 고정</label>
               </>
             ) : null}
@@ -247,7 +267,6 @@ const Editor = (props: EditorProps): JSX.Element => {
                 <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
                   <span className="footnote__count"></span>
                   <textarea
-                    ref={reference}
                     value={footnote.content}
                     onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
                 </div>
@@ -256,14 +275,17 @@ const Editor = (props: EditorProps): JSX.Element => {
           </div>
           <div>
             <label>참고 문헌</label>
-            <textarea ref={reference}></textarea>
+            <textarea
+              value={reference}
+              onChange={handleReferenceChange}
+            />
           </div>
           <div>
-            <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
-            <label>태그 입력</label>
+            <div>선택된 태그: {postTags.map((tag, tagIndex) => <Tag key={tagIndex} tag={tag}/>)}</div>
+            <label>태그 추가</label>
             <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
             {tags.map((tag, tagIndex) => {
-              return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
+              return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags} />)
             })}
           </div>
           <button onClick={handlePreviewClick}>preview</button>

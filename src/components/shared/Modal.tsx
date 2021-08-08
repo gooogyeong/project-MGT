@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, ReactNode } from 'react'
 import styled from 'styled-components'
+import Button from '@/components/shared/Button'
 
 type ModalProps = {
   open: Dispatch<SetStateAction<boolean>>;
@@ -34,23 +35,24 @@ const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
           <div className="modal__content">
             <div>{props.children}</div>
             <div className="modal__footer">
-              <button
+              <Button
+                buttonText={props.confirmButtonText || ''}
+                className="confirm"
+                variant="blue"
                 disabled={props.isConfirmButtonDisabled}
                 onClick={() => {
                   if (props.onConfirmButtonClick) props.onConfirmButtonClick()
                 }}
-                className="confirm"
-              >
-                {props.confirmButtonText}
-              </button>
+              />
               {!props.isHideCancelButton ? (
-                <button
+                <Button
+                  buttonText={props.cancelButtonText || '취소'}
+                  variant="red"
                   className="cancel"
                   onClick={() => {
                     handleCancelButtonClick()
-                  }}>
-                  {props.cancelButtonText || '취소'}
-                </button>) : null}
+                  }}
+                />) : null}
             </div>
           </div>
         </div>
@@ -90,16 +92,8 @@ display: block;
 margin: 0.25em 0;
 }
 
-button {
-font-size: 100%;
-padding: 0.5em 1em;
-color: white;
-&:disabled {
-opacity: 0.3;
-}
-& + button {
-margin-left: 10px;
-}
+.button:not(:last-child) {
+margin-right: 1.3rem;
 }
 
 .tab-header {
