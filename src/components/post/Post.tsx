@@ -351,9 +351,14 @@ padding: 0.6rem 1.8rem;
 &__text {
 font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
+.iframe-wrapper {
+display: flex;
+justify-content: center;
+}
 img {
 max-width: 100%;
 }
+
 }
 .btn-container {
 display: flex;

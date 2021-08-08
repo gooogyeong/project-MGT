@@ -1,5 +1,6 @@
-import React, { useState, useRef, Dispatch, SetStateAction } from 'react'
+import React, { useState, useRef, Dispatch, SetStateAction, useEffect } from 'react'
 import Modal from '@/components/shared/Modal'
+import styled from 'styled-components'
 
 type ImageUploadModalProps = {
   isOpen: boolean;
@@ -12,6 +13,10 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
   const fileUploader = useRef<HTMLInputElement>(null)
 
   const [tempImageSrc, setTempImageSrc] = useState('')
+
+  useEffect(() => {
+    setTempImageSrc('')
+  }, [])
 
   const handleFileChange = async () => {
     if (fileUploader.current && fileUploader.current.files) {
@@ -43,18 +48,35 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
     <Modal
       isOpen={props.isOpen}
       open={props.openImageUploadModal}
-      confirmButtonText={'add image'}
+      confirmButtonText={'이미지 추가'}
+      cancelButtonText={'닫기'}
       onConfirmButtonClick={addImageToEditor}
     >
-      <div>
+      <MGTImgUploadModal>
         <div>
           <input type="file" onChange={handleFileChange} id="up" ref={fileUploader}/>
         </div>
-        <img src={tempImageSrc} alt="preview"/>
-      </div>
+        {tempImageSrc ? (
+          <div className="preview-container">
+            <img src={tempImageSrc} alt="preview" className="preview"/>
+          </div>
+        ) : null}
+      </MGTImgUploadModal>
     </Modal>
   )
 }
+
+const MGTImgUploadModal = styled.div`
+.preview-container {
+width: 50rem;
+height: 30rem;
+padding-top: 1.2rem;
+img.preview {
+max-height: 30rem;
+object-fit: contain;
+}
+}
+`
 
 export default ImageUploadModal
 
