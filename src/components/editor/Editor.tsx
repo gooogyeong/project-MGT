@@ -326,6 +326,10 @@ outline: none !important;
 }
 }
 .ProseMirror {
+  .iframe-wrapper {
+  display: flex;
+  justify-content: center;
+  }
   table {
     border-collapse: collapse;
     table-layout: fixed;

@@ -88,7 +88,8 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
     <Modal
       isOpen={props.isOpen}
       open={props.openVideoUploadModal}
-      confirmButtonText={'add video'}
+      confirmButtonText="비디오 추가"
+      cancelButtonText="닫기"
       isConfirmButtonDisabled={!(progress === null || progress === 100)}
       onConfirmButtonClick={addVideoToEditor}
       onCancelButtonClick={cancelVideoUpload}
