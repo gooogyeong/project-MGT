@@ -50,6 +50,9 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
 
       const newFootnoteArr = [...footnoteArr]
       newFootnoteArr.splice(newFootnoteWrapperIdx, 0, newFootnoteWrapperObj)
+      newFootnoteArr.forEach((footnote, footnoteIdx) => {
+        footnote.count = footnoteIdx + 1
+      })
       setFootnoteArr(newFootnoteArr)
     }
   }
