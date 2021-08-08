@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction, useEffect, useState, useRef } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
 import TextAlign from '@tiptap/extension-text-align'
 import TextStyle from '@tiptap/extension-text-style'
@@ -26,15 +26,20 @@ import { createTag, getTags } from '@/services/tags'
 import { Tag as TagType } from '@/types/tags'
 import Tag from '@/components/shared/Tag'
 import PreviewModal from '@/components/editor/PreviewModal'
-import { PostPayload, Footnote as FootnoteType } from '@/types/posts'
+import { PostPayload, Footnote as FootnoteType, UpdatePostPayload } from '@/types/posts'
 import { Category as CategoryType } from '@/types/category'
 import { Category as CategoryEnum } from '@/types/category/enum'
 import CategoryDropdown from '@/components/shared/CategoryDropdown'
+import Post from '@/components/post/Post'
+import { Post as PostType } from '@/types/posts'
+import ContentHeader from '@/components/shared/ContentHeader'
 
 type EditorProps = {
+  isWrite?: boolean;
   isNotice: boolean;
+  isEdit?: boolean;
   setIsNotice: Dispatch<SetStateAction<boolean>>;
-  handleSubmitClick: (payload: PostPayload) => Promise<void>;
+  handleSubmitClick: (payload: PostPayload | UpdatePostPayload) => Promise<void>;
 }
 
 const Editor = (props: EditorProps): JSX.Element => {
@@ -69,8 +74,7 @@ const Editor = (props: EditorProps): JSX.Element => {
 
   const author = store?.admin.admin
 
-  const reference = useRef<HTMLTextAreaElement>(null)
-
+  const submitText = store?.post.currEditPost ? '수정' : '등록'
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
   const [postCategory, setPostCategory] = useState(null as (null | CategoryType))
@@ -78,10 +82,15 @@ const Editor = (props: EditorProps): JSX.Element => {
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
   const [isPinned, setIsPinned] = useState(0)
-  const [footnoteArr, setFootnoteArr] = useState([] as FootnoteType[])
+  const [reference, setReference] = useState('')
+  const [footnoteArr, setFootnoteArr] = useState(store?.post.currEditPost?.footnote || [] as FootnoteType[])
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
+  }
+
+  const handleReferenceChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReference(e.target.value)
   }
 
   const handleCategorySelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -108,6 +117,19 @@ const Editor = (props: EditorProps): JSX.Element => {
     setIsPinned(e.target.checked ? 1 : 0)
   }
 
+  useEffect(() => {
+    if (store?.post.currEditPost) {
+      const post = store.post.currEditPost
+      const category = store?.category.categories.find(c => c.categoryId === post.categoryId)
+      if (category) {
+        setPostCategory(category)
+        if (category.name === CategoryEnum.notice && post.isPinned) setIsPinned(post.isPinned)
+      }
+      if (post.footnote) setFootnoteArr(post.footnote)
+      if (post.reference) setReference(post.reference)
+    }
+  }, [])
+
   return useObserver(() => {
     // TODO: 위로 올려도 될듯
     const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,64 +153,47 @@ const Editor = (props: EditorProps): JSX.Element => {
       }
     }
 
-    const handlePreviewClick = async () => {
-      if (store) {
-        // TODO: payload 하나의 state로 관리
-        const payload = {
-          title,
-          content: editor ? editor.getHTML() : '',
-          createdAt: Date.now().valueOf(),
-          tags: postTags,
-          categoryName: postCategory ? postCategory.name : '',
-          categoryId: postCategory ? postCategory.categoryId : ''
-        }
-        await store.post.updateTempPost(payload)
-        setIsOpenPreviewModal(true)
-      }
-    }
-
     const handleSubmitClick = async () => {
       // TODO: post validation 분리
-      if (editor) {
-        if (!(title && editor.getHTML())) {
-          alert('제목 또는 내용은 반드시 입력해야합니다')
-          return
-        }
-        if (!postCategory) {
-          alert('카테고리를 선택해주세요')
-          return
-        }
-
-        let formattedFootnoteArr = [] as FootnoteType[]
-        if (footnoteArr.length) {
-          footnoteArr.forEach((footnote, footnoteIdx) => {
-            const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
-            const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
-            if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
-              ...footnote,
-              count: formattedFootnoteArr.length + 1
-            } as FootnoteType)
-          })
-        }
-
-        const payload = {
-          authorUid: author ? author.uid : '',
-          author: author ? author.nickName : '',
-          categoryName: postCategory.name,
-          categoryId: postCategory.categoryId,
-          title,
-          content: editor ? editor.getHTML() : '',
-          createdAt: Date.now().valueOf(),
-          tags: postTags,
-          footnote: formattedFootnoteArr,
-          reference: reference.current?.value || ''
-        }
-        // 꼭 props로 받아야하는지 재고 필요
-        if (props.isNotice) (payload as PostPayload).isPinned = isPinned
-        await props.handleSubmitClick(payload)
-        alert('성공적으로 글을 등록했습니다.')
-        history.push('/post/list')
+      if (!(title && editor?.getHTML())) {
+        alert('제목 또는 내용은 반드시 입력해야합니다')
+        return
       }
+      if (!postCategory) {
+        alert('카테고리를 선택해주세요')
+        return
+      }
+
+      let formattedFootnoteArr = [] as FootnoteType[]
+      if (footnoteArr.length) {
+        footnoteArr.forEach((footnote, footnoteIdx) => {
+          const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
+          const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
+          if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
+            ...footnote,
+            count: formattedFootnoteArr.length + 1
+          } as FootnoteType)
+        })
+      }
+
+      const payload = {
+        authorUid: author ? author.uid : '',
+        author: author ? author.nickName : '',
+        categoryName: postCategory.name,
+        categoryId: postCategory.categoryId,
+        title,
+        content: editor ? editor.getHTML() : '',
+        createdAt: Date.now().valueOf(),
+        tags: postTags,
+        footnote: formattedFootnoteArr,
+        reference
+      }
+      // 꼭 props로 받아야하는지 재고 필요
+      if (props.isNotice) (payload as PostPayload).isPinned = isPinned
+      const { createdAt, ...updatePayload } = payload
+      await props.handleSubmitClick(!props.isEdit ? payload : updatePayload)
+      alert(`성공적으로 글을 ${submitText}했습니다.`)
+      history.push('/post/list')
     }
 
     const handleFootnoteContentInput = (footnoteIdx: number, e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -197,6 +202,11 @@ const Editor = (props: EditorProps): JSX.Element => {
       setFootnoteArr(newFootnoteArr)
     }
 
+    const leaveWithoutSave = () => {
+      history.push('/')
+    }
+
+
     return (
       <div>
         <PreviewModal
@@ -204,27 +214,22 @@ const Editor = (props: EditorProps): JSX.Element => {
           open={setIsOpenPreviewModal}
         />
         <MGTEditor>
-          <button onClick={() => {
-            history.push('/')
-          }}>leave without save
-          </button>
-          <label>제목</label>
-          <input
-            value={title}
-            spellCheck={false}
-            onChange={handleTitleChange}
-          />
-          <div>
-            <label>글쓴이</label>
-            <span>
-          {author ? author.nickName : ''}
-        </span>
-          </div>
-          <div>
+          <ContentHeader>
+            <input
+              value={title}
+              spellCheck={false}
+              onChange={handleTitleChange}
+            />
+          </ContentHeader>
+          <div className="edit-menu-wrapper">
             <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
-            {props.isNotice ? (
+            {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
               <>
-                <input type="checkbox" onChange={handleIsPinnedSelect}/>
+                <input
+                  type="checkbox"
+                  checked={!!isPinned}
+                  onChange={handleIsPinnedSelect}
+                />
                 <label>상단에 고정</label>
               </>
             ) : null}
@@ -237,9 +242,17 @@ const Editor = (props: EditorProps): JSX.Element => {
             />
           </div>
           <EditorBubbleMenu editor={editor}/>
-          <EditorContent
-            className='editor__wrapper'
+          <Post
+            post={store?.post.currEditPost as PostType}
+            isEdit={props.isEdit}
+            isWrite={props.isWrite}
             editor={editor}
+            editPostTags={postTags}
+            editFootnote={footnoteArr}
+            editReference={reference}
+            handleSubmitClick={handleSubmitClick}
+            handleReferenceChange={handleReferenceChange}
+            leaveWithoutSave={leaveWithoutSave}
           />
           <div className="footnote-list__wrapper">
             {footnoteArr.map((footnote, footnoteIdx) => {
@@ -247,7 +260,6 @@ const Editor = (props: EditorProps): JSX.Element => {
                 <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
                   <span className="footnote__count"></span>
                   <textarea
-                    ref={reference}
                     value={footnote.content}
                     onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
                 </div>
@@ -255,31 +267,23 @@ const Editor = (props: EditorProps): JSX.Element => {
             })}
           </div>
           <div>
-            <label>참고 문헌</label>
-            <textarea ref={reference}></textarea>
-          </div>
-          <div>
-            <div>선택된 태그: {postTags.map((tag, tagIndex) => <span key={tagIndex}>{tag.name}</span>)}</div>
-            <label>태그 입력</label>
+            <label>태그 추가</label>
             <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
             {tags.map((tag, tagIndex) => {
-              return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}></Tag>)
+              return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}/>)
             })}
           </div>
-          <button onClick={handlePreviewClick}>preview</button>
-          <button onClick={handleSubmitClick}>완료</button>
         </MGTEditor>
       </div>
     )
   })
-
-
 }
 
 const MGTEditor = styled.div`
+.edit-menu-wrapper {
+border-top: 1px dotted blue !important;
+}
 .editor__wrapper {
-border: 1px solid black;
-border-radius: 4px;
 user-select: auto !important;
 counter-reset: footnote-label;
 footnote {
@@ -288,7 +292,7 @@ cursor: pointer;
 content: counter(footnote-label);
 vertical-align: super;
 font-size: 75%;
-counter-increment: footnote-label; 
+counter-increment: footnote-label;
 }
 }
 button {
@@ -304,6 +308,11 @@ outline: none !important;
 }
 }
 .ProseMirror {
+padding: 0;
+  .iframe-wrapper {
+  display: flex;
+  justify-content: center;
+  }
   table {
     border-collapse: collapse;
     table-layout: fixed;
@@ -368,7 +377,7 @@ outline: none !important;
 }
 .footnote-list__wrapper {
 counter-reset: footnote-content;
-}
+padding: 1.3rem;
 .footnote__wrapper {
 // TODO: scroll X -> flex height
 display: flex;
@@ -381,6 +390,16 @@ display: flex;
 textarea {
 width: 100%;
 border: none;
+}
+}
+}
+
+.post {
+&__footer--reference {
+textarea {
+width: calc(100% - 2.6rem);
+height: 100%;
+}
 }
 }
 `

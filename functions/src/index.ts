@@ -25,9 +25,9 @@ exports.updatePostIndex = functions.firestore
     .document("posts/{postId}")
     .onUpdate((change) => {
       const newData = change.after.data();
-      const objectId = change.after.id;
+      const objectID = change.after.id;
       return postIndex.saveObject({
-        objectId,
+        objectID,
         ...newData,
       });
     });

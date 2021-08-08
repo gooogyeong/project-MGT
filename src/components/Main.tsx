@@ -77,7 +77,7 @@ const Feed = (): JSX.Element => {
         return null
       }
 
-      if (node.type === 'tag' && node.name === 'video') {
+      if (node.type === 'tag' && (node.name === 'video' || node.name === 'iframe')) {
         return null
       }
     }
@@ -85,16 +85,17 @@ const Feed = (): JSX.Element => {
     return ReactHtmlParser(content, options)
   }
 
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        history.push('/login')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   return useObserver(() => {
-    const handleSignOut = () => {
-      signOut(auth)
-        .then(() => {
-          history.push('/login')
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    }
 
     return (
       <MGTMain>
@@ -134,12 +135,9 @@ const Feed = (): JSX.Element => {
                         </div>
                       ) : null}
                       <div className="button__container">
-                        <Button buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>
+                        <Button isDouble={true} buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>
                       </div>
                     </div>
-                    {/*<div className="button__container">*/}
-                    {/*  <Button buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>*/}
-                    {/*</div>*/}
                   </div>
                 </div>
               </div>

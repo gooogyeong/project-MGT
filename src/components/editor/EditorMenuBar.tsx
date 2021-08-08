@@ -5,6 +5,22 @@ import VideoUploadModal from '@/components/editor/VideoUploadModal'
 import styled from 'styled-components'
 import { Footnote } from '@/types/posts'
 import { generateId } from '@/utils'
+import { RiVideoUploadFill, RiImageAddLine } from 'react-icons/ri'
+import { IoIosUndo, IoIosRedo } from 'react-icons/io'
+import { FiAlignCenter, FiAlignJustify, FiAlignLeft, FiAlignRight } from 'react-icons/fi'
+import { GrBold, GrBlockQuote, GrTable } from 'react-icons/gr'
+import { FaBold } from 'react-icons/fa'
+import {
+  AiOutlineItalic,
+  AiOutlineLine,
+  AiOutlineTable,
+  AiOutlineStrikethrough,
+  AiOutlineOrderedList,
+  AiOutlineUnorderedList
+} from 'react-icons/ai'
+import { MdFormatStrikethrough } from 'react-icons/md'
+import { BsBlockquoteLeft } from 'react-icons/bs'
+import { TiSortNumerically } from 'react-icons/ti'
 
 type MenuBarProps = {
   editor: EditorType | null;
@@ -50,6 +66,9 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
 
       const newFootnoteArr = [...footnoteArr]
       newFootnoteArr.splice(newFootnoteWrapperIdx, 0, newFootnoteWrapperObj)
+      newFootnoteArr.forEach((footnote, footnoteIdx) => {
+        footnote.count = footnoteIdx + 1
+      })
       setFootnoteArr(newFootnoteArr)
     }
   }
@@ -93,19 +112,23 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
       />
       <button onClick={() => editor.chain().focus().setTextAlign('left').run()}
               className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}>
-        left
+        {/*left*/}
+        <FiAlignLeft/>
       </button>
       <button onClick={() => editor.chain().focus().setTextAlign('center').run()}
               className={editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}>
-        center
+        {/*center*/}
+        <FiAlignCenter/>
       </button>
       <button onClick={() => editor.chain().focus().setTextAlign('right').run()}
               className={editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}>
-        right
+        {/*right*/}
+        <FiAlignRight/>
       </button>
       <button onClick={() => editor.chain().focus().setTextAlign('justify').run()}
               className={editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}>
-        justify
+        {/*justify*/}
+        <FiAlignJustify/>
       </button>
       <button onClick={() => editor.chain().focus().setParagraph().run()}
               className={editor.isActive('paragraph') ? 'is-active' : ''}>
@@ -115,19 +138,24 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? 'is-active' : ''}
       >
-        bold
+        {/*bold*/}
+        {/*<GrBold />*/}
+        <FaBold/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={editor.isActive('italic') ? 'is-active' : ''}
       >
-        italic
+        {/*italic*/}
+        <AiOutlineItalic/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleStrike().run()}
         className={editor.isActive('strike') ? 'is-active' : ''}
       >
-        strike
+        {/*strike*/}
+        {/*<MdFormatStrikethrough />*/}
+        <AiOutlineStrikethrough/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -230,25 +258,32 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'is-active' : ''}
       >
-        bullet list
+        {/*bullet list*/}
+        <AiOutlineUnorderedList/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={editor.isActive('orderedList') ? 'is-active' : ''}
       >
-        ordered list
+        {/*ordered list*/}
+        <AiOutlineOrderedList/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={editor.isActive('blockquote') ? 'is-active' : ''}
       >
-        blockquote
+        {/*blockquote*/}
+        {/*<BsBlockquoteLeft />*/}
+        <GrBlockQuote/>
       </button>
       <button onClick={addFootnote}>
-        footnote
+        {/*footnote*/}
+        <TiSortNumerically/>
       </button>
       <button onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
-        insertTable
+        {/*insertTable*/}
+        {/*<AiOutlineTable />*/}
+        <GrTable/>
       </button>
       <button onClick={() => editor.chain().focus().addColumnAfter().run()}>
         add column
@@ -281,27 +316,32 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
               disabled={!editor.can().setCellAttribute('backgroundColor', '#FAF594')}>
         change background color
       </button>
-      <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-        horizontal rule
-      </button>
+      {/*<button onClick={() => editor.chain().focus().setHorizontalRule().run()}>*/}
+      {/*  horizontal rule*/}
+      {/*</button>*/}
       <button onClick={() => editor.chain().focus().setHardBreak().run()}>
-        hard break
+        {/*hard break*/}
+        <AiOutlineLine/>
       </button>
       <button onClick={() => editor.chain().focus().undo().run()}>
-        undo
+        {/*undo*/}
+        <IoIosUndo/>
       </button>
       <button onClick={() => editor.chain().focus().redo().run()}>
-        redo
+        {/*redo*/}
+        <IoIosRedo/>
       </button>
       <button onClick={() => {
         setIsOpenImageUploadModal(!isOpenImageUploadModal)
       }}>
-        upload image
+        {/*upload image*/}
+        <RiImageAddLine/>
       </button>
       <button onClick={() => {
         setIsOpenVideoUploadModal(!isOpenVideoUploadModal)
       }}>
-        upload video
+        {/*upload video*/}
+        <RiVideoUploadFill/>
       </button>
     </MGTEditorMenuBar>
   )
