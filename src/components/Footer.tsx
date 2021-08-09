@@ -44,6 +44,7 @@ const Footer = () => {
       // TODO: turn pathname into enum
       if (history.location.pathname !== '/post/list') history.push('/post/list')
       await store?.post.getPostsByTag()
+      store?.post.setSearchOptionText(tag.name)
     }
 
     return (

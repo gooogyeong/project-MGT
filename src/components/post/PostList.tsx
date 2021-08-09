@@ -10,6 +10,25 @@ import { Post, PostPayloadKey } from '@/types/posts'
 import { kebabize } from '@/utils'
 import { Category as CategoryEnum } from '@/types/category/enum'
 
+const labels = [
+  {
+    key: 'categoryName',
+    labelText: '카테고리'
+  },
+  {
+    key: 'title',
+    labelText: '제목'
+  },
+  {
+    key: 'author',
+    labelText: '작성자'
+  },
+  {
+    key: 'createdAt',
+    labelText: '작성일'
+  }
+]
+
 const PostList = (): JSX.Element => {
 
   const store = React.useContext(storeContext)
@@ -44,26 +63,8 @@ const PostList = (): JSX.Element => {
     }
   }, [])
 
+  // TODO: 부모가 useObserver()로 래핑해주고 있는데 여기서 useBoserver를 제거할 수 없는게.. 이해가 잘 안간다. 성능에도 문제가 있지 않나?
   return useObserver(() => {
-    const labels = [
-      {
-        key: 'categoryName',
-        labelText: '카테고리'
-      },
-      {
-        key: 'title',
-        labelText: '제목'
-      },
-      {
-        key: 'author',
-        labelText: '작성자'
-      },
-      {
-        key: 'createdAt',
-        labelText: '작성일'
-      }
-    ]
-
     const formatContent = (label: string, content: string): string => {
       switch (label) {
         case 'createdAt':
