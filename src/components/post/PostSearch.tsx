@@ -5,9 +5,10 @@ import Dropdown from '@/components/shared/Dropdown'
 import { Admin } from '@/types/admin'
 import { storeContext } from '@/stores/context'
 import { months, years } from '@/utils/date'
-import { addMonths } from 'date-fns'
+import { addMonths, getMonth, getYear } from 'date-fns'
 import styled from 'styled-components'
 import { Category } from '@/types/category'
+import { PostPayloadKey, SearchRange } from '@/types/posts'
 
 const PostSearch = () => {
 
@@ -63,13 +64,43 @@ const PostSearch = () => {
     }
   }
 
+  const getSearchOptionText = () => {
+    let filterText = ''
+    const searchOptions = store?.post.searchOptions
+    if (searchOptions) {
+      const searchKeys = Object.keys(searchOptions)
+      if (!searchKeys.length) {
+        return '전체'
+      } else {
+        searchKeys.forEach((key, keyIdx) => {
+          if (key === PostPayloadKey.authorUid) {
+            const author = store?.admin.admins.find(admin => admin.uid === searchOptions.authorUid)
+            if (author) filterText += `,${author.nickName}`
+          }
+          if (key === PostPayloadKey.categoryId) {
+            filterText += `,${store?.category.categories.find(category => category.categoryId === searchOptions.categoryId)?.name}`
+          }
+          if (key === 'searchRange') {
+            const searchStartDay = (searchOptions.searchRange as SearchRange).from
+            const year = getYear(searchStartDay)
+            const month = getMonth(searchStartDay)
+            filterText += `,${year}년도,${month}월`
+          }
+        })
+        return filterText.slice(1)
+      }
+    }
+  }
+
   const handleSearchButtonClick = async () => {
     if (searchYear && !searchMonth) {
       // TODO: 정책
       alert('검색 월을 선택해주세요')
       return
     }
-    if (store) await store.post.getPosts()
+    await store?.post.getPosts()
+    const searchOptionText = getSearchOptionText() || ''
+    store?.post.setSearchOptionText(searchOptionText)
   }
 
   const handleCategorySelect = async (idx: number) => {

@@ -31,7 +31,7 @@ const getFilterStr = (searchOptionFlags: Record<string, string | SearchRange>, i
 
 // TODO: 타입 정교화
 export const getSearchOptions = (
-  searchOptionFlags: Record<PostPayloadKey, string>,
+  searchOptionFlags: Record<PostPayloadKey | 'searchRange', string | SearchRange>,
   page: number,
   hitsPerPage: number,
   isPinnedNotice?: boolean

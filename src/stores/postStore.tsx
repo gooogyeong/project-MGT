@@ -29,7 +29,9 @@ export type PostStore = {
   searchKeyword: string;
   searchTag: null | Tag;
   setSearchTag: (payload: Tag) => void;
-  searchOptions: Record<PostPayloadKey, string>;
+  searchOptions: Record<PostPayloadKey | 'searchRange', string | SearchRange>;
+  searchOptionText: string;
+  setSearchOptionText: (payload: string) => void;
   posts: Post[];
   currEditPost: Post | null;
   setCurrEditPost: (payload: Post) => void;
@@ -67,10 +69,15 @@ export const postStore = (): PostStore => {
 
     searchKeyword: '',
     searchTag: null,
-    searchOptions: {} as Record<PostPayloadKey, string>,
+    searchOptions: {} as Record<PostPayloadKey | 'searchRange', string | SearchRange>,
+    searchOptionText: '전체',
 
     setCurrPage (page) {
       this.currPage = page
+    },
+
+    setSearchOptionText (text) {
+      this.searchOptionText = text
     },
 
     setCurrEditPost (post) {
@@ -96,7 +103,7 @@ export const postStore = (): PostStore => {
       this.searchOptions = Object.assign(this.searchOptions, payload)
     },
     initSearchOption () {
-      this.searchOptions = {} as Record<PostPayloadKey, string>
+      this.searchOptions = {} as Record<PostPayloadKey | 'searchRange', string | SearchRange>
     },
 
     posts: [],
