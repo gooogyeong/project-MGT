@@ -36,7 +36,7 @@ const PostDetail = () => {
   useEffect(() => {
     const getNeighborPosts = async () => {
       if (store?.post.posts) {
-        let currPostIdx = -12
+        let currPostIdx = -1
         store?.post.posts.forEach((post, postIdx) => {
           if (params.id === post.objectID) currPostIdx = postIdx
         })
@@ -54,12 +54,17 @@ const PostDetail = () => {
 
           if (isPageFirstPost) {
             const currPage = store?.post.currPage as number
-            if (!store?.post.searchTag) {
-              const prevPagePosts = await store?.post.getPosts(currPage - 1, true)
-              setPrevPost(prevPagePosts ? prevPagePosts[prevPagePosts.length - 1] : null)
+            if (currPage === 1) {
+              setPrevPost(null)
+              return
             } else {
-              const prevPagePosts = await store?.post.getPostsByTag(currPage - 1, true)
-              setPrevPost(prevPagePosts ? prevPagePosts[prevPagePosts.length - 1] : null)
+              if (!store?.post.searchTag) {
+                const prevPagePosts = await store?.post.getPosts(currPage - 1, true)
+                setPrevPost(prevPagePosts ? prevPagePosts[prevPagePosts.length - 1] : null)
+              } else {
+                const prevPagePosts = await store?.post.getPostsByTag(currPage - 1, true)
+                setPrevPost(prevPagePosts ? prevPagePosts[prevPagePosts.length - 1] : null)
+              }
             }
           }
 
@@ -86,10 +91,11 @@ const PostDetail = () => {
       } else {
         const currPostCategoryId = store?.post.currPostDetail?.categoryId
         store?.post.addSearchOption({
-          categoryId: currPostCategoryId  || ''
+          categoryId: currPostCategoryId || ''
         })
         const relPosts = await store?.post.getPosts(1, true)
         if (relPosts) setRelPosts(relPosts.slice(0, 8))
+        store?.post.initSearchOption()
       }
     }
     getCurrRelPosts()
