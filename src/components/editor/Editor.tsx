@@ -186,10 +186,11 @@ const Editor = (props: EditorProps): JSX.Element => {
         createdAt: Date.now().valueOf(),
         tags: postTags,
         footnote: formattedFootnoteArr,
-        reference
+        reference,
+        // TODO: isPinned: optional -> required field
+        isPinned: isPinned ? 1 : 0
       }
       // 꼭 props로 받아야하는지 재고 필요
-      if (props.isNotice) (payload as PostPayload).isPinned = isPinned
       const { createdAt, ...updatePayload } = payload
       await props.handleSubmitClick(!props.isEdit ? payload : updatePayload)
       alert(`성공적으로 글을 ${submitText}했습니다.`)

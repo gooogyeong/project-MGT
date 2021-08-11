@@ -90,12 +90,13 @@ const PostDetail = () => {
         setRelPosts(store?.post.posts.slice(0, 8))
       } else {
         const currPostCategoryId = store?.post.currPostDetail?.categoryId
+        const oldSearchOption = Object.assign({}, store?.post.searchOptions)
         store?.post.addSearchOption({
           categoryId: currPostCategoryId || ''
         })
         const relPosts = await store?.post.getPosts(1, true)
         if (relPosts) setRelPosts(relPosts.slice(0, 8))
-        store?.post.initSearchOption()
+        if (oldSearchOption) store?.post.setSearchOption(oldSearchOption)
       }
     }
     getCurrRelPosts()

@@ -47,13 +47,24 @@ exports.searchPost = functions.https.onCall(async (data) => {
 });
 
 exports.searchPostByTag = functions.https.onCall(async (data) => {
-  const {tag, offset, limit} = data;
-  const snapshot = await firestore.collection("posts")
-      .where("tags", "array-contains", tag)
-      .orderBy("createdAt")
-      .limit(limit)
-      .offset(offset)
-      .get();
+  const {tag, offset, limit, isPinned} = data;
+  let snapshot;
+  if (isPinned === 0) {
+    snapshot = await firestore.collection("posts")
+        .where("isPinned", "not-in", [1])
+        .where("tags", "array-contains", tag)
+        .orderBy("isPinned")
+        .orderBy("createdAt")
+        .limit(limit)
+        .offset(offset)
+        .get();
+  } else if (isPinned === 1) {
+    snapshot = await firestore.collection("posts")
+        .where("isPinned", ">", 0)
+        .where("tags", "array-contains", tag)
+        .orderBy("isPinned")
+        .get();
+  }
   const res = [] as Post[];
   snapshot.forEach((doc) => {
     res.push({...doc.data(), objectID: doc.id} as Post);
