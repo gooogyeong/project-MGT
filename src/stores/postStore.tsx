@@ -30,6 +30,7 @@ export type PostStore = {
   searchTag: null | Tag;
   setSearchTag: (payload: Tag) => void;
   searchOptions: Record<PostPayloadKey | 'searchRange', string | SearchRange>;
+  setSearchOption: (payload: Record<PostPayloadKey | 'searchRange', string | SearchRange>) => void;
   searchOptionText: string;
   setSearchOptionText: (payload: string) => void;
   posts: Post[];
@@ -71,6 +72,14 @@ export const postStore = (): PostStore => {
     searchTag: null,
     searchOptions: {} as Record<PostPayloadKey | 'searchRange', string | SearchRange>,
     searchOptionText: '전체',
+
+    setSearchOption (searchOption) {
+      console.log('setting search option')
+      console.log({...searchOption})
+      console.log({...this.searchOptions })
+      this.searchOptions = searchOption
+      console.log({...this.searchOptions })
+    },
 
     setCurrPage (page) {
       this.currPage = page
@@ -172,13 +181,32 @@ export const postStore = (): PostStore => {
 
     async getPostsByTag (page, noSet) {
       try {
-        const { posts } = await getPostsByTagService({
-          tag: this.searchTag as Tag,
-          offset: ((page || this.currPage) - 1) * this.postsPerPage,
-          limit: this.postsPerPage
-        })
-        if (!noSet) this.posts = posts as Post[]
-        if (noSet) return posts as Post[]
+        if (this.currPage === 1 && !page) {
+          // TODO: [{ posts as pinnedNotices }, { posts }] 이렇게 쓰는거 가능할지
+          const [pinnedNotices, posts] = await Promise.all([
+            getPostsByTagService({
+              tag: this.searchTag as Tag,
+              isPinned: 1
+            }),
+            getPostsByTagService({
+              tag: this.searchTag as Tag,
+              offset: ((page || this.currPage) - 1) * this.postsPerPage,
+              limit: this.postsPerPage,
+              isPinned: 0
+            })
+          ])
+          const pinnedNoticesAndPosts = pinnedNotices.posts.concat(posts.posts)
+          if (!noSet) this.posts = pinnedNoticesAndPosts
+          if (noSet) return pinnedNoticesAndPosts
+        } else {
+          const { posts } = await getPostsByTagService({
+            tag: this.searchTag as Tag,
+            offset: ((page || this.currPage) - 1) * this.postsPerPage,
+            limit: this.postsPerPage
+          })
+          if (!noSet) this.posts = posts as Post[]
+          if (noSet) return posts as Post[]
+        }
       } catch (error) {
         console.log(error)
       }
