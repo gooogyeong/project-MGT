@@ -53,11 +53,11 @@ export const getLatestPostByAuthor = (searchOptions: RequestOptions & SearchOpti
   })
 }
 
-export const getPostsByTag = (payload: { tag: Tag; offset: number; limit: number }): Promise<{ posts: Post[] }> => {
+export const getPostsByTag = (payload: { tag: Tag; offset?: number; limit?: number; isPinned?: number }): Promise<{ posts: Post[] }> => {
   return new Promise((resolve, reject) => {
     const searchPostByTag = httpsCallable(functions, 'searchPostByTag')
-    const { tag, offset, limit } = payload
-    searchPostByTag({ tag, offset, limit })
+    const { tag, offset, limit, isPinned } = payload
+    searchPostByTag({ tag, offset, limit, isPinned })
       .then((res) => {
         resolve({ posts: res.data as Post[] })
       })

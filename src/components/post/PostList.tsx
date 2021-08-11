@@ -39,12 +39,11 @@ const PostList = (): JSX.Element => {
     const getPostList = async () => {
       // TODO: 새 글 작성후 바로 algolia에 업데이트 되기 전에 리스트를 받아오는 문제
       try {
-        if (store) {
           // TODO: 정책.
           // TODO: 대신 '글' 눌렀을 떄 refresh !?
           // store.post.initSearchOption()
-          await store.post.getPosts()
-        }
+        if (!store?.post.searchTag) await store?.post.getPosts()
+        else await store?.post.getPostsByTag()
       } catch (error) {
         console.log(error)
       }

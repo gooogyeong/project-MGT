@@ -82,21 +82,28 @@ const Post = (props: PostProps) => {
   }, [props.post?.objectID, props.editFootnote])
 
   // TODO: add event listener to footnote
-  useEffect(() => {
-    if (!props.isWrite && !props.isEdit) {
-      const footnotes = document.getElementsByTagName('footnote')
-      Array.from(footnotes).forEach((footnote, footnoteIdx) => {
-        footnote.innerHTML = (footnoteIdx + 1).toString()
-        const footnoteButton = document.createElement('button')
-        footnoteButton.innerHTML = `[${footnoteIdx + 1}]`
-        footnoteButton.className = 'footnote'
-        footnoteButton.addEventListener('click', (e) => {
-          console.log('footnote button clicked!')
-        })
-        footnote.parentNode?.replaceChild(footnoteButton, footnote)
-      })
-    }
-  }, [params.id])
+  // useEffect(() => {
+  //   console.log('useEffect')
+  //   if (!props.isWrite && !props.isEdit) {
+  //     console.log(!props.isWrite && !props.isEdit)
+  //     try {
+  //       const footnotes = document.getElementsByTagName('footnote')
+  //       Array.from(footnotes).forEach((footnote, footnoteIdx) => {
+  //         footnote.innerHTML = (footnoteIdx + 1).toString()
+  //         const footnoteButton = document.createElement('button')
+  //         footnoteButton.innerHTML = `[${footnoteIdx + 1}]`
+  //         footnoteButton.className = 'footnote'
+  //         footnoteButton.addEventListener('click', (e) => {
+  //           console.log('footnote button clicked!')
+  //         })
+  //         footnote.parentNode?.replaceChild(footnoteButton, footnote)
+  //       })
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  // }, [props.post.objectID])
+  // }, [params.id])
 
   useEffect(() => {
     // TODO: 생성시에 className 부여할 수 있는게 가장 좋음
@@ -115,6 +122,7 @@ const Post = (props: PostProps) => {
         store?.post.setCurrPage(store?.post.currPage - 1)
         await store?.post.getPosts()
       }
+      store?.post.setCurrPostDetail(props.prevPost)
       history.push(`/post/${props.prevPost?.objectID}`)
     }
   }
@@ -125,6 +133,7 @@ const Post = (props: PostProps) => {
         store?.post.setCurrPage(store?.post.currPage + 1)
         await store?.post.getPosts()
       }
+      store?.post.setCurrPostDetail(props.nextPost)
       history.push(`/post/${props.nextPost.objectID}`)
     }
   }
