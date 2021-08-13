@@ -133,16 +133,19 @@ const Editor = (props: EditorProps): JSX.Element => {
     }
   }, [])
 
-
   useEffect(() => {
-    // TODO: eventListener 계속 쌓이는거 아닌지
-    window.addEventListener('footnote-delete', (e) => {
+    const updateFootnoteArr = (e: Event) => {
       const deletedFootnoteId = (e as CustomEvent<string>).detail
       const newFootnoteArr = footnoteArr.filter(footnote => {
         return footnote.id !== deletedFootnoteId
       })
       setFootnoteArr(newFootnoteArr)
-    })
+    }
+    window.addEventListener('footnote-delete', updateFootnoteArr)
+
+    return () => {
+      window.removeEventListener('footnote-delete', updateFootnoteArr)
+    }
   }, [footnoteArr])
 
   return useObserver(() => {
