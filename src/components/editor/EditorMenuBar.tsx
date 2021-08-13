@@ -1,5 +1,5 @@
 import { Editor as EditorType } from '@tiptap/react'
-import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import ImageUploadModal from '@/components/editor/ImageUploadModal'
 import VideoUploadModal from '@/components/editor/VideoUploadModal'
 import styled from 'styled-components'
@@ -44,7 +44,7 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
     let footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
     let footnoteLabelIdMap: string[] = []
     footnoteElArr.forEach(footnote => {
-      const footnoteId = footnote.className.split(' ')[1]
+      const footnoteId = footnote.id
       if (footnoteId) footnoteLabelIdMap.push(footnoteId)
     })
 
@@ -53,10 +53,8 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
       editor.chain().focus().setFootnoteComponent({ id: newFootnoteId }).run()
 
       footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
-      const newFootnote = footnoteElArr.find(footnote => !footnote.className.split(' ')[1])
-      if (newFootnote) newFootnote.className = `footnote--label ${newFootnoteId}`
       footnoteLabelIdMap = footnoteElArr.map(footnote => {
-        return footnote.className.split(' ')[1]
+        return footnote.id
       })
       const newFootnoteWrapperIdx = footnoteLabelIdMap.indexOf(newFootnoteId)
       const newFootnoteWrapperObj = {

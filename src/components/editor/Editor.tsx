@@ -134,6 +134,20 @@ const Editor = (props: EditorProps): JSX.Element => {
   }, [])
 
   useEffect(() => {
+    const updateFootnoteArr = () => {
+      if (store?.post.currPostDetail?.footnote?.length !== footnoteArr.length) {
+        if (store?.post.currPostDetail && store?.post.currPostDetail?.footnote) {
+          setFootnoteArr(store?.post.currPostDetail?.footnote)
+        }
+      }
+    }
+    window.addEventListener('footnote-create', updateFootnoteArr)
+    return () => {
+      window.removeEventListener('footnote-create', updateFootnoteArr)
+    }
+  }, [footnoteArr])
+
+  useEffect(() => {
     const updateFootnoteArr = (e: Event) => {
       const deletedFootnoteId = (e as CustomEvent<string>).detail
       const newFootnoteArr = footnoteArr.filter(footnote => {

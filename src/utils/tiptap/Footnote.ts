@@ -29,13 +29,14 @@ const Footnote = Node.create({
   atom: true,
   defaultOptions: {
     HTMLAttributes: {
-      class: 'footnote--label'
+      class: 'footnote--label',
+      id
     }
   } as FootnoteOptions,
 
   addNodeView () {
-    return () => {
-      return new FootnoteHelperComponent(id)
+    return ({ node }) => {
+      return new FootnoteHelperComponent(node.attrs.id)
     }
   },
 
@@ -49,6 +50,9 @@ const Footnote = Node.create({
     return {
       class: {
         default: 'footnote--label'
+      },
+      id: {
+        default: id
       }
     }
   },
@@ -59,8 +63,8 @@ const Footnote = Node.create({
     }]
   },
 
-  renderHTML () {
-    return ['footnote', { className: 'footnote--label' }]
+  renderHTML ({ HTMLAttributes }) {
+    return ['footnote', HTMLAttributes]
   },
 
   addCommands () {
