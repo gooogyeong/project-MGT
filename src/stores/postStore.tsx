@@ -10,7 +10,14 @@ import {
   updatePost as updatePostService,
   getPostsByTag as getPostsByTagService
 } from '@/services/posts'
-import { Post, PostPayload, PostPayloadKey, UpdatePostPayload, GetPostsPayload, SearchRange } from '@/types/posts'
+import {
+  Post,
+  PostPayload,
+  PostPayloadKey,
+  UpdatePostPayload,
+  GetPostsPayload,
+  SearchRange
+} from '@/types/posts'
 import { Order } from '@/utils/enum'
 import { getSearchOptions } from '@/utils'
 import { Tag } from '@/types/tags'
@@ -74,11 +81,7 @@ export const postStore = (): PostStore => {
     searchOptionText: '전체',
 
     setSearchOption (searchOption) {
-      console.log('setting search option')
-      console.log({...searchOption})
-      console.log({...this.searchOptions })
       this.searchOptions = searchOption
-      console.log({...this.searchOptions })
     },
 
     setCurrPage (page) {

@@ -77,7 +77,10 @@ const Editor = (props: EditorProps): JSX.Element => {
   const submitText = store?.post.currEditPost ? '수정' : '등록'
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
-  const [postCategory, setPostCategory] = useState(null as (null | CategoryType))
+  const [postCategory, setPostCategory] = useState(
+    store?.post.currEditPost ? store?.category.categories.find(category => {
+      return category.categoryId === store?.post.currEditPost?.categoryId
+    }) : null as (null | CategoryType))
   const [postTags, setPostTags] = useState(store?.post.currEditPost?.tags || [] as TagType[])
   const [tagName, setTagName] = useState('')
   const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false)
@@ -130,154 +133,169 @@ const Editor = (props: EditorProps): JSX.Element => {
     }
   }, [])
 
-  return useObserver(() => {
-    // TODO: 위로 올려도 될듯
-    const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setTagName(e.target.value)
-    }
-
-    const handleTagCreate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        try {
-          if (!tagName) {
-            alert('태그명을 입력하지 않았습니다')
-            return
-          }
-          await createTag({ name: tagName })
-          const tags = await getTags()
-          setTags(tags as TagType[])
-          setTagName('')
-        } catch (error) {
-          console.log(error)
-        }
-      }
-    }
-
-    const handleSubmitClick = async () => {
-      // TODO: post validation 분리
-      if (!(title && editor?.getHTML())) {
-        alert('제목 또는 내용은 반드시 입력해야합니다')
-        return
-      }
-      if (!postCategory) {
-        alert('카테고리를 선택해주세요')
-        return
-      }
-
-      let formattedFootnoteArr = [] as FootnoteType[]
-      if (footnoteArr.length) {
-        footnoteArr.forEach((footnote, footnoteIdx) => {
-          const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
-          const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
-          if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
-            ...footnote,
-            count: formattedFootnoteArr.length + 1
-          } as FootnoteType)
-        })
-      }
-
-      const payload = {
-        authorUid: author ? author.uid : '',
-        author: author ? author.nickName : '',
-        categoryName: postCategory.name,
-        categoryId: postCategory.categoryId,
-        title,
-        content: editor ? editor.getHTML() : '',
-        createdAt: Date.now().valueOf(),
-        tags: postTags,
-        footnote: formattedFootnoteArr,
-        reference,
-        // TODO: isPinned: optional -> required field
-        isPinned: isPinned ? 1 : 0
-      }
-      // 꼭 props로 받아야하는지 재고 필요
-      const { createdAt, ...updatePayload } = payload
-      await props.handleSubmitClick(!props.isEdit ? payload : updatePayload)
-      alert(`성공적으로 글을 ${submitText}했습니다.`)
-      history.push('/post/list')
-    }
-
-    const handleFootnoteContentInput = (footnoteIdx: number, e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newFootnoteArr = [...footnoteArr]
-      newFootnoteArr.splice(footnoteIdx, 1, { ...newFootnoteArr[footnoteIdx], content: e.target.value })
+  useEffect(() => {
+    const updateFootnoteArr = (e: Event) => {
+      const deletedFootnoteId = (e as CustomEvent<string>).detail
+      const newFootnoteArr = footnoteArr.filter(footnote => {
+        return footnote.id !== deletedFootnoteId
+      })
       setFootnoteArr(newFootnoteArr)
     }
+    window.addEventListener('footnote-delete', updateFootnoteArr)
 
-    const leaveWithoutSave = () => {
-      history.push('/')
+    return () => {
+      window.removeEventListener('footnote-delete', updateFootnoteArr)
     }
+  }, [footnoteArr])
 
+  return useObserver(() => {
+      // TODO: 위로 올려도 될듯
+      const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTagName(e.target.value)
+      }
 
-    return (
-      <div>
-        <PreviewModal
-          isOpen={isOpenPreviewModal}
-          open={setIsOpenPreviewModal}
-        />
-        <MGTEditor>
-          <ContentHeader>
-            <input
-              value={title}
-              spellCheck={false}
-              onChange={handleTitleChange}
-            />
-          </ContentHeader>
-          <div className="edit-menu-wrapper">
-            <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
-            {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
-              <>
-                <input
-                  type="checkbox"
-                  checked={!!isPinned}
-                  onChange={handleIsPinnedSelect}
-                />
-                <label>상단에 고정</label>
-              </>
-            ) : null}
-          </div>
-          <div className='menu-bar__wrapper'>
-            <EditorMenuBar
-              editor={editor}
-              footnoteArr={footnoteArr}
-              setFootnoteArr={setFootnoteArr}
-            />
-          </div>
-          <EditorBubbleMenu editor={editor}/>
-          <Post
-            post={store?.post.currEditPost as PostType}
-            isEdit={props.isEdit}
-            isWrite={props.isWrite}
-            editor={editor}
-            editPostTags={postTags}
-            editFootnote={footnoteArr}
-            editReference={reference}
-            handleSubmitClick={handleSubmitClick}
-            handleReferenceChange={handleReferenceChange}
-            leaveWithoutSave={leaveWithoutSave}
+      const handleTagCreate = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          try {
+            if (!tagName) {
+              alert('태그명을 입력하지 않았습니다')
+              return
+            }
+            await createTag({ name: tagName })
+            const tags = await getTags()
+            setTags(tags as TagType[])
+            setTagName('')
+          } catch (error) {
+            console.log(error)
+          }
+        }
+      }
+
+      const handleSubmitClick = async () => {
+        // TODO: post validation 분리
+        if (!(title && editor?.getHTML())) {
+          alert('제목 또는 내용은 반드시 입력해야합니다')
+          return
+        }
+        if (!postCategory) {
+          alert('카테고리를 선택해주세요')
+          return
+        }
+
+        let formattedFootnoteArr = [] as FootnoteType[]
+        if (footnoteArr.length) {
+          footnoteArr.forEach((footnote, footnoteIdx) => {
+            const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
+            const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
+            if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
+              ...footnote,
+              count: formattedFootnoteArr.length + 1
+            } as FootnoteType)
+          })
+        }
+
+        const payload = {
+          authorUid: author ? author.uid : '',
+          author: author ? author.nickName : '',
+          categoryName: postCategory.name,
+          categoryId: postCategory.categoryId,
+          title,
+          content: editor ? editor.getHTML() : '',
+          createdAt: Date.now().valueOf(),
+          tags: postTags,
+          footnote: formattedFootnoteArr,
+          reference,
+          // TODO: isPinned: optional -> required field
+          isPinned: isPinned ? 1 : 0
+        }
+        // 꼭 props로 받아야하는지 재고 필요
+        const { createdAt, ...updatePayload } = payload
+        await props.handleSubmitClick(!props.isEdit ? payload : updatePayload)
+        alert(`성공적으로 글을 ${submitText}했습니다.`)
+        history.push('/post/list')
+      }
+
+      const handleFootnoteContentInput = (footnoteIdx: number, e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newFootnoteArr = [...footnoteArr]
+        newFootnoteArr.splice(footnoteIdx, 1, { ...newFootnoteArr[footnoteIdx], content: e.target.value })
+        setFootnoteArr(newFootnoteArr)
+      }
+
+      const leaveWithoutSave = () => {
+        history.push('/')
+      }
+
+      return (
+        <div>
+          <PreviewModal
+            isOpen={isOpenPreviewModal}
+            open={setIsOpenPreviewModal}
           />
-          <div className="footnote-list__wrapper">
-            {footnoteArr.map((footnote, footnoteIdx) => {
-              return (
-                <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
-                  <span className="footnote__count"></span>
-                  <textarea
-                    value={footnote.content}
-                    onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
-                </div>
-              )
-            })}
-          </div>
-          <div>
-            <label>태그 추가</label>
-            <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
-            {tags.map((tag, tagIndex) => {
-              return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}/>)
-            })}
-          </div>
-        </MGTEditor>
-      </div>
-    )
-  })
+          <MGTEditor>
+            <ContentHeader>
+              <input
+                value={title}
+                spellCheck={false}
+                onChange={handleTitleChange}
+              />
+            </ContentHeader>
+            <div className="edit-menu-wrapper">
+              <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
+              {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
+                <>
+                  <input
+                    type="checkbox"
+                    checked={!!isPinned}
+                    onChange={handleIsPinnedSelect}
+                  />
+                  <label>상단에 고정</label>
+                </>
+              ) : null}
+            </div>
+            <div className='menu-bar__wrapper'>
+              <EditorMenuBar
+                editor={editor}
+                footnoteArr={footnoteArr}
+                setFootnoteArr={setFootnoteArr}
+              />
+            </div>
+            <EditorBubbleMenu editor={editor}/>
+            <Post
+              post={store?.post.currEditPost as PostType}
+              isEdit={props.isEdit}
+              isWrite={props.isWrite}
+              editor={editor}
+              editPostTags={postTags}
+              editFootnote={footnoteArr}
+              editReference={reference}
+              handleSubmitClick={handleSubmitClick}
+              handleReferenceChange={handleReferenceChange}
+              leaveWithoutSave={leaveWithoutSave}
+            />
+            <div className="footnote-list__wrapper">
+              {footnoteArr.map((footnote, footnoteIdx) => {
+                return (
+                  <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
+                    <span className="footnote__count"></span>
+                    <textarea
+                      value={footnote.content}
+                      onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
+                  </div>
+                )
+              })}
+            </div>
+            <div>
+              <label>태그 추가</label>
+              <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
+              {tags.map((tag, tagIndex) => {
+                return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}/>)
+              })}
+            </div>
+          </MGTEditor>
+        </div>
+      )
+    }
+  )
 }
 
 const MGTEditor = styled.div`
@@ -290,7 +308,7 @@ counter-reset: footnote-label;
 footnote {
 cursor: pointer;
 &:after {
-content: counter(footnote-label);
+content: counter(footnote-label) ')';
 vertical-align: super;
 font-size: 75%;
 counter-increment: footnote-label;
@@ -384,7 +402,7 @@ padding: 1.3rem;
 display: flex;
 .footnote__count {
   &:after {
-  content: counter(footnote-content)")";
+  content: counter(footnote-content) ')';
   counter-increment: footnote-content;
 }
 }
