@@ -2,14 +2,12 @@ export default class FootnoteComponent {
   id: string;
   constructor (id: string) {
     this.id = id
-    const footnote = document.createElement('div')
-    footnote.className = `footnote__wrapper ${id}`
   }
 
   destroy () {
     try {
-      const footnoteContent = document.getElementById(this.id) as HTMLElement
-      if (footnoteContent) footnoteContent.remove()
+      const footnoteDelete = new CustomEvent<string>('footnote-delete', { detail: this.id })
+      window.dispatchEvent(footnoteDelete)
     } catch (error) {
       console.log(error)
     }
