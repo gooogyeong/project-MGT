@@ -14,7 +14,9 @@ let id = ''
 declare module '@tiptap/core' {
   interface Commands {
     footnoteComponent: {
-      setFootnoteComponent: (options: { id: string }) => TipTapCommand,
+      setFootnoteComponent: (options: {
+        id: string,
+      }) => TipTapCommand,
     }
   }
 }
@@ -57,7 +59,7 @@ const Footnote = Node.create({
     }]
   },
 
-  renderHTML (ops) {
+  renderHTML () {
     return ['footnote', { className: 'footnote--label' }]
   },
 

@@ -203,7 +203,11 @@ const Post = (props: PostProps) => {
           <div className="footnote__content__wrapper">
             {leftFootnote.map((footnote, footnoteIdx) => {
               return (
-                <div key={footnoteIdx} className="footnote__content">{`${footnote.count}) ${footnote.content}`}</div>
+                <div key={footnoteIdx}
+                     id={`preview_${footnote.id}`}
+                     className="footnote__content"
+                >{footnote.content}
+                </div>
               )
             })}
           </div>
@@ -238,7 +242,11 @@ const Post = (props: PostProps) => {
           <div className="footnote__content__wrapper">
             {rightFootnote.map((footnote, footnoteIdx) => {
               return (
-                <div key={footnoteIdx} className="footnote__content">{`${footnote.count}) ${footnote.content}`}</div>
+                <div key={footnoteIdx}
+                     id={`preview_${footnote.id}`}
+                     className="footnote__content"
+                >{footnote.content}
+                </div>
               )
             })}
           </div>
@@ -399,6 +407,7 @@ justify-content: center;
 .post {
 &__body {
 .post__main-text {
+counter-reset: footnote-main-text;
 .content {
 &__sub-header {
 display: flex;
@@ -412,6 +421,15 @@ padding: 0.6rem 1.8rem;
 &__text {
 font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
+footnote {
+&:after {
+// TODO: footnote style 통합
+content: counter(footnote-main-text) ')';
+counter-increment: footnote-main-text;
+vertical-align: super;
+font-size: 75%;
+}
+}
 .iframe-wrapper {
 display: flex;
 justify-content: center;
@@ -448,6 +466,24 @@ font-size: 1.8rem;
 &:not(:last-child) {
 margin-bottom: 2.2rem;
 }
+}
+}
+}
+&--left {
+counter-set: footnote-preview-left -1;
+.footnote__content {
+&:before {
+content: counter(footnote-preview-left) ')';
+counter-increment: footnote-preview-left 2;
+}
+}
+}
+&--right {
+counter-reset: footnote-preview-right;
+.footnote__content {
+&:before {
+content: counter(footnote-preview-right) ')';
+counter-increment: footnote-preview-right 2;
 }
 }
 }

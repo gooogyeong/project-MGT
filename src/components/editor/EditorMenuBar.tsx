@@ -1,5 +1,5 @@
 import { Editor as EditorType } from '@tiptap/react'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
 import ImageUploadModal from '@/components/editor/ImageUploadModal'
 import VideoUploadModal from '@/components/editor/VideoUploadModal'
 import styled from 'styled-components'
@@ -8,18 +8,15 @@ import { generateId } from '@/utils'
 import { RiVideoUploadFill, RiImageAddLine } from 'react-icons/ri'
 import { IoIosUndo, IoIosRedo } from 'react-icons/io'
 import { FiAlignCenter, FiAlignJustify, FiAlignLeft, FiAlignRight } from 'react-icons/fi'
-import { GrBold, GrBlockQuote, GrTable } from 'react-icons/gr'
+import { GrBlockQuote, GrTable } from 'react-icons/gr'
 import { FaBold } from 'react-icons/fa'
 import {
   AiOutlineItalic,
   AiOutlineLine,
-  AiOutlineTable,
   AiOutlineStrikethrough,
   AiOutlineOrderedList,
   AiOutlineUnorderedList
 } from 'react-icons/ai'
-import { MdFormatStrikethrough } from 'react-icons/md'
-import { BsBlockquoteLeft } from 'react-icons/bs'
 import { TiSortNumerically } from 'react-icons/ti'
 
 type MenuBarProps = {
@@ -44,32 +41,34 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
   }
 
   const addFootnote = () => {
-    let footnotesArr = Array.from(document.getElementsByTagName('footnote'))
-    let footnoteLabelIdMap = footnotesArr.map(footnote => {
-      return footnote.className.split(' ')[1]
+    let footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
+    let footnoteLabelIdMap: string[] = []
+    footnoteElArr.forEach(footnote => {
+      const footnoteId = footnote.className.split(' ')[1]
+      if (footnoteId) footnoteLabelIdMap.push(footnoteId)
     })
-    const id = generateId()
-    if (footnoteLabelIdMap.indexOf(id) < 0) {
-      editor.chain().focus().setFootnoteComponent({ id: id }).run()
-      footnotesArr = Array.from(document.getElementsByTagName('footnote'))
-      const newFootnote = footnotesArr.find(footnote => footnote.className === '')
-      if (newFootnote) newFootnote.className = `footnote--label ${id}`
-      footnoteLabelIdMap = footnotesArr.map(footnote => {
+
+    const newFootnoteId = generateId()
+    if (footnoteLabelIdMap.indexOf(newFootnoteId) < 0) {
+      editor.chain().focus().setFootnoteComponent({ id: newFootnoteId }).run()
+
+      footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
+      const newFootnote = footnoteElArr.find(footnote => !footnote.className.split(' ')[1])
+      if (newFootnote) newFootnote.className = `footnote--label ${newFootnoteId}`
+      footnoteLabelIdMap = footnoteElArr.map(footnote => {
         return footnote.className.split(' ')[1]
       })
-      const newFootnoteWrapperIdx = footnoteLabelIdMap.indexOf(id)
+      const newFootnoteWrapperIdx = footnoteLabelIdMap.indexOf(newFootnoteId)
       const newFootnoteWrapperObj = {
-        id,
+        id: newFootnoteId,
         count: -1,
         content: ''
       }
-
-      const newFootnoteArr = [...footnoteArr]
-      newFootnoteArr.splice(newFootnoteWrapperIdx, 0, newFootnoteWrapperObj)
-      newFootnoteArr.forEach((footnote, footnoteIdx) => {
+      footnoteArr.splice(newFootnoteWrapperIdx, 0, newFootnoteWrapperObj)
+      footnoteArr.forEach((footnote, footnoteIdx) => {
         footnote.count = footnoteIdx + 1
       })
-      setFootnoteArr(newFootnoteArr)
+      setFootnoteArr(footnoteArr)
     }
   }
 
