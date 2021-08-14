@@ -12,7 +12,7 @@ import { GrBlockQuote, GrTable } from 'react-icons/gr'
 import { FaBold } from 'react-icons/fa'
 import {
   AiOutlineItalic,
-  AiOutlineLine,
+  // AiOutlineLine,
   AiOutlineStrikethrough,
   AiOutlineOrderedList,
   AiOutlineUnorderedList
@@ -316,10 +316,10 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
       {/*<button onClick={() => editor.chain().focus().setHorizontalRule().run()}>*/}
       {/*  horizontal rule*/}
       {/*</button>*/}
-      <button onClick={() => editor.chain().focus().setHardBreak().run()}>
+      {/*<button onClick={() => editor.chain().focus().setHardBreak().run()}>*/}
         {/*hard break*/}
-        <AiOutlineLine/>
-      </button>
+        {/*<AiOutlineLine/>*/}
+      {/*</button>*/}
       <button onClick={() => editor.chain().focus().undo().run()}>
         {/*undo*/}
         <IoIosUndo/>
