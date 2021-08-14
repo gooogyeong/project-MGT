@@ -13,6 +13,7 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import Image from '@tiptap/extension-image'
 import ImageExtension from '@/utils/tiptap/ImageExtension'
+import { HardBreak } from '@tiptap/extension-hard-break'
 import { FontSize } from '@/utils/tiptap/FontSize'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
@@ -33,6 +34,7 @@ import CategoryDropdown from '@/components/shared/CategoryDropdown'
 import Post from '@/components/post/Post'
 import { Post as PostType } from '@/types/posts'
 import ContentHeader from '@/components/shared/ContentHeader'
+import HardBreakExtension from '@/utils/tiptap/HardBreakExtension'
 
 type EditorProps = {
   isWrite?: boolean;
@@ -67,7 +69,9 @@ const Editor = (props: EditorProps): JSX.Element => {
       Image,
       ImageExtension,
       Iframe,
-      Video
+      Video,
+      HardBreak,
+      HardBreakExtension
     ],
     content: store?.post.currEditPost?.content || ''
   })
