@@ -377,11 +377,12 @@ font-size: 2.6rem;
 display: flex;
 flex-direction: column;
 &:nth-child(1), &:nth-child(3) {
-flex-basis: 23.3%;
+flex-basis: 20%;
+max-width: 20%;
 }
 &:nth-child(2) {
-flex-basis: 53.4%;
-max-width: 52%;
+flex-basis: 60%;
+max-width: 60%;
 }
 &:not(:last-child) {
 border-right: 1px dotted blue;
@@ -535,6 +536,7 @@ background-color: white;
 &--rel-posts {
 flex-direction: column;
 .label {
+min-width: 100%;
 border-right: none;
 color: blue;
 border-bottom: 1px dotted red;
