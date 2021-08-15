@@ -6,8 +6,12 @@ const size = {
 
 const color = {
   turquoiseLight: '#D4F9F9',
-  beigeLight: '#FAF4D3',
+  beigeLight: '#FAF4D3'
+}
+
+const zIndex = {
+  zIndexMobileNavBar: 10,
   zIndexModal: 20
 }
 
-export const theme = Object.assign({}, size, color)
+export const theme = Object.assign({}, size, color, zIndex)

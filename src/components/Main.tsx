@@ -99,7 +99,9 @@ const Feed = (): JSX.Element => {
 
     return (
       <MGTMain>
-        <ContentHeader text={`"${thisYear}년 그로테스크의 해"`}/>
+        <div className="content-header-wrapper">
+          <ContentHeader text={`"${thisYear}년 그로테스크의 해"`}/>
+        </div>
         <div className="main__body">
           {store?.post.authorLatestPosts.map((post, postIdx) => {
             return (
@@ -121,21 +123,23 @@ const Feed = (): JSX.Element => {
                       </span>
                     </div>
                     <div className={`post__content__body ${!postIdx ? 'left' : 'right'}`}>
-                      <div className="main-text">
-                        <div className="text">
-                          <div>{processContent(postIdx)}</div>
+                      <div className="content-wrapper">
+                        <div className={`main-text ${!thumbnailArr[postIdx] ? 'no-thumbnail' : ''}`}>
+                          <div className="text">
+                            <div>{processContent(postIdx)}</div>
+                          </div>
                         </div>
+                        {thumbnailArr[postIdx] ? (
+                          <div className="thumbnail__container">
+                            <img
+                              src={thumbnailArr[postIdx]?.attribs?.src}
+                              alt={thumbnailArr[postIdx]?.attribs?.alt}
+                            />
+                          </div>
+                        ) : null}
                       </div>
-                      {thumbnailArr[postIdx] ? (
-                        <div className="thumbnail__container">
-                          <img
-                            src={thumbnailArr[postIdx]?.attribs?.src}
-                            alt={thumbnailArr[postIdx]?.attribs?.alt}
-                          />
-                        </div>
-                      ) : null}
                       <div className="button__container">
-                        <Button isDouble={true} buttonText="더 봐" onClick={() => goToPostDetail(postIdx)}/>
+                        <Button isDouble={true} buttonText="더 보기" onClick={() => goToPostDetail(postIdx)}/>
                       </div>
                     </div>
                   </div>
@@ -154,6 +158,10 @@ const Feed = (): JSX.Element => {
 const MGTMain = styled.div`
 .content__header {
 border-top: 1rem solid blue;
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+border-top: 0.32rem solid blue;
+border-bottom: 0.32rem solid blue;
+}
 }
 .main__body {
 display: flex;
@@ -189,6 +197,7 @@ overflow: hidden;
 display: flex;
 flex-direction: column;
 &__header {
+margin-bottom: 0.7rem;
 display: flex;
 justify-content: space-between;
 .created-at, .tag {
@@ -201,49 +210,32 @@ margin-right: 0.4rem;
 }
 }
 }
+
 &__body {
+max-height: 77.3rem;
 display: flex;
 flex-direction: column;
 position: relative;
-&.left {
+
+.content-wrapper {
+display: flex;
+flex-direction: column;
+// COMMON
 .thumbnail__container {
-order: 1;
-justify-content: flex-start;
-}
-.main-text { 
-order: 2;
-}
-.button__container {
-order: 3;
-}
-}
-&.right {
-.thumbnail__container {
-order: 3;
-justify-content: flex-end;
-}
-.main-text { 
-order: 1;
-}
-.button__container {
-order: 2;
-}
-}
-.thumbnail__container {
-max-height: 42.8rem;
+max-height: 20%;
 display: flex;
 margin: 0 -0.7rem;
 img {
 // TODO: 왜 fill이 안되는지. 그리고 이미지 사이즈에 따라 fill / cover 분기처리
-object-fit: cover;
+width: 100%;
+object-fit: contain; // cover;
 }
 }
+
 .main-text {
 .text {
-max-height: 46.9rem;
 overflow: hidden;
 text-overflow: ellipsis;
-box-shadow: white 0px -60px 40px 0 inset; 
 & > div {
 position: relative;
 z-index: -1;
@@ -251,10 +243,58 @@ z-index: -1;
 }
 }
 }
+
+}
 .button__container {
 display: flex;
 justify-content: flex-end;
-margin-bottom: 2.1rem;
+height: 7.8rem;
+}
+
+// LEFT
+&.left {
+.thumbnail__container {
+order: 1;
+justify-content: flex-start;
+min-height: calc(68.8rem * 0.45);
+max-height: calc(68.8rem * 0.45);
+flex-basis: 45%;
+}
+.main-text { 
+order: 2;
+max-height: calc(68.8rem * 0.55);
+flex-basis: 55%;
+overflow: hidden;
+&.no-thumbnail {
+max-height: 69.5rem;
+}
+}
+.button__container {
+order: 3;
+box-shadow: white 0px -40px 20px 20px;
+}
+}
+
+// RIGHT
+&.right {
+.thumbnail__container {
+order: 3;
+min-height: calc(68.8rem * 0.45);
+max-height: calc(68.8rem * 0.45);
+justify-content: flex-end;
+}
+.main-text { 
+order: 1;
+// TODO: 공통 셀렉터 왜 안먹는지 알아내야함
+max-height: calc(68.8rem * 0.55);
+overflow: hidden;
+&.no-thumbnail {
+max-height: 69.5rem;
+}
+}
+.button__container {
+order: 2;
+}
 }
 }
 }
@@ -279,7 +319,67 @@ background-color: ${props => props.theme.turquoiseLight};
 }
 }
 }
+}
+}
 
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+&.main {
+&__body {
+flex-direction: column;
+& > div {
+&.content__wrapper {
+flex-basis: 100%;
+max-width: 100%;
+border-right: none !important;
+&:not(:last-child) {
+margin-bottom: 0.5rem;
+border-bottom: 1px dotted red;
+}
+.label {
+font-size: 1.7rem;
+padding: 0.2rem 0;
+}
+.post {
+&__title {
+margin-top: 0.5rem;
+font-size: 1.7rem;
+}
+&__content {
+font-size: 1.7rem;
+max-height: 46.2rem;
+
+&__body {
+.button__container {
+height: 5.2rem;
+.layer {
+font-size: 1.7rem;
+padding: 0.7rem 1.8rem;
+}
+}
+&.left {
+.thumbnail__container {
+min-height: calc(37.7rem * 0.45);
+max-height: calc(37.7rem * 0.45);
+}
+.main-text { 
+max-height: calc(37.7rem * 0.55);
+}
+}
+&.right {
+.thumbnail__container {
+min-height: calc(37.7rem * 0.45);
+max-height: calc(37.7rem * 0.45);
+}
+.main-text {
+max-height: calc(37.7rem * 0.55);
+}
+}
+}
+}
+}
+}
+}
+}
 }
 }
 `

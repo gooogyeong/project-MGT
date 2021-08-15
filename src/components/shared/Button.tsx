@@ -16,10 +16,14 @@ const Button = (props: ButtonProps) => {
   }
 
   return (
-    <MGTButton onClick={handleClick} className={`button ${props.isDouble ? 'double' : ''} ${props.variant || ''} ${props.className || ''}`}>
-      {props.isDouble ? <div className="layer">
+    <MGTButton
+      className={`button ${props.isDouble ? 'double' : ''} ${props.variant || ''} ${props.className || ''}`}
+      onClick={handleClick}
+    >{props.isDouble ? (
+      <div className="layer">
         <span>{props.buttonText}</span>
-      </div> : null}
+      </div>
+    ) : null}
       <div className="layer">
         <span>{props.buttonText}</span>
       </div>
