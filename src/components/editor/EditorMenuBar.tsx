@@ -50,6 +50,7 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
 
     const newFootnoteId = generateId()
     if (footnoteLabelIdMap.indexOf(newFootnoteId) < 0) {
+      // @ts-ignore
       editor.chain().focus().setFootnoteComponent({ id: newFootnoteId }).run()
 
       footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
@@ -72,16 +73,20 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
 
   const addVideoToEditor = (videoSrc: string) => {
     if (videoSrc.includes('youtube')) {
+      // @ts-ignore
       editor.chain().focus().setIframe({ src: videoSrc }).run()
     } else {
+      // @ts-ignore
       editor.chain().focus().setVideo({ src: videoSrc }).run()
     }
   }
 
   const toggleFontSizeOption = (option: string) => {
     if (editor.isActive('textStyle', { fontSize: '15px' })) {
+      // @ts-ignore
       editor.chain().focus().setFontSize('12px').run()
     } else {
+      // @ts-ignore
       editor.chain().focus().setFontSize(option).run()
     }
   }
