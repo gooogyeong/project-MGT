@@ -30,4 +30,12 @@ input {
 border: none;
 width: 100%;
 }
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+padding: 0.5rem 0 0.7rem;
+div {
+font-size: 1.7rem;
+font-weight: bold;
+}
+}
 `
