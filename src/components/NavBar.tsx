@@ -75,6 +75,7 @@ position: relative;
 border-bottom: 1px dotted red;
 padding: 1.2rem 1.4rem;
 background-color: white;
+z-index: ${props => props.theme.zIndexMobileNavBar};
 .navbar {
 &__logo {
 position: absolute;
@@ -93,7 +94,9 @@ height: 100%;
 display: flex;
 justify-content: space-between;
 font-size: 2.6rem;
-width: 50%;
+// TODO: 50% 원복
+//width: 50%;
+width: 25%;
 cursor: pointer;
 }
 }
