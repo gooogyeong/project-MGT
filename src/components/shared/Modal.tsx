@@ -17,8 +17,6 @@ type ModalProps = {
 const Modal: React.FC<ModalProps> = (props: ModalProps): JSX.Element => {
 
   const close = (event: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    // TODO: self close not working
-    console.log('close')
     if (event.target !== event.currentTarget) return
     props.open(false)
   }
