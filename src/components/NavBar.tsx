@@ -14,22 +14,22 @@ const menus = [
     key: 'posts',
     menuText: '글',
     uri: '/post/list'
-  },
-  {
-    key: 'subscription',
-    menuText: '구독',
-    uri: '/sub'
-  },
-  {
-    key: 'shop',
-    menuText: '구매',
-    uri: '/shop'
-  },
-  {
-    key: 'contact',
-    menuText: '연락',
-    uri: '/contact'
-  }
+  }// ,
+  // {
+  //   key: 'subscription',
+  //   menuText: '구독',
+  //   uri: '/sub'
+  // },
+  // {
+  //   key: 'shop',
+  //   menuText: '구매',
+  //   uri: '/shop'
+  // },
+  // {
+  //   key: 'contact',
+  //   menuText: '연락',
+  //   uri: '/contact'
+  // }
 ]
 
 type NavBarProps = {
