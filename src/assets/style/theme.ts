@@ -1,7 +1,8 @@
 export const widthMobileScreen = '600px'
 
 const size = {
-  widthMobileScreen
+  widthMobileScreen,
+  fontSizeMobile: '1.7rem'
 }
 
 const color = {

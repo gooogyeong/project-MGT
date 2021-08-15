@@ -4,7 +4,7 @@ import Header from '@/components/Header'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
 import { storeContext } from '@/stores/context'
-import { widthMobileScreen } from '@/styles/theme'
+import { widthMobileScreen } from '@/assets/style/theme'
 import { useObserver } from 'mobx-react-lite'
 
 type MainLayoutProps = {

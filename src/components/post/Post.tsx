@@ -576,7 +576,7 @@ margin-right: 0.5rem;
 }
 }
 .modal__content {
-padding: 1.7rem;
+padding: ${props => props.theme.fontSizeMobile};
 background-color: ${props => props.theme.beigeLight} !important;
 width: 43rem !important;
 .copied {
