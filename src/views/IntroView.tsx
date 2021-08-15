@@ -25,6 +25,16 @@ line-height: 160%;
 letter-spacing: -0.015rem;
 word-break: keep-all;
 }
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+padding: 1.3rem 0;
+& > div {
+font-size: 1.7rem;
+width: calc(100% - 2.6rem);
+max-width: calc(100% - 2.6rem);
+}
+}
+
 `
 
 export default IntroView
