@@ -2,43 +2,68 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { yyyyMMddDot } from '@/utils/date'
 import { format } from 'date-fns'
+import { GiHamburgerMenu } from 'react-icons/gi'
+import { GrClose } from 'react-icons/gr'
+import { Dispatch, SetStateAction } from 'react'
 
-const Header = () => {
+type HeaderProps = {
+  isMobile: boolean;
+  isShowMobileNavBar: boolean;
+  setIsShowMobileNavBar: Dispatch<SetStateAction<boolean>>;
+}
+
+const Header = (props: HeaderProps) => {
   const history = useHistory()
+
   const goToMain = () => {
     history.push('/')
   }
+
   return (
     <MGTHeader className="header">
       <div className="header__top-left">
-        <table>
-          <div>
-            <th>발행</th>
-            <tr>
-              <td>이혜원</td>
-              <td>한아임</td>
-            </tr>
+        {!props.isMobile ? (
+          <table>
+            <div>
+              <th>발행</th>
+              <tr>
+                <td>이혜원</td>
+                <td>한아임</td>
+              </tr>
+            </div>
+            <div>
+              <th>개발</th>
+              <tr>
+                <td>이민경</td>
+              </tr>
+            </div>
+          </table>
+        ) : (
+          <div
+            className="icon-container"
+            onClick={() => {
+              props.setIsShowMobileNavBar(!props.isShowMobileNavBar)
+            }}>
+            {!props.isShowMobileNavBar ? <GiHamburgerMenu/> : <GrClose/>}
           </div>
-          <div>
-            <th>개발</th>
-            <tr>
-              <td>이민경</td>
-            </tr>
-          </div>
-        </table>
+        )}
       </div>
       <div className="header__center" onClick={goToMain}>
         <div>모던 그로테스크 타임스</div>
-        <div>Modern Grotesque Times</div>
+        {!props.isMobile ? <div>Modern Grotesque Times</div> : null}
       </div>
       <div>
         <div className="header__top-right">
-          <div>{format(new Date(), yyyyMMddDot)}</div>
-          {/*TODO: 증시 가져오는 API*/}
-          <div className="nasdaq">
-            <div>Nasdaq 14,069.42</div>
-            <div>+49.09 (+0.35%)</div>
-          </div>
+          {!props.isMobile ? (
+            <>
+              <div>{format(new Date(), yyyyMMddDot)}</div>
+              {/*TODO: 증시 가져오는 API*/}
+              <div className="nasdaq">
+                <div>Nasdaq 14,069.42</div>
+                <div>+49.09 (+0.35%)</div>
+              </div>
+            </>
+          ) : <div className="buffer"></div>}
         </div>
       </div>
     </MGTHeader>
@@ -100,6 +125,33 @@ padding: 1rem 0.7rem;
 div:nth-child(2) {
 color: blue;
 }
+}
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+height: 4rem;
+align-items: center;
+.header {
+&__center {
+font-size: 2rem;
+}
+&__top-left {
+.icon-container {
+height: 100%;
+display: flex;
+align-items: center;
+width: 4rem;
+justify-content: center;
+cursor: pointer;
+}
+}
+&__top-right {
+border: none;
+.buffer {
+width: 4rem;
+border-bottom: none !important;
 }
 }
 }

@@ -39,6 +39,7 @@ export default Tag
 const MGTTag = styled.span`
 border-radius: 4px;
 color: red;
+white-space: nowrap;
 &:not(.disabled) {
   cursor: pointer;
 }
