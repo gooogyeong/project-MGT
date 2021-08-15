@@ -58,3 +58,18 @@ export const kebabize = (str: string): string => {
 export const generateId = (): string => {
   return '_' + Math.random().toString(36).substr(2, 9)
 }
+
+export const shuffle = (array: any[]) => {
+  let counter = array.length
+
+  while (counter > 0) {
+    const index = Math.floor(Math.random() * counter)
+
+    counter--
+
+    const temp = array[counter]
+    array[counter] = array[index]
+    array[index] = temp
+  }
+  return array
+}

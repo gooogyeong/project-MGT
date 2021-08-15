@@ -7,25 +7,19 @@ type BubbleMenuProps = {
 }
 
 const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
-  if (!editor) {
-    return null
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [selectionType, setSelectionType] = useState('')
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    const isText = editor.state.selection instanceof TextSelection
-    const isNode = editor.state.selection instanceof NodeSelection
+    const isText = editor?.state.selection instanceof TextSelection
+    const isNode = editor?.state.selection instanceof NodeSelection
 
     if (isText) setSelectionType('text')
     else if (isNode) setSelectionType('node')
     else setSelectionType('')
-  }, [editor.state.selection])
+  }, [editor?.state.selection])
 
-  return (
-    <BubbleMenu editor={editor}>
+  return editor ? (
+    <BubbleMenu editor={editor} pluginKey="" shouldShow={() => true}>
       {selectionType === 'text' ? (
         <div>
           <button
@@ -98,7 +92,7 @@ const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
         </div>
       ) : null}
     </BubbleMenu>
-  )
+  ) : <></>
 }
 
 export default EditorBubbleMenu

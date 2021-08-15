@@ -4,12 +4,14 @@ import { adminStore, AdminStore } from '@/stores/adminStore'
 import { tagStore, TagStore } from '@/stores/tagStore'
 import { postStore, PostStore } from '@/stores/postStore'
 import { categoryStore, CategoryStore } from '@/stores/categoryStore'
+import { mobileStore, MobileStore } from '@/stores/mobileStore'
 
 type Store = {
   admin: AdminStore;
   post: PostStore;
   tag: TagStore;
   category: CategoryStore;
+  mobile: MobileStore;
 }
 
 type StoreProviderProps = {
@@ -23,8 +25,11 @@ export const StoreProvider = ({ children }: StoreProviderProps): JSX.Element => 
   const post = useLocalStore(postStore)
   const tag = useLocalStore(tagStore)
   const category = useLocalStore(categoryStore)
+  const mobile = useLocalStore(mobileStore)
   return (
-    <storeContext.Provider value={{ admin, post, tag, category }}>{children}</storeContext.Provider>
+    <storeContext.Provider value={{ mobile, admin, post, tag, category }}>
+      {children}
+    </storeContext.Provider>
   )
 }
 

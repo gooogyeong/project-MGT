@@ -13,6 +13,10 @@ display: none; // Chrome, Safari, Opera
 }
 }
 
+body {
+margin: 0px;
+}
+
 button {
 cursor: pointer;
 border: none;
