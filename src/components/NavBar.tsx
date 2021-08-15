@@ -125,7 +125,7 @@ order: 1;
 margin-top: 2.7rem;
 flex-direction: column;
 align-items: center;
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 order: 2;
 & > div:not(:last-child) {
 margin-bottom: 1rem;

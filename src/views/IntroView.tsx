@@ -29,7 +29,7 @@ word-break: keep-all;
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 padding: 1.3rem 0;
 & > div {
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 width: calc(100% - 2.6rem);
 max-width: calc(100% - 2.6rem);
 }
