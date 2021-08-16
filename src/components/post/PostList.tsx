@@ -108,13 +108,15 @@ const PostList = (): JSX.Element => {
                   </td>
                 )
               }) : (
-                <td>
+                <td
+                  onClick={() => {
+                    goToPostDetail(post)
+                  }}
+                >
                   <div className="post-info-wrapper__mobile">
                     {labels.filter(label => label.key !== PostPayloadKey.title).map((label, labelIdx) => {
                       return (
-                        <div key={labelIdx} className={kebabize(label.key)} onClick={() => {
-                          goToPostDetail(post)
-                        }}>
+                        <div key={labelIdx} className={kebabize(label.key)}>
                           <div className="buffer">{labelIdx ? '\\' : ''}</div>
                           <div>
                             {formatContent(label.key, post[label.key as string as PostPayloadKey] as string)}

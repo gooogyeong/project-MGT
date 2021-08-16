@@ -127,6 +127,18 @@ padding: 0.3rem 0.6rem 0.3rem 1.1rem;
 font-size: ${props => props.theme.fontSizeMobile};
 }
 }
+
+.menu__container {
+top: 3.9rem;
+.menu__wrapper {
+min-width: 100%;
+}
+.menu {
+min-width: 100%;
+padding: 0.4rem 0 !important;
+font-size: ${props => props.theme.fontSizeMobile} !important;
+}
+}
 `
 
 export default Dropdown

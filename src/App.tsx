@@ -6,8 +6,12 @@ import GlobalStyle from '@/assets/style/GlobalStyle'
 import { ThemeProvider } from 'styled-components'
 import { theme } from '@/assets/style/theme'
 import config from '../env.json'
+import Loading from '@/components/shared/Loading'
+import { usePromiseTracker } from 'react-promise-tracker'
 
 function App () {
+
+  const { promiseInProgress } = usePromiseTracker()
 
   useEffect(() => {
     try {
@@ -25,6 +29,7 @@ function App () {
       <StoreProvider>
         <AuthProvider>
           <AppRouter/>
+          {promiseInProgress ? <Loading/> : null}
         </AuthProvider>
       </StoreProvider>
     </ThemeProvider>
