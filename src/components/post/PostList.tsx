@@ -39,9 +39,9 @@ const PostList = (): JSX.Element => {
     const getPostList = async () => {
       // TODO: 새 글 작성후 바로 algolia에 업데이트 되기 전에 리스트를 받아오는 문제
       try {
-          // TODO: 정책.
-          // TODO: 대신 '글' 눌렀을 떄 refresh !?
-          // store.post.initSearchOption()
+        // TODO: 정책.
+        // TODO: 대신 '글' 눌렀을 떄 refresh !?
+        // store.post.initSearchOption()
         if (!store?.post.searchTag) await store?.post.getPosts()
         else await store?.post.getPostsByTag()
       } catch (error) {
@@ -66,6 +66,8 @@ const PostList = (): JSX.Element => {
   return useObserver(() => {
     const formatContent = (label: string, content: string): string => {
       switch (label) {
+        case 'categoryName':
+          return store?.mobile.isMobile ? `[${content}]` : content
         case 'createdAt':
           return format(new Date(parseInt(content)), yyyyMMddDot)
         default:
@@ -83,19 +85,21 @@ const PostList = (): JSX.Element => {
 
     return (
       <MGTBoard>
-        <thead>
-        <tr>
-          {labels.map((label, labelIdx) => {
-            return (<th key={labelIdx} className={kebabize(label.key)}>{label.labelText}</th>)
-          })}
-        </tr>
-        </thead>
+        {!store?.mobile.isMobile ? (
+          <thead>
+          <tr>
+            {labels.map((label, labelIdx) => {
+              return (<th key={labelIdx} className={kebabize(label.key)}>{label.labelText}</th>)
+            })}
+          </tr>
+          </thead>
+        ) : null}
         <tbody>
         {store ? postList?.map((post, postIdx) => {
           return (
             <tr key={postIdx}
                 className={post.categoryName === CategoryEnum.notice && !!post.isPinned ? 'category' : ''}>
-              {labels.map((label, labelIdx) => {
+              {!store?.mobile.isMobile ? labels.map((label, labelIdx) => {
                 return (
                   <td key={labelIdx} className={kebabize(label.key)} onClick={() => {
                     goToPostDetail(post)
@@ -103,7 +107,28 @@ const PostList = (): JSX.Element => {
                     {formatContent(label.key, post[label.key as string as PostPayloadKey] as string)}
                   </td>
                 )
-              })}
+              }) : (
+                <td>
+                  <div className="post-info-wrapper__mobile">
+                    {labels.filter(label => label.key !== PostPayloadKey.title).map((label, labelIdx) => {
+                      return (
+                        <div key={labelIdx} className={kebabize(label.key)} onClick={() => {
+                          goToPostDetail(post)
+                        }}>
+                          <div className="buffer">{labelIdx ? '\\' : ''}</div>
+                          <div>
+                            {formatContent(label.key, post[label.key as string as PostPayloadKey] as string)}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="post-title-wrapper__mobile">
+                    <div className="title">{post.title}</div>
+                  </div>
+                </td>
+              )
+              }
             </tr>
           )
         }) : null}
@@ -150,6 +175,49 @@ padding: 1rem 2rem;
 }
 }
 }
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+tbody {
+tr {
+td {
+max-width: calc(100vw - 2.4rem);
+overflow: hidden;
+padding: 0.6rem 0.9rem;
+position: relative;
+width: 100%;
+.post-info-wrapper__mobile {
+display: flex;
+max-width: calc(100vw - 2.4rem);
+.category-name, .author, .created-at {
+display: flex;
+flex-basis: 33.3%;
+font-size: 1.3rem;
+}
+
+.author, .created-at {
+div:not(.buffer) {
+flex-grow: 1;
+}
+}
+
+}
+.post-title-wrapper__mobile {
+margin-top: 0.6rem;
+text-align: left;
+font-size: ${props => props.theme.fontSizeMobile};
+overflow: hidden;
+max-width: calc(100vw - 0.9rem);
+.title {
+// TODO
+//white-space: nowrap;
+//border: 1px solid black;
+max-width: calc(100vw - 2.4rem);
+}
+}
+}
+}
+}
+
 }
 `
 

@@ -114,11 +114,9 @@ position: relative;
 right: unset;
 height: 4rem;
 min-width: 15.4rem;
+order: 1;
 button {
 max-height: 4rem;
-}
-.searchbar {
-order: 1;
 }
 }
 &__menu {

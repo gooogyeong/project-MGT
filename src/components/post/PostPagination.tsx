@@ -3,14 +3,12 @@ import React from 'react'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
 
-
-const pagePerPage = 10
-
-const pageButtonArr = new Array(pagePerPage).fill(true)
-
 const PostPagination = () => {
 
   const store = React.useContext(storeContext)
+
+  const pagePerPage = !store?.mobile.isMobile ? 10 : 5
+  const pageButtonArr = new Array(pagePerPage).fill(true)
 
   const handlePageClick = async (page: number) => {
     store?.post.setCurrPage(page)
@@ -72,6 +70,26 @@ margin-right: 1rem;
 &.selected {
 background-color: white;
 border: 1px dotted blue;
+}
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+padding: 1rem 0.8rem 0;
+.pagination__wrapper {
+padding: 1.7rem 0;
+.prev, .next {
+font-size: 1.3rem;
+}
+.pages {
+.page {
+font-size: 1.3rem;
+width: 2.2rem;
+height: 2.2rem;
+&:not(:last-child) {
+margin-right: 0.8rem;
+}
 }
 }
 }
