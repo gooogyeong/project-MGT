@@ -324,42 +324,42 @@ const Post = (props: PostProps) => {
             {!store?.mobile.isMobile ? <div></div> : null}
           </div>
         ) : null}
-        {props.isWrite || props.isEdit || props.post?.tags.length ? (
-          <div className="post__footer--share">
-            <div className="label">태그</div>
-            <div className="content">
-              <div className="tag__wrapper">
-                {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
+        {/*{props.isWrite || props.isEdit ? (*/}
+        <div className="post__footer--share">
+          <div className="label">태그</div>
+          <div className="content">
+            <div className="tag__wrapper">
+              {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
+                key={tagIndex}
+                tag={tag}
+              />) : (
+                props.editPostTags?.map((tag, tagIndex) => <Tag
                   key={tagIndex}
                   tag={tag}
-                />) : (
-                  props.editPostTags?.map((tag, tagIndex) => <Tag
-                    key={tagIndex}
-                    tag={tag}
-                  />)
-                )}
-              </div>
+                />)
+              )}
             </div>
-            <div className="content">
-              <div className="label">공유하기</div>
-              <div className="social-media__wrapper">
-                <div onClick={shareTwitter}>
-                  <img src={twitterBlue} alt="share-via-twitter" className="red"/>
-                </div>
-                <div onClick={shareFacebook}>
-                  <img src={facebookBlue} alt="share-via-facebook"/>
-                </div>
-                <div onClick={shareKakaotalk}>
-                  {/*TODO: 모바일 테스트*/}
-                  <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
-                </div>
-                <div onClick={shareLink}>
-                  <img src={linkBlue} alt="share-via-link"/>
-                </div>
+          </div>
+          <div className="content">
+            <div className="label">공유하기</div>
+            <div className="social-media__wrapper">
+              <div onClick={shareTwitter}>
+                <img src={twitterBlue} alt="share-via-twitter" className="red"/>
+              </div>
+              <div onClick={shareFacebook}>
+                <img src={facebookBlue} alt="share-via-facebook"/>
+              </div>
+              <div onClick={shareKakaotalk}>
+                {/*TODO: 모바일 테스트*/}
+                <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
+              </div>
+              <div onClick={shareLink}>
+                <img src={linkBlue} alt="share-via-link"/>
               </div>
             </div>
           </div>
-        ) : null}
+        </div>
+        {/*) : null}*/}
         {!store?.mobile.isMobile ? (
           <PostNavigator
             isMobile={store?.mobile.isMobile || false}
