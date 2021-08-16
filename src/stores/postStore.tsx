@@ -21,6 +21,7 @@ import {
 import { Order } from '@/utils/enum'
 import { getSearchOptions } from '@/utils'
 import { Tag } from '@/types/tags'
+import { trackPromise } from 'react-promise-tracker'
 
 // TODO: post (view)와 edit (write) 을 구분해서 stoer분리
 
@@ -126,23 +127,23 @@ export const postStore = (): PostStore => {
         if (this.currPage === 1 && !page) {
           const isPinnedNotice = this.currPage === 1
           const [pinnedNotices, posts] = await Promise.all([
-            getPostsService(
+            trackPromise(getPostsService(
               this.searchKeyword,
               getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage, isPinnedNotice)
-            ),
-            getPostsService(
+            )),
+            trackPromise(getPostsService(
               this.searchKeyword,
               getSearchOptions(this.searchOptions, this.currPage, this.postsPerPage)
-            )
+            ))
           ])
           const pinnedNoticesAndPosts = ((pinnedNotices as SearchResponse<unknown>).hits as Post[]).concat((posts as SearchResponse<unknown>).hits as Post[])
           if (!noSet) this.posts = pinnedNoticesAndPosts
           if (noSet) return pinnedNoticesAndPosts
         } else {
-          const res = await getPostsService(
+          const res = await trackPromise(getPostsService(
             this.searchKeyword,
             getSearchOptions(this.searchOptions, page || this.currPage, this.postsPerPage)
-          )
+          ))
           const { hits } = res as SearchResponse<unknown>
           if (!noSet) this.posts = hits as Post[]
           if (noSet) return hits as Post[]
@@ -154,7 +155,7 @@ export const postStore = (): PostStore => {
 
     async getPost (postId) {
       try {
-        const res = await getPostService(postId)
+        const res = await trackPromise(getPostService(postId))
         this.currPostDetail = res as Post
       } catch (error) {
         console.log(error)
@@ -173,7 +174,7 @@ export const postStore = (): PostStore => {
           filters: `authorUid:"${authorUid}"`,
           hitsPerPage: 1
         }
-        const res = await getLatestPostByAuthorService(searchOptions)
+        const res = await trackPromise(getLatestPostByAuthorService(searchOptions))
         const { hits } = res as SearchResponse<unknown>
         // TODO: 더 나은 방법? ex. mobx-react-lite에서 store간 상호작용
         return hits[0] as Post
@@ -187,26 +188,26 @@ export const postStore = (): PostStore => {
         if (this.currPage === 1 && !page) {
           // TODO: [{ posts as pinnedNotices }, { posts }] 이렇게 쓰는거 가능할지
           const [pinnedNotices, posts] = await Promise.all([
-            getPostsByTagService({
+            trackPromise(getPostsByTagService({
               tag: this.searchTag as Tag,
               isPinned: 1
-            }),
-            getPostsByTagService({
+            })),
+            trackPromise(getPostsByTagService({
               tag: this.searchTag as Tag,
               offset: ((page || this.currPage) - 1) * this.postsPerPage,
               limit: this.postsPerPage,
               isPinned: 0
-            })
+            }))
           ])
           const pinnedNoticesAndPosts = pinnedNotices.posts.concat(posts.posts)
           if (!noSet) this.posts = pinnedNoticesAndPosts
           if (noSet) return pinnedNoticesAndPosts
         } else {
-          const { posts } = await getPostsByTagService({
+          const { posts } = await trackPromise(getPostsByTagService({
             tag: this.searchTag as Tag,
             offset: ((page || this.currPage) - 1) * this.postsPerPage,
             limit: this.postsPerPage
-          })
+          }))
           if (!noSet) this.posts = posts as Post[]
           if (noSet) return posts as Post[]
         }
@@ -220,12 +221,12 @@ export const postStore = (): PostStore => {
     },
 
     async createPost (payload) {
-      await createPostService(this.tempPostId, payload)
+      await trackPromise(createPostService(this.tempPostId, payload))
     },
 
     async getTempPost () {
       if (this.tempPostId) {
-        const tempPost = await getTempPostService(this.tempPostId)
+        const tempPost = await trackPromise(getTempPostService(this.tempPostId))
         return tempPost as Post
       }
     },
@@ -233,7 +234,7 @@ export const postStore = (): PostStore => {
     async updatePost (payload: UpdatePostPayload) {
       try {
         if (this.currEditPost?.objectID) {
-          await updatePostService(this.currEditPost.objectID, payload)
+          await trackPromise(updatePostService(this.currEditPost.objectID, payload))
         }
       } catch (error) {
         console.log(error)
@@ -242,7 +243,7 @@ export const postStore = (): PostStore => {
 
     async updateTempPost (payload: UpdatePostPayload) {
       try {
-        await updateTempPostService(this.tempPostId, payload)
+        await trackPromise(updateTempPostService(this.tempPostId, payload))
       } catch (error) {
         console.log(error)
       }
@@ -250,7 +251,7 @@ export const postStore = (): PostStore => {
 
     async deleteTempPost () {
       try {
-        await deleteTempPostService(this.tempPostId)
+        await trackPromise(deleteTempPostService(this.tempPostId))
         this.tempPostId = ''
       } catch (error) {
         console.log(error)

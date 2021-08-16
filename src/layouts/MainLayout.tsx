@@ -65,7 +65,7 @@ border: 1px dotted red;
 position: relative;
 
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
-margin: 1.2rem;
+margin: 1.2rem 1.2rem 21.4rem;
 }
 `
 

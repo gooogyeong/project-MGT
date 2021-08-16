@@ -1,5 +1,6 @@
 import { getAdminsInfo, getAdminInfo } from '@/services/admin'
 import { Admin } from '@/types/admin'
+import { trackPromise } from 'react-promise-tracker'
 
 export type AdminStore = {
   admins: Admin[];
@@ -14,13 +15,13 @@ export const adminStore = (): AdminStore => {
     admin: null,
 
     async getAdmin (uid: string) {
-      const admin = await getAdminInfo(uid)
+      const admin = await trackPromise(getAdminInfo(uid))
       this.admin = admin
       return admin
     },
 
     async getAdmins () {
-      const admins = await getAdminsInfo()
+      const admins = await trackPromise(getAdminsInfo())
       this.admins = admins
       return admins
     }
