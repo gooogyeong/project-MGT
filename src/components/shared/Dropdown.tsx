@@ -119,6 +119,14 @@ border-bottom: 1px dotted blue;
 }
 }
 }
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+button {
+padding: 0.3rem 0.6rem 0.3rem 1.1rem;
+.button__wrapper {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+}
 `
 
 export default Dropdown

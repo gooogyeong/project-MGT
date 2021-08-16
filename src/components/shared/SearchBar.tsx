@@ -50,6 +50,12 @@ color: white;
 font-size: 1.8rem;
 padding: 0 2rem;
 }
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+button {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+}
 `
 
 export default SearchBar

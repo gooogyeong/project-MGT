@@ -83,7 +83,7 @@ const PostSearch = () => {
           if (key === 'searchRange') {
             const searchStartDay = (searchOptions.searchRange as SearchRange).from
             const year = getYear(searchStartDay)
-            const month = getMonth(searchStartDay)
+            const month = getMonth(searchStartDay) + 1
             filterText += `,${year}년도,${month}월`
           }
         })
@@ -143,7 +143,9 @@ const PostSearch = () => {
                 handleItemSelect={handleSearchMonthSelect}
               />
             </div>
-            <SearchBar handleSearchButtonClick={handleSearchButtonClick}/>
+            <div className="filter__searchbar">
+              <SearchBar handleSearchButtonClick={handleSearchButtonClick}/>
+            </div>
           </div>
         </div>
       </MGTPostSearch>
@@ -169,6 +171,33 @@ display: flex;
 min-width: 14rem;
 &:not(:last-child) {
 margin-right: 2rem;
+}
+}
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+padding: 0 1rem 0.8rem;
+.filter__wrapper {
+padding: 2.2rem 0 2.8rem;
+.filter__container {
+flex-direction: column;
+& > div {
+justify-content: center;
+
+&:not(:last-child) {
+margin-bottom: 0.8rem;
+}
+
+&.filter__searchbar {
+min-height: 3.25rem;
+.searchbar {
+input {
+max-width: 16rem;
+margin-right: 1.2rem;
+}
+}
 }
 }
 }

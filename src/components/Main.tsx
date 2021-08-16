@@ -336,23 +336,23 @@ margin-bottom: 0.5rem;
 border-bottom: 1px dotted red;
 }
 .label {
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 padding: 0.2rem 0;
 }
 .post {
 &__title {
 margin-top: 0.5rem;
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 }
 &__content {
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 max-height: 46.2rem;
 
 &__body {
 .button__container {
 height: 5.2rem;
 .layer {
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 padding: 0.7rem 1.8rem;
 }
 }

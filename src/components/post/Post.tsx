@@ -17,12 +17,12 @@ import twitterBlue from '@/assets/icon/twitter-blue.svg'
 import config from '../../../env.json'
 import Button from '@/components/shared/Button'
 import { Editor, EditorContent } from '@tiptap/react'
+import { useObserver } from 'mobx-react-lite'
 
 type PostProps = {
   post: PostType;
   prevPost?: PostType;
   nextPost?: PostType;
-  toNextPost?: (payload: PostType) => void;
   isPageFirstPost?: boolean;
   isPageLastPost?: boolean;
   relPosts?: PostType[];
@@ -37,6 +37,30 @@ type PostProps = {
   handleReferenceChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   leaveWithoutSave?: () => void;
   isWrite?: boolean;
+}
+
+const PostNavigator = (props: {
+  isMobile: boolean;
+  prevPost: PostType | undefined;
+  nextPost: PostType | undefined;
+  toPrevPost: () => void;
+  toNextPost: () => void;
+}) => {
+  return (
+    <div className="post__footer--navigator">
+      <div>
+        {props.prevPost ? <button className="label" onClick={props.toPrevPost}>
+          {`← 이전${props.isMobile ? '' : ' 게시글'}`}
+        </button> : null}
+      </div>
+      <div></div>
+      <div>
+        {props.nextPost ? <button className="label" onClick={props.toNextPost}>
+          {`다음${props.isMobile ? '' : ' 게시글'} →`}
+        </button> : null}
+      </div>
+    </div>
+  )
 }
 
 const Post = (props: PostProps) => {
@@ -189,183 +213,216 @@ const Post = (props: PostProps) => {
     setIsShowCopiedMsg(true)
   }
 
-  return (
-    <MGTPost className="post">
-      <div className="post__header">
-        <div className="label">좌측 각주</div>
-        <div className="label">
-          내용
-        </div>
-        <div className="label">우측 각주</div>
-      </div>
-      <div className="post__body">
-        <div className="post__footnote--left">
-          <div className="footnote__content__wrapper">
-            {leftFootnote.map((footnote, footnoteIdx) => {
-              return (
-                <div key={footnoteIdx}
-                     id={`preview_${footnote.id}`}
-                     className="footnote__content"
-                >{footnote.content}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-        <div className="post__main-text">
-          <div className="content">
-            <div className="content__sub-header">
-              <div>{format(props.post ? new Date(props.post.createdAt) : new Date(), yyyyMMddDot)}</div>
-              <div>{props.post?.author || store?.admin.admin?.nickName}</div>
+  return useObserver(() => {
+    return (
+      <MGTPost className="post">
+        {!store?.mobile.isMobile ? (
+          <div className="post__header">
+            <div className="label">좌측 각주</div>
+            <div className="label">
+              내용
             </div>
-            <div className="content__text">
+            <div className="label">우측 각주</div>
+          </div>
+        ) : <></>}
+        <div className="post__body">
+          {!store?.mobile.isMobile ? (
+            <div className="post__footnote--left">
+              <div className="footnote__content__wrapper">
+                {leftFootnote.map((footnote, footnoteIdx) => {
+                  return (
+                    <div key={footnoteIdx}
+                         id={`preview_${footnote.id}`}
+                         className="footnote__content"
+                    >{footnote.content}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ) : <></>}
+          <div className="post__main-text">
+            <div className="content">
+              <div className="content__sub-header">
+                <div>{format(props.post ? new Date(props.post.createdAt) : new Date(), yyyyMMddDot)}</div>
+                <div>{props.post?.author || store?.admin.admin?.nickName}</div>
+              </div>
+              <div className="content__text">
+                {!props.isEdit && !props.isWrite ?
+                  ReactHtmlParser(props.post.content).map((content => content)) :
+                  props.editor ? (
+                    <EditorContent
+                      className='editor__wrapper'
+                      editor={props.editor}
+                    />) : null}
+              </div>
+              <div className="btn-container">
+                {!props.isEdit && !props.isWrite && (props.post && store?.admin.admin?.nickName === props.post.author) ?
+                  <Button variant="red" buttonText="삭제" onClick={handleDeleteClick}/> : null}
+                {props.isWrite || (props.post && store?.admin.admin?.nickName === props.post.author) ?
+                  <Button variant="blue" buttonText={!props.isWrite ? '수정' : '등록'} onClick={handleSubmitClick}/> : null}
+                {props.isEdit || props.isWrite ? <Button variant="red" buttonText="취소" onClick={() => {
+                  if (props.leaveWithoutSave) props.leaveWithoutSave()
+                }}/> : null}
+              </div>
+            </div>
+          </div>
+          {!store?.mobile.isMobile ? (
+            <div className="post__footnote--right">
+              <div className="footnote__content__wrapper">
+                {rightFootnote.map((footnote, footnoteIdx) => {
+                  return (
+                    <div key={footnoteIdx}
+                         id={`preview_${footnote.id}`}
+                         className="footnote__content"
+                    >{footnote.content}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ) : <></>}
+        </div>
+        {!store?.mobile.isMobile ? null : (
+          <PostNavigator
+            isMobile={store?.mobile.isMobile || false}
+            prevPost={props.prevPost}
+            nextPost={props.nextPost}
+            toPrevPost={toPrevPost}
+            toNextPost={toNextPost}
+          />
+        )}
+        {store?.mobile.isMobile && !props.isWrite && !props.isEdit && props.post.footnote?.length ? (
+          <div className="post__footer--footnote">
+            <div className="label">각주</div>
+            <div className="content">
+              {props.post.footnote.map((footnote, footnoteIdx) => {
+                return (
+                  // <div>{foontnote.count})</div>
+                  <div>{footnoteIdx + 1}) {
+                    footnote.content
+                  }</div>
+                )
+              })}
+            </div>
+            {!store?.mobile.isMobile ? <div></div> : null}
+          </div>
+        ) : null}
+        {props.isWrite || props.isEdit || props.post?.reference ? (
+          <div className="post__footer--reference">
+            <div className="label">참고</div>
+            <div className="content">
               {!props.isEdit && !props.isWrite ?
-                ReactHtmlParser(props.post.content).map((content => content)) :
-                props.editor ? (
-                  <EditorContent
-                    className='editor__wrapper'
-                    editor={props.editor}
-                  />) : null}
+                (<div className="reference__wrapper">{props.post.reference}</div>) :
+                (<textarea
+                  spellCheck={false}
+                  value={props.editReference}
+                  onChange={props.handleReferenceChange}
+                />)
+              }
             </div>
-            <div className="btn-container">
-              {!props.isEdit && !props.isWrite ?
-                <Button variant="red" buttonText="삭제" onClick={handleDeleteClick}/> : null}
-              {props.isWrite || (props.post && store?.admin.admin?.nickName === props.post.author) ?
-                <Button variant="blue" buttonText={!props.isWrite ? '수정' : '등록'} onClick={handleSubmitClick}/> : null}
-              {props.isEdit || props.isWrite ? <Button variant="red" buttonText="취소" onClick={() => {
-                if (props.leaveWithoutSave) props.leaveWithoutSave()
-              }}/> : null}
-            </div>
+            {!store?.mobile.isMobile ? <div></div> : null}
           </div>
-        </div>
-        <div className="post__footnote--right">
-          <div className="footnote__content__wrapper">
-            {rightFootnote.map((footnote, footnoteIdx) => {
-              return (
-                <div key={footnoteIdx}
-                     id={`preview_${footnote.id}`}
-                     className="footnote__content"
-                >{footnote.content}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-      {props.isWrite || props.isEdit || props.post?.reference ? (
-        <div className="post__footer--reference">
-          <div className="label">참고</div>
-          <div className="content">
-            {!props.isEdit && !props.isWrite ?
-              (<div className="reference__wrapper">{props.post.reference}</div>) :
-              (<textarea
-                spellCheck={false}
-                value={props.editReference}
-                onChange={props.handleReferenceChange}
-              />)
-            }
-          </div>
-          <div></div>
-        </div>
-      ) : null}
-      {props.isWrite || props.isEdit || props.post?.tags.length ? (
-        <div className="post__footer--share">
-          <div className="label">태그</div>
-          <div className="content">
-            <div className="tag__wrapper">
-              {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
-                key={tagIndex}
-                tag={tag}
-              />) : (
-                props.editPostTags?.map((tag, tagIndex) => <Tag
+        ) : null}
+        {props.isWrite || props.isEdit || props.post?.tags.length ? (
+          <div className="post__footer--share">
+            <div className="label">태그</div>
+            <div className="content">
+              <div className="tag__wrapper">
+                {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
                   key={tagIndex}
                   tag={tag}
-                />)
-              )}
-            </div>
-          </div>
-          <div className="content">
-            <div className="label">공유하기</div>
-            <div className="social-media__wrapper">
-              <div onClick={shareTwitter}>
-                <img src={twitterBlue} alt="share-via-twitter" className="red"/>
-              </div>
-              <div onClick={shareFacebook}>
-                <img src={facebookBlue} alt="share-via-facebook"/>
-              </div>
-              <div onClick={shareKakaotalk}>
-                {/*TODO: 모바일 테스트*/}
-                <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
-              </div>
-              <div onClick={shareLink}>
-                <img src={linkBlue} alt="share-via-link"/>
+                />) : (
+                  props.editPostTags?.map((tag, tagIndex) => <Tag
+                    key={tagIndex}
+                    tag={tag}
+                  />)
+                )}
               </div>
             </div>
+            <div className="content">
+              <div className="label">공유하기</div>
+              <div className="social-media__wrapper">
+                <div onClick={shareTwitter}>
+                  <img src={twitterBlue} alt="share-via-twitter" className="red"/>
+                </div>
+                <div onClick={shareFacebook}>
+                  <img src={facebookBlue} alt="share-via-facebook"/>
+                </div>
+                <div onClick={shareKakaotalk}>
+                  {/*TODO: 모바일 테스트*/}
+                  <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
+                </div>
+                <div onClick={shareLink}>
+                  <img src={linkBlue} alt="share-via-link"/>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      ) : null}
-      <div className="post__footer--navigator">
-        <div>
-          {props.prevPost ? <button className="label" onClick={toPrevPost}>← 이전 게시글</button> : null}
-        </div>
-        <div></div>
-        <div>
-          {props.nextPost ? <button className="label" onClick={toNextPost}>다음 게시글 →</button> : null}
-        </div>
-      </div>
-      {/*TODO: 관련게시글 컴포넌트 분리 또는 chunkArr 유틸 만들어서 반복 없도록*/}
-      {props.relPosts && props.relPosts.length ? <div className="post__footer--rel-posts">
-        <div className="label">관련 게시글</div>
-        <div className="rel-posts__container">
-          <div className="rel-posts__left">{
-            props.relPosts ? props.relPosts.slice(0, 4).map((post, postIdx) => {
-                return (
-                  <div
-                    key={postIdx}
-                    className="title__wrapper"
-                    onClick={() => goToRelPost(post.objectID as string)}
-                  >
-                    <div className="title">◦{post.title}</div>
-                    <div className="created-at">____ {format(new Date(post.createdAt), yyyyMMddDot)}</div>
-                  </div>
-                )
-              })
-              : null}</div>
-          <div className="rel-posts__right">{
-            props.relPosts ? props.relPosts.slice(4, 8).map((post, postIdx) => {
-                return (
-                  <div
-                    key={postIdx}
-                    className="title__wrapper"
-                    onClick={() => goToRelPost(post.objectID as string)}
-                  >
-                    <div className="title">◦{post.title}</div>
-                    <div className="created-at">____ {format(new Date(post.createdAt), yyyyMMddDot)}</div>
-                  </div>
-                )
-              })
-              : null}</div>
-        </div>
-      </div> : null}
-      {isOpenLinkModal ? (
-        <Modal
-          isOpen={isOpenLinkModal}
-          open={setIsOpenLinkModal}
-          confirmButtonText="복사"
-          cancelButtonText="닫기"
-          onConfirmButtonClick={copyToClipboard}
-          onCancelButtonClick={() => {
-            setIsShowCopiedMsg(false)
-          }}
-        >
-          <div className="share-modal__wrapper">
-            <div className={`copied ${isShowCopiedMsg ? '' : 'hidden'}`}>복사되었습니다</div>
-            <div className="link">링크: {shortenURL}</div>
+        ) : null}
+        {!store?.mobile.isMobile ? (
+          <PostNavigator
+            isMobile={store?.mobile.isMobile || false}
+            prevPost={props.prevPost}
+            nextPost={props.nextPost}
+            toPrevPost={toPrevPost}
+            toNextPost={toNextPost}
+          />
+        ) : null}
+        {/*TODO: 관련게시글 컴포넌트 분리 또는 chunkArr 유틸 만들어서 반복 없도록*/}
+        {props.relPosts && props.relPosts.length ? <div className="post__footer--rel-posts">
+          <div className="label">관련 게시글</div>
+          <div className="rel-posts__container">
+            <div className="rel-posts__left">{
+              props.relPosts ? props.relPosts.slice(0, 4).map((post, postIdx) => {
+                  return (
+                    <div
+                      key={postIdx}
+                      className="title__wrapper"
+                      onClick={() => goToRelPost(post.objectID as string)}
+                    >
+                      <div className="title">◦{post.title}</div>
+                      <div className="created-at">____ {format(new Date(post.createdAt), yyyyMMddDot)}</div>
+                    </div>
+                  )
+                })
+                : null}</div>
+            <div className="rel-posts__right">{
+              props.relPosts ? props.relPosts.slice(4, 8).map((post, postIdx) => {
+                  return (
+                    <div
+                      key={postIdx}
+                      className="title__wrapper"
+                      onClick={() => goToRelPost(post.objectID as string)}
+                    >
+                      <div className="title">◦{post.title}</div>
+                      <div className="created-at">____ {format(new Date(post.createdAt), yyyyMMddDot)}</div>
+                    </div>
+                  )
+                })
+                : null}</div>
           </div>
-        </Modal>
-      ) : null}
-    </MGTPost>
-  )
+        </div> : null}
+        {isOpenLinkModal ? (
+          <Modal
+            isOpen={isOpenLinkModal}
+            open={setIsOpenLinkModal}
+            confirmButtonText="복사"
+            cancelButtonText="닫기"
+            onConfirmButtonClick={copyToClipboard}
+            onCancelButtonClick={() => {
+              setIsShowCopiedMsg(false)
+            }}
+          >
+            <div className="share-modal__wrapper">
+              <div className={`copied ${isShowCopiedMsg ? '' : 'hidden'}`}>복사되었습니다</div>
+              <div className="link">링크: {shortenURL}</div>
+            </div>
+          </Modal>
+        ) : null}
+      </MGTPost>
+    )
+  })
 }
 
 export const MGTPost = styled.div`
@@ -509,6 +566,9 @@ align-items: center;
 .tag__wrapper {
 width: calc(100% - 2.6rem);
 max-width: calc(100% - 2.6rem);
+.tag:not(:last-child) {
+margin-right: 0.75rem;
+}
 }
 .social-media__wrapper {
 display: flex;
@@ -576,8 +636,8 @@ margin-right: 0.5rem;
 }
 }
 .modal__content {
-padding: 1.7rem;
-background-color: ${props => props.theme.beigeLight} !important;
+ padding: 1.7rem;
+ background-color: ${props => props.theme.beigeLight} !important;
 width: 43rem !important;
 .copied {
 color: blue;
@@ -599,6 +659,154 @@ background-color: blue;
 }
 &.cancel {
 background-color: red;
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+.label {
+font-size: 1.3rem;
+}
+.content {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+
+.post {
+&__body {
+.post__main-text {
+flex-basis: 100%;
+min-width: 100%;
+border-right: none;
+.content {
+&__sub-header {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+&__text {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+.btn-container {
+padding: 1.3rem;
+font-size: ${props => props.theme.fontSizeMobile};
+.layer {
+padding: 0.6rem 1.2rem;
+}
+.button:not(:last-child) {
+margin-right: 0.8rem;
+}
+}
+}
+}
+}
+&__footer {
+&--footnote {
+flex-direction: column;
+.label, .content {
+max-width: 100%;
+flex-basis: 100%;
+}
+.label {
+ border-right: none;
+ border-bottom: 1px dotted blue;
+}
+.content {
+padding: 0.7rem 1.3rem;
+& > div {
+  padding-left: 1.2em;
+  text-indent:-1.2em;
+  &:not(:last-child) {
+  margin-bottom: 0.4rem;
+  }
+}
+}
+}
+&--reference {
+flex-direction: column;
+.label, .content {
+flex-basis: 100%;
+min-width: 100%;
+}
+.label {
+border-right: none;
+border-bottom: 1px dotted blue;
+}
+.content {
+.reference__wrapper {
+line-height: 2.8rem;
+}
+}
+}
+&--share {
+flex-direction: column;
+border-right: none;
+.label, .content {
+min-width: 100%;
+flex-basis: 100%:
+}
+.label {
+border-right: none;
+border-bottom: 1px dotted blue;
+}
+.content {
+.label {
+border-top: 1px dotted blue;
+}
+&:not(:last-child) {
+border-right: none;
+}
+.tag__wrapper {
+padding: 0.7rem 0;
+}
+.social-media__wrapper {
+padding: 0.7rem 0;
+& > div {
+height: 2.8rem;
+width: 2.8rem;
+img {
+height: 2.8rem;
+width: 2.8rem;
+}
+&:not(:last-child) {
+margin-right: 2rem;
+}
+}
+}
+}
+}
+&--rel-posts {
+border-top: 1px dotted red;
+.rel-posts__container {
+flex-direction: column;
+padding: 1.2rem 0;
+& > div {
+flex-basis: 100%;
+max-width: 100%;
+padding: 0;
+&:not(:last-child) {
+border-right: none;
+}
+.title__wrapper {
+padding-left: 0.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
+}
+}
+}
+}
+}
+
+
+
+}
+
+.modal__content {
+width: 27.3rem !important;
+.copied {
+font-size: 1.3rem;
+}
+.link {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+.layer {
+font-size: 1.3rem;
 }
 }
 }
