@@ -45,6 +45,7 @@ const MainLayout = (props: MainLayoutProps) => {
         {!store?.mobile.isMobile || (store?.mobile.isMobile && isShowMobileNavBar) ? (
           <NavBar
             isMobile={store?.mobile.isMobile || window.innerWidth <= parseInt(widthMobileScreen)}
+            setIsShowMobileNavBar={setIsShowMobileNavBar}
           />
         ) : null}
         <div>
