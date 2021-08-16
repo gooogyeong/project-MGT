@@ -23,7 +23,6 @@ type PostProps = {
   post: PostType;
   prevPost?: PostType;
   nextPost?: PostType;
-  toNextPost?: (payload: PostType) => void;
   isPageFirstPost?: boolean;
   isPageLastPost?: boolean;
   relPosts?: PostType[];
@@ -38,6 +37,30 @@ type PostProps = {
   handleReferenceChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   leaveWithoutSave?: () => void;
   isWrite?: boolean;
+}
+
+const PostNavigator = (props: {
+  isMobile: boolean;
+  prevPost: PostType | undefined;
+  nextPost: PostType | undefined;
+  toPrevPost: () => void;
+  toNextPost: () => void;
+}) => {
+  return (
+    <div className="post__footer--navigator">
+      <div>
+        {props.prevPost ? <button className="label" onClick={props.toPrevPost}>
+          {`← 이전${props.isMobile ? '' : ' 게시글'}`}
+        </button> : null}
+      </div>
+      <div></div>
+      <div>
+        {props.nextPost ? <button className="label" onClick={props.toNextPost}>
+          {`다음${props.isMobile ? '' : ' 게시글'} →`}
+        </button> : null}
+      </div>
+    </div>
+  )
 }
 
 const Post = (props: PostProps) => {
@@ -260,6 +283,15 @@ const Post = (props: PostProps) => {
             </div>
           ) : <></>}
         </div>
+        {!store?.mobile.isMobile ? null : (
+          <PostNavigator
+            isMobile={store?.mobile.isMobile || false}
+            prevPost={props.prevPost}
+            nextPost={props.nextPost}
+            toPrevPost={toPrevPost}
+            toNextPost={toNextPost}
+          />
+        )}
         {store?.mobile.isMobile && !props.isWrite && !props.isEdit && props.post.footnote?.length ? (
           <div className="post__footer--footnote">
             <div className="label">각주</div>
@@ -328,15 +360,15 @@ const Post = (props: PostProps) => {
             </div>
           </div>
         ) : null}
-        <div className="post__footer--navigator">
-          <div>
-            {props.prevPost ? <button className="label" onClick={toPrevPost}>← 이전 게시글</button> : null}
-          </div>
-          <div></div>
-          <div>
-            {props.nextPost ? <button className="label" onClick={toNextPost}>다음 게시글 →</button> : null}
-          </div>
-        </div>
+        {!store?.mobile.isMobile ? (
+          <PostNavigator
+            isMobile={store?.mobile.isMobile || false}
+            prevPost={props.prevPost}
+            nextPost={props.nextPost}
+            toPrevPost={toPrevPost}
+            toNextPost={toNextPost}
+          />
+        ) : null}
         {/*TODO: 관련게시글 컴포넌트 분리 또는 chunkArr 유틸 만들어서 반복 없도록*/}
         {props.relPosts && props.relPosts.length ? <div className="post__footer--rel-posts">
           <div className="label">관련 게시글</div>
@@ -604,7 +636,7 @@ margin-right: 0.5rem;
 }
 }
 .modal__content {
- padding: ${props => props.theme.fontSizeMobile};
+ padding: 1.7rem;
  background-color: ${props => props.theme.beigeLight} !important;
 width: 43rem !important;
 .copied {
@@ -741,6 +773,7 @@ margin-right: 2rem;
 }
 }
 &--rel-posts {
+border-top: 1px dotted red;
 .rel-posts__container {
 flex-direction: column;
 padding: 1.2rem 0;
@@ -754,12 +787,26 @@ border-right: none;
 .title__wrapper {
 padding-left: 0.7rem;
 font-size: ${props => props.theme.fontSizeMobile};
-.title {
 }
 }
 }
 }
 }
+
+
+
+}
+
+.modal__content {
+width: 27.3rem !important;
+.copied {
+font-size: 1.3rem;
+}
+.link {
+font-size: ${props => props.theme.fontSizeMobile};
+}
+.layer {
+font-size: 1.3rem;
 }
 }
 }
