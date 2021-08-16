@@ -6,12 +6,16 @@ import Footer from '@/components/Footer'
 import { storeContext } from '@/stores/context'
 import { widthMobileScreen } from '@/assets/style/theme'
 import { useObserver } from 'mobx-react-lite'
+import Loading from '@/components/shared/Loading'
+import { usePromiseTracker } from 'react-promise-tracker'
 
 type MainLayoutProps = {
   children: JSX.Element;
 }
 
 const MainLayout = (props: MainLayoutProps) => {
+
+  const { promiseInProgress } = usePromiseTracker()
 
   const store = useContext(storeContext)
 
@@ -37,6 +41,7 @@ const MainLayout = (props: MainLayoutProps) => {
   return useObserver(() => {
     return (
       <MGTMainLayout>
+        {promiseInProgress ? <Loading/> : null}
         <Header
           isMobile={store?.mobile.isMobile || window.innerWidth <= parseInt(widthMobileScreen)}
           isShowMobileNavBar={isShowMobileNavBar}
@@ -62,7 +67,7 @@ const MainLayout = (props: MainLayoutProps) => {
 const MGTMainLayout = styled.div`
 margin: 6.8rem 7.6rem;
 border: 1px dotted red;
-position: relative;
+//position: relative;
 
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 margin: 1.2rem;

@@ -1,5 +1,6 @@
 import { Tag } from '@/types/tags'
 import { getTags as getTagsService } from '@/services/tags'
+import { trackPromise } from 'react-promise-tracker'
 
 export type TagStore = {
   tags: Tag[];
@@ -11,7 +12,7 @@ export const tagStore = (): TagStore => {
     tags: [],
 
     async getTags () {
-      const tags = await getTagsService()
+      const tags = await trackPromise(getTagsService())
       this.tags = tags as Tag[]
     }
   }
