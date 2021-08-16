@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import SearchBar from '@/components/shared/SearchBar'
 import { useHistory } from 'react-router-dom'
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { storeContext } from '@/stores/context'
 
 const menus = [
@@ -34,6 +34,7 @@ const menus = [
 
 type NavBarProps = {
   isMobile: boolean;
+  setIsShowMobileNavBar: Dispatch<SetStateAction<boolean>>;
 }
 
 const NavBar = (props: NavBarProps) => {
@@ -42,12 +43,16 @@ const NavBar = (props: NavBarProps) => {
   const store = React.useContext(storeContext)
 
   const goToMenu = (uri: string) => {
-    if (uri) history.push(uri)
+    if (uri) {
+      history.push(uri)
+      props.setIsShowMobileNavBar(false)
+    }
   }
 
   const handleSearchButtonClick = async () => {
     if (history.location.pathname !== '/post/list') history.push('/post/list')
     await store?.post.getPosts()
+    props.setIsShowMobileNavBar(false)
   }
 
   return (
@@ -114,18 +119,16 @@ position: relative;
 right: unset;
 height: 4rem;
 min-width: 15.4rem;
+order: 1;
 button {
 max-height: 4rem;
-}
-.searchbar {
-order: 1;
 }
 }
 &__menu {
 margin-top: 2.7rem;
 flex-direction: column;
 align-items: center;
-font-size: 1.7rem;
+font-size: ${props => props.theme.fontSizeMobile};
 order: 2;
 & > div:not(:last-child) {
 margin-bottom: 1rem;
