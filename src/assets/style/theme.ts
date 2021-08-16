@@ -12,7 +12,8 @@ const color = {
 
 const zIndex = {
   zIndexMobileNavBar: 10,
-  zIndexModal: 20
+  zIndexModal: 20,
+  zIndexLoading: 30
 }
 
 export const theme = Object.assign({}, size, color, zIndex)

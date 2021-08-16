@@ -3,6 +3,7 @@ import { auth } from '@/services/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import firebase from 'firebase/compat'
 import { storeContext } from '@/stores/context'
+import Loading from '@/components/shared/Loading'
 
 export const AuthContext = createContext<{ currentUser: (firebase.User | null) } | null>(null)
 
@@ -25,7 +26,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
   }, [])
 
   if (pending) {
-    return <>Loading...</>
+    return <Loading/>
   }
 
   return (
