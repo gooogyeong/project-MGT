@@ -83,7 +83,7 @@ const PostSearch = () => {
           if (key === 'searchRange') {
             const searchStartDay = (searchOptions.searchRange as SearchRange).from
             const year = getYear(searchStartDay)
-            const month = getMonth(searchStartDay)
+            const month = getMonth(searchStartDay) + 1
             filterText += `,${year}년도,${month}월`
           }
         })
