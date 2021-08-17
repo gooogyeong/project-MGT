@@ -98,9 +98,11 @@ export default Image.extend({
     const size = getWidth(node.attrs.size) // node.attrs.size
     const position = node.attrs.position
 
-    if (size) HTMLAttributes.style = size
+    let styleStr = 'object-fit: contain;'
+    if (size) styleStr = `${styleStr} ${size}`
+    HTMLAttributes.style = styleStr
 
-    return ['div', { class: 'img__wrapper', style: `display: flex; justify-content: ${position};` }, [
+    return ['div', { class: 'img__wrapper', style: `display: flex; justify-content: ${position}` }, [
       'img',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)
     ]]
