@@ -209,7 +209,15 @@ const Post = (props: PostProps) => {
   }
 
   const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(shortenURL)
+    const tmpTextarea = document.createElement('textarea')
+    tmpTextarea.value = shortenURL
+
+    document.body.appendChild(tmpTextarea)
+    tmpTextarea.select()
+    tmpTextarea.setSelectionRange(0, 9999)
+
+    document.execCommand('copy')
+    document.body.removeChild(tmpTextarea)
     setIsShowCopiedMsg(true)
   }
 
@@ -324,22 +332,25 @@ const Post = (props: PostProps) => {
             {!store?.mobile.isMobile ? <div></div> : null}
           </div>
         ) : null}
-        {/*{props.isWrite || props.isEdit ? (*/}
         <div className="post__footer--share">
-          <div className="label">태그</div>
-          <div className="content">
-            <div className="tag__wrapper">
-              {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
-                key={tagIndex}
-                tag={tag}
-              />) : (
-                props.editPostTags?.map((tag, tagIndex) => <Tag
-                  key={tagIndex}
-                  tag={tag}
-                />)
-              )}
-            </div>
-          </div>
+          {props.isWrite || props.isEdit || (props.post && props.post.tags.length) ? (
+            <>
+              <div className="label">태그</div>
+              <div className="content">
+                <div className="tag__wrapper">
+                  {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
+                    key={tagIndex}
+                    tag={tag}
+                  />) : (
+                    props.editPostTags?.map((tag, tagIndex) => <Tag
+                      key={tagIndex}
+                      tag={tag}
+                    />)
+                  )}
+                </div>
+              </div>
+            </>
+          ) : null}
           <div className="content">
             <div className="label">공유하기</div>
             <div className="social-media__wrapper">
@@ -359,7 +370,6 @@ const Post = (props: PostProps) => {
             </div>
           </div>
         </div>
-        {/*) : null}*/}
         {!store?.mobile.isMobile ? (
           <PostNavigator
             isMobile={store?.mobile.isMobile || false}
