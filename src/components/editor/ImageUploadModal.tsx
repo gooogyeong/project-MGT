@@ -37,6 +37,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
 
   const addImageToEditor = () => {
     if (tempImageSrc) props.addImageToEditor(tempImageSrc)
+    setTempImageSrc('')
     props.openImageUploadModal(false)
   }
 
