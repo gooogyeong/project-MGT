@@ -1,6 +1,7 @@
-import React, { useState, useRef, Dispatch, SetStateAction, useEffect } from 'react'
+import React, { useState, useRef, Dispatch, SetStateAction, useContext } from 'react'
 import Modal from '@/components/shared/Modal'
 import styled from 'styled-components'
+import { storeContext } from '@/stores/context'
 
 type ImageUploadModalProps = {
   isOpen: boolean;
@@ -10,6 +11,8 @@ type ImageUploadModalProps = {
 
 const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadModalProps): JSX.Element => {
 
+  const store = useContext(storeContext)
+
   const fileUploader = useRef<HTMLInputElement>(null)
 
   const [tempImageSrc, setTempImageSrc] = useState('')
@@ -17,23 +20,10 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
   const handleFileChange = async () => {
     if (fileUploader.current && fileUploader.current.files) {
       const file = fileUploader.current.files[0]
-      const base64Format = await toBase64(file)
-      // TODO: validate base64?
-      if (typeof base64Format === 'string') setTempImageSrc(base64Format)
-      // TODO: firebase 스토리지에 저장
-      // const objectUrl = URL.createObjectURL(file)
-      // let formData = new FormData()
-      // formData.append('file', file)
+      const downloadURL = await store?.post.uploadPostImg(file)
+      setTempImageSrc(downloadURL as unknown as string)
     }
   }
-
-  const toBase64 = (file: Blob): Promise<string | ArrayBuffer | null> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result)
-      reader.onerror = (error) => reject(error)
-    })
 
   const addImageToEditor = () => {
     if (tempImageSrc) props.addImageToEditor(tempImageSrc)
@@ -54,7 +44,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
     >
       <MGTImgUploadModal>
         <div>
-          <input type="file" onChange={handleFileChange} id="up" ref={fileUploader}/>
+          <input type="file" onChange={handleFileChange} ref={fileUploader}/>
         </div>
         {tempImageSrc ? (
           <div className="preview-container">
