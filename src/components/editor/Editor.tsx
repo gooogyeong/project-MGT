@@ -324,6 +324,7 @@ position: sticky;
 top: 0;
 background-color: white;
 border-bottom: 1px dotted blue;
+z-index: ${props => props.theme.zIndexToolBar};
 .edit-menu-wrapper {
 border-top: 1px dotted blue !important;
 }
