@@ -15,7 +15,7 @@ export default Image.extend({
     positions: ['center', 'flex-start', 'flex-end']
   },
 
-  addAttributes() {
+  addAttributes () {
     return {
       // @ts-ignore
       ...Image.config.addAttributes(),
@@ -30,7 +30,7 @@ export default Image.extend({
     }
   },
 
-  addCommands() {
+  addCommands () {
     // @ts-ignore
     return {
       // This is unchanged from the original
@@ -49,6 +49,7 @@ export default Image.extend({
 
         return true
       },
+
       // @ts-ignore
       setSize: (attributes: ImageAttribute) => ({ tr, dispatch }) => {
         if (attributes.size !== undefined && !this.options.sizes.includes(attributes.size)) {
@@ -70,6 +71,7 @@ export default Image.extend({
           tr.replaceRangeWith(selection.from, selection.to, node)
         }
       },
+
       // @ts-ignore
       setPosition: (attributes: ImageAttribute) => ({ tr, dispatch }) => {
         if (attributes.position !== undefined && !this.options.positions.includes(attributes.position)) {
@@ -94,8 +96,8 @@ export default Image.extend({
     }
   },
 
-  renderHTML({ node, HTMLAttributes }) {
-    const size = getWidth(node.attrs.size) // node.attrs.size
+  renderHTML ({ node, HTMLAttributes }) {
+    const size = getWidth(node.attrs.size)
     const position = node.attrs.position
 
     let styleStr = 'object-fit: contain;'
@@ -112,9 +114,9 @@ export default Image.extend({
 const getWidth = (size: string) => {
   switch (size) {
     case 'small':
-      return `width: 300px; height: 250px;`
+      return `height: 250px;`
     case 'medium':
-      return `width: 500px; height: 300px`
+      return `height: 500px`
     default:
       return ''
   }
