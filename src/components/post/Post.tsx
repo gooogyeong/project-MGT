@@ -698,6 +698,9 @@ font-size: ${props => props.theme.fontSizeMobile};
 }
 &__text {
 font-size: ${props => props.theme.fontSizeMobile};
+  .iframe-wrapper {
+  height: 24rem !important;
+  }
 }
 .btn-container {
 padding: 1.3rem;

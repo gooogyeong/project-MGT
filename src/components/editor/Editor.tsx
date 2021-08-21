@@ -448,6 +448,14 @@ height: 100%;
 }
 }
 }
+
+@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+.ProseMirror {
+  .iframe-wrapper {
+  height: 24rem !important;
+  }
+}
+}
 `
 
 export default Editor
