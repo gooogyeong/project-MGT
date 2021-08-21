@@ -436,7 +436,7 @@ const Post = (props: PostProps) => {
 }
 
 export const MGTPost = styled.div`
-&.post {
+&.post.edit {
 & > div:first-child {
 border-top: none;
 }
