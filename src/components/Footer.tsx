@@ -138,7 +138,7 @@ const Footer = (props: FooterProps) => {
             </div>
             <div className="sub-row">
               <div className="label">아이콘 제작자</div>
-              <div className="content">Pixel perfect from www.flaticon.com</div>
+              <div className="content">Pixel perfect from <a href="https://www.flaticon.com/" target="_blank">www.flaticon.com</a></div>
             </div>
           </div>
           {!props.isMobile ? (
@@ -468,4 +468,4 @@ margin-right: 0.4rem;
 }
 `
 
-export default Footer
+export default React.memo(Footer)
