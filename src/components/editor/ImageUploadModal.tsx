@@ -14,10 +14,6 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
 
   const [tempImageSrc, setTempImageSrc] = useState('')
 
-  useEffect(() => {
-    setTempImageSrc('')
-  }, [])
-
   const handleFileChange = async () => {
     if (fileUploader.current && fileUploader.current.files) {
       const file = fileUploader.current.files[0]
@@ -51,6 +47,9 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
       confirmButtonText={'이미지 추가'}
       cancelButtonText={'닫기'}
       onConfirmButtonClick={addImageToEditor}
+      onCancelButtonClick={() => {
+        setTempImageSrc('')
+      }}
     >
       <MGTImgUploadModal>
         <div>
