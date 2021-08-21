@@ -9,6 +9,7 @@ import LoginView from '@/views/LoginView'
 import WriteView from '@/views/WriteView'
 import EditView from '@/views/EditView'
 import PrivateRoute from '@/routers/privateRoute'
+import SubscribeView from '@/views/SubscribeView'
 
 function AppRouter (): JSX.Element {
   return (
@@ -19,6 +20,7 @@ function AppRouter (): JSX.Element {
           <Route exact path="/intro" component={IntroView}/>
           <Route exact path="/post/list" component={PostListView}/>
           <Route exact path="/post/:id" component={PostDetailView}/>
+          <Route exact path="/sub" component={SubscribeView}/>
           <Route path="/login" component={LoginView}/>
           <PrivateRoute exact path="/write" component={WriteView}/>
           <PrivateRoute exact path="/write/:postId" component={EditView}/>
