@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import algoliasearch from "algoliasearch";
 import {Post} from "./types";
+import axios from "axios";
 
 admin.initializeApp();
 const env = functions.config();
@@ -71,3 +72,9 @@ exports.searchPostByTag = functions.https.onCall(async (data) => {
   });
   return res;
 });
+
+exports.getWonDollarExcRate = functions.https.onCall(async () => {
+  const {data} = await axios.get(`https://v6.exchangerate-api.com/v6/${env.exchrateapi.key}/latest/USD`);
+  return data;
+});
+
