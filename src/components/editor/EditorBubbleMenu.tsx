@@ -11,10 +11,10 @@ const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
 
   useEffect(() => {
     const isText = editor?.state.selection instanceof TextSelection
-    const isNode = editor?.state.selection instanceof NodeSelection
+    const isImg = editor?.state.selection instanceof NodeSelection && editor?.state.selection.node.type.name === 'image'
 
     if (isText) setSelectionType('text')
-    else if (isNode) setSelectionType('node')
+    else if (isImg) setSelectionType('img')
     else setSelectionType('')
   }, [editor?.state.selection])
 
@@ -41,7 +41,7 @@ const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
             strike
           </button>
         </div>) : null}
-      {selectionType === 'node' ? (
+      {selectionType === 'img' ? (
         <div>
           <button
             onClick={() => {

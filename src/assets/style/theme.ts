@@ -12,6 +12,7 @@ const color = {
 
 const zIndex = {
   zIndexMobileNavBar: 10,
+  zIndexToolBar: 15,
   zIndexModal: 20,
   zIndexLoading: 30
 }

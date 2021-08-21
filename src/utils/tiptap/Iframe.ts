@@ -25,7 +25,8 @@ export const Iframe = TipTapNode.create({
   defaultOptions: {
     allowFullscreen: true,
     HTMLAttributes: {
-      class: 'iframe-wrapper'
+      class: 'iframe-wrapper',
+      style: 'height: 50rem;'
     }
   } as IframeOptions,
 
@@ -55,6 +56,7 @@ export const Iframe = TipTapNode.create({
   },
 
   renderHTML ({ HTMLAttributes }) {
+    HTMLAttributes.style = 'width: 100%; object-fit: contain;'
     return ['div', this.options.HTMLAttributes, ['iframe', HTMLAttributes]]
   },
 
