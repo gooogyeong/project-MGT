@@ -223,7 +223,7 @@ const Post = (props: PostProps) => {
 
   return useObserver(() => {
     return (
-      <MGTPost className="post">
+      <MGTPost className={`post ${props.isEdit ? 'edit' : ''}`}>
         {!store?.mobile.isMobile ? (
           <div className="post__header">
             <div className="label">좌측 각주</div>
@@ -436,6 +436,11 @@ const Post = (props: PostProps) => {
 }
 
 export const MGTPost = styled.div`
+&.post {
+& > div:first-child {
+border-top: none;
+}
+}
 & > div {
 display: flex;
 border-top: 1px dotted blue;

@@ -257,25 +257,27 @@ const Editor = (props: EditorProps): JSX.Element => {
                 onChange={handleTitleChange}
               />
             </ContentHeader>
-            <div className="edit-menu-wrapper">
-              <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
-              {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
-                <>
-                  <input
-                    type="checkbox"
-                    checked={!!isPinned}
-                    onChange={handleIsPinnedSelect}
-                  />
-                  <label>상단에 고정</label>
-                </>
-              ) : null}
-            </div>
-            <div className='menu-bar__wrapper'>
-              <EditorMenuBar
-                editor={editor}
-                footnoteArr={footnoteArr}
-                setFootnoteArr={setFootnoteArr}
-              />
+            <div className="toolbar-wrapper">
+              <div className="edit-menu-wrapper">
+                <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
+                {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
+                  <>
+                    <input
+                      type="checkbox"
+                      checked={!!isPinned}
+                      onChange={handleIsPinnedSelect}
+                    />
+                    <label>상단에 고정</label>
+                  </>
+                ) : null}
+              </div>
+              <div className='menu-bar__wrapper'>
+                <EditorMenuBar
+                  editor={editor}
+                  footnoteArr={footnoteArr}
+                  setFootnoteArr={setFootnoteArr}
+                />
+              </div>
             </div>
             <EditorBubbleMenu editor={editor}/>
             <Post
@@ -317,8 +319,14 @@ const Editor = (props: EditorProps): JSX.Element => {
 }
 
 const MGTEditor = styled.div`
+.toolbar-wrapper {
+position: sticky;
+top: 0;
+background-color: white;
+border-bottom: 1px dotted blue;
 .edit-menu-wrapper {
 border-top: 1px dotted blue !important;
+}
 }
 .editor__wrapper {
 user-select: auto !important;
