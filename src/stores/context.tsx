@@ -5,6 +5,7 @@ import { tagStore, TagStore } from '@/stores/tagStore'
 import { postStore, PostStore } from '@/stores/postStore'
 import { categoryStore, CategoryStore } from '@/stores/categoryStore'
 import { mobileStore, MobileStore } from '@/stores/mobileStore'
+import { exchangeRateStore, ExchangeRateStore } from '@/stores/exchangeRateStore'
 
 type Store = {
   admin: AdminStore;
@@ -12,6 +13,7 @@ type Store = {
   tag: TagStore;
   category: CategoryStore;
   mobile: MobileStore;
+  exchangeRate: ExchangeRateStore;
 }
 
 type StoreProviderProps = {
@@ -26,8 +28,9 @@ export const StoreProvider = ({ children }: StoreProviderProps): JSX.Element => 
   const tag = useLocalStore(tagStore)
   const category = useLocalStore(categoryStore)
   const mobile = useLocalStore(mobileStore)
+  const exchangeRate = useLocalStore(exchangeRateStore)
   return (
-    <storeContext.Provider value={{ mobile, admin, post, tag, category }}>
+    <storeContext.Provider value={{ mobile, admin, post, tag, category, exchangeRate }}>
       {children}
     </storeContext.Provider>
   )

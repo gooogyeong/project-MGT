@@ -1,10 +1,12 @@
+import React from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { yyyyMMddDot } from '@/utils/date'
 import { format } from 'date-fns'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { GrClose } from 'react-icons/gr'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { storeContext } from '@/stores/context'
 
 type HeaderProps = {
   isMobile: boolean;
@@ -15,9 +17,18 @@ type HeaderProps = {
 const Header = (props: HeaderProps) => {
   const history = useHistory()
 
+  const store = useContext(storeContext)
+
   const goToMain = () => {
     history.push('/')
   }
+
+  useEffect(() => {
+    const getExchRate = async () => {
+      await store?.exchangeRate.getExchangeRate()
+    }
+    getExchRate()
+  }, [])
 
   return (
     <MGTHeader className="header">
@@ -57,10 +68,9 @@ const Header = (props: HeaderProps) => {
           {!props.isMobile ? (
             <>
               <div>{format(new Date(), yyyyMMddDot)}</div>
-              {/*TODO: 증시 가져오는 API*/}
-              <div className="nasdaq">
-                <div>Nasdaq 14,069.42</div>
-                <div>+49.09 (+0.35%)</div>
+              <div className="exch-rate">
+                <div>미국 USD</div>
+                <div>￦{store?.exchangeRate.wonPerDollarToday}</div>
               </div>
             </>
           ) : <div className="buffer"></div>}
@@ -120,7 +130,7 @@ border-bottom: 1px dotted red;
 font-size: 1.6rem;
 padding: 0.1rem;
 }
-&.nasdaq {
+&.exch-rate {
 padding: 1rem 0.7rem;
 div:nth-child(2) {
 color: blue;
@@ -158,4 +168,4 @@ border-bottom: none !important;
 }
 `
 
-export default Header
+export default React.memo(Header)
