@@ -8,7 +8,7 @@ import {
   getTempPost as getTempPostService,
   updateTempPost as updateTempPostService,
   updatePost as updatePostService,
-  getPostsByTag as getPostsByTagService
+  getPostsByTag as getPostsByTagService, uploadImg
 } from '@/services/posts'
 import {
   Post,
@@ -60,6 +60,7 @@ export type PostStore = {
   updateTempPost: (payload: UpdatePostPayload) => Promise<void>;
   updatePost: (payload: UpdatePostPayload) => Promise<void>;
   deleteTempPost: () => Promise<void>;
+  uploadPostImg: (payload: File) => Promise<unknown>;
 }
 
 export const postStore = (): PostStore => {
@@ -244,6 +245,15 @@ export const postStore = (): PostStore => {
     async updateTempPost (payload: UpdatePostPayload) {
       try {
         await trackPromise(updateTempPostService(this.tempPostId, payload))
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async uploadPostImg (payload: File) {
+      try {
+        const downloadURL = await uploadImg(payload)
+        return downloadURL || ''
       } catch (error) {
         console.log(error)
       }

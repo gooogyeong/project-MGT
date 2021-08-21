@@ -1,4 +1,4 @@
-import { db, functions } from '@/services/firebase'
+import { db, functions, storage } from '@/services/firebase'
 import {
   collection,
   doc,
@@ -14,6 +14,7 @@ import { SearchOptions } from '@algolia/client-search'
 import { Tag } from '@/types/tags'
 import { httpsCallable } from 'firebase/functions'
 import { SearchResponse } from '@algolia/client-search'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 
 export const getPosts = (searchKeyword: string, searchOptions: RequestOptions & SearchOptions) => {
   return new Promise((resolve, reject) => {
@@ -98,6 +99,24 @@ export const createPost = (tempPostId: string, payload: PostPayload): Promise<vo
       }).catch((error) => {
       reject(error)
     })
+  })
+}
+
+export const uploadImg = (file: File) => {
+  return new Promise((resolve, reject) => {
+    const imgRef = ref(storage, `img/${file.name}`)
+    const uploadImgTask = uploadBytesResumable(imgRef, file)
+    uploadImgTask.on('state_changed',
+      (snapshot) => {},
+      (error) => {
+        reject(error)
+      },
+      () => {
+        getDownloadURL(uploadImgTask.snapshot.ref)
+          .then((downloadURL) => {
+            resolve(downloadURL)
+          })
+      })
   })
 }
 
