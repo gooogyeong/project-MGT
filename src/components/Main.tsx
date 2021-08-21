@@ -167,6 +167,8 @@ border-bottom: 0.32rem solid blue;
 display: flex;
 & > div {
 &.content__wrapper {
+display: flex;
+flex-direction: column;
 flex-basis: 50%;
 max-width: 50%;
 &:not(:last-child) {
@@ -178,6 +180,10 @@ font-size: 2.6rem;
 }
 .post {
 font-size: 2rem;
+display: flex;
+flex-direction: column;
+position: relative;
+flex-grow: 1;
 &__title {
 margin-top: 0.3rem;
 background-color: blue;
@@ -196,6 +202,7 @@ position: relative;
 overflow: hidden;
 display: flex;
 flex-direction: column;
+flex-grow: 1;
 &__header {
 margin-bottom: 0.7rem;
 display: flex;
@@ -216,6 +223,8 @@ max-height: 77.3rem;
 display: flex;
 flex-direction: column;
 position: relative;
+justify-content: space-between;
+flex-grow: 1;
 
 .content-wrapper {
 display: flex;
@@ -282,6 +291,7 @@ order: 3;
 min-height: calc(68.8rem * 0.45);
 max-height: calc(68.8rem * 0.45);
 justify-content: flex-end;
+box-shadow: white 0px -40px 20px 20px;
 }
 .main-text { 
 order: 1;
