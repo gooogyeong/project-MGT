@@ -197,9 +197,17 @@ const Editor = (props: EditorProps): JSX.Element => {
           alert('제목 또는 내용은 반드시 입력해야합니다')
           return
         }
+
+        let currEditPostCategory: CategoryType | undefined
         if (!postCategory) {
-          alert('카테고리를 선택해주세요')
-          return
+          if (!props.isEdit) {
+            alert('카테고리를 선택해주세요')
+            return
+          } else {
+            currEditPostCategory = store?.category.categories.find(category => {
+              return category.categoryId === store?.post.currEditPost?.categoryId
+            })
+          }
         }
 
         let formattedFootnoteArr = [] as FootnoteType[]
@@ -217,8 +225,8 @@ const Editor = (props: EditorProps): JSX.Element => {
         const payload = {
           authorUid: author ? author.uid : '',
           author: author ? author.nickName : '',
-          categoryName: postCategory.name,
-          categoryId: postCategory.categoryId,
+          categoryName: postCategory?.name || currEditPostCategory?.name,
+          categoryId: postCategory?.categoryId || currEditPostCategory?.categoryId,
           title,
           content: editor ? editor.getHTML() : '',
           createdAt: Date.now().valueOf(),
