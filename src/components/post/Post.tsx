@@ -223,7 +223,7 @@ const Post = (props: PostProps) => {
 
   return useObserver(() => {
     return (
-      <MGTPost className={`post ${props.isEdit ? 'edit' : ''}`}>
+      <MGTPost className={`post ${props.isEdit ? 'edit' : ''} ${!props.prevPost && !props.nextPost ? 'no-nav' : ''} ${store?.mobile.isMobile && !props.post.tags.length ? 'no-tag' : ''}`}>
         {!store?.mobile.isMobile ? (
           <div className="post__header">
             <div className="label">좌측 각주</div>
@@ -333,7 +333,7 @@ const Post = (props: PostProps) => {
           </div>
         ) : null}
         <div className="post__footer--share">
-          {props.isWrite || props.isEdit || (props.post && props.post.tags.length) ? (
+          {props.isWrite || props.isEdit || (props.post && !(store?.mobile.isMobile && !props.post.tags.length)) ? (
             <>
               <div className="label">태그</div>
               <div className="content">
@@ -351,7 +351,7 @@ const Post = (props: PostProps) => {
               </div>
             </>
           ) : null}
-          <div className="content">
+          <div className="content share">
             <div className="label">공유하기</div>
             <div className="social-media__wrapper">
               <div onClick={shareTwitter}>
@@ -436,9 +436,16 @@ const Post = (props: PostProps) => {
 }
 
 export const MGTPost = styled.div`
-&.post.edit {
+&.post {
+&.edit {
 & > div:first-child {
 border-top: none;
+}
+}
+&.no-nav {
+.post__footer--rel-posts {
+border-top: none;
+}
 }
 }
 & > div {
@@ -679,6 +686,21 @@ background-color: red;
 }
 
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+&.post {
+&.no-nav {
+.post__footer--share {
+border-top: none;
+}
+.post__footer--rel-posts {
+border-top: 1px dotted blue;
+}
+}
+&.no-tag {
+.content.share .label{
+border-top: none;
+}
+}
+}
 .label {
 font-size: 1.3rem;
 }
@@ -764,7 +786,6 @@ flex-basis: 100%:
 border-right: none;
 border-bottom: 1px dotted blue;
 }
-.content {
 .label {
 border-top: 1px dotted blue;
 }
@@ -810,9 +831,6 @@ font-size: ${props => props.theme.fontSizeMobile};
 }
 }
 }
-
-
-
 }
 
 .modal__content {
