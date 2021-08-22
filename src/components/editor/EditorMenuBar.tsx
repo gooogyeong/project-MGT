@@ -5,11 +5,12 @@ import VideoUploadModal from '@/components/editor/VideoUploadModal'
 import styled from 'styled-components'
 import { Footnote } from '@/types/posts'
 import { generateId } from '@/utils'
+// TODO
+// import { BiFont, BiHighlight } from 'react-icons/bi'
 import { RiVideoUploadFill, RiImageAddLine } from 'react-icons/ri'
 import { IoIosUndo, IoIosRedo } from 'react-icons/io'
 import { FiAlignCenter, FiAlignJustify, FiAlignLeft, FiAlignRight } from 'react-icons/fi'
-import { GrBlockQuote, GrTable } from 'react-icons/gr'
-import { FaBold } from 'react-icons/fa'
+import { GrBlockQuote, GrTable, GrBold } from 'react-icons/gr'
 import {
   AiOutlineItalic,
   AiOutlineLine,
@@ -132,31 +133,22 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         {/*justify*/}
         <FiAlignJustify/>
       </button>
-      <button onClick={() => editor.chain().focus().setParagraph().run()}
-              className={editor.isActive('paragraph') ? 'is-active' : ''}>
-        paragraph
-      </button>
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? 'is-active' : ''}
       >
-        {/*bold*/}
-        {/*<GrBold />*/}
-        <FaBold/>
+        <GrBold size={14}/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={editor.isActive('italic') ? 'is-active' : ''}
       >
-        {/*italic*/}
         <AiOutlineItalic/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleStrike().run()}
         className={editor.isActive('strike') ? 'is-active' : ''}
       >
-        {/*strike*/}
-        {/*<MdFormatStrikethrough />*/}
         <AiOutlineStrikethrough/>
       </button>
       <button
@@ -213,27 +205,27 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         18px
       </button>
       <button onClick={() => toggleFontFamilyOption('Nanum MyeongJo')}
-              className={editor.isActive('textStyle', { fontFamily: 'Nanum MyeongJo' }) ? 'is-active' : ''}>
+              className={`nanum-myeongjo ${editor.isActive('textStyle', { fontFamily: 'Nanum MyeongJo' }) ? 'is-active' : ''}`}>
         나눔명조
       </button>
       <button onClick={() => toggleFontFamilyOption('Noto Serif KR')}
-              className={editor.isActive('textStyle', { fontFamily: 'Noto Serif KR' }) ? 'is-active' : ''}>
+              className={`noto-serif-kr ${editor.isActive('textStyle', { fontFamily: 'Noto Serif KR' }) ? 'is-active' : ''}`}>
         Noto Serif KR
       </button>
       <button onClick={() => toggleFontFamilyOption('Black Han Sans')}
-              className={editor.isActive('textStyle', { fontFamily: 'Black Han Sans' }) ? 'is-active' : ''}>
+              className={`black-han-sans ${editor.isActive('textStyle', { fontFamily: 'Black Han Sans' }) ? 'is-active' : ''}`}>
         Black Han Sans
       </button>
       <button onClick={() => toggleFontFamilyOption('monospace')}
-              className={editor.isActive('textStyle', { fontFamily: 'monospace' }) ? 'is-active' : ''}>
+              className={`monospace ${editor.isActive('textStyle', { fontFamily: 'monospace' }) ? 'is-active' : ''}`}>
         monospace
       </button>
       <button onClick={() => toggleFontFamilyOption('cursive')}
-              className={editor.isActive('textStyle', { fontFamily: 'cursive' }) ? 'is-active' : ''}>
+              className={`cursive ${editor.isActive('textStyle', { fontFamily: 'cursive' }) ? 'is-active' : ''}`}>
         cursive
       </button>
       <button onClick={() => toggleFontFamilyOption('Comic Sans MS, Comic Sans')}
-              className={editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' }) ? 'is-active' : ''}>
+              className={`comic-sans ${editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' }) ? 'is-active' : ''}`}>
         Comic Sans
       </button>
       <button
@@ -265,31 +257,24 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'is-active' : ''}
       >
-        {/*bullet list*/}
         <AiOutlineUnorderedList/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={editor.isActive('orderedList') ? 'is-active' : ''}
       >
-        {/*ordered list*/}
         <AiOutlineOrderedList/>
       </button>
       <button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={editor.isActive('blockquote') ? 'is-active' : ''}
       >
-        {/*blockquote*/}
-        {/*<BsBlockquoteLeft />*/}
         <GrBlockQuote/>
       </button>
       <button onClick={addFootnote}>
-        {/*footnote*/}
         <TiSortNumerically/>
       </button>
       <button onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}>
-        {/*insertTable*/}
-        {/*<AiOutlineTable />*/}
         <GrTable/>
       </button>
       <button onClick={() => editor.chain().focus().addColumnAfter().run()}>
@@ -321,7 +306,7 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
       </button>
       <button onClick={() => editor.chain().focus().setCellAttribute('backgroundColor', '#FAF594').run()}
               disabled={!editor.can().setCellAttribute('backgroundColor', '#FAF594')}>
-        change background color
+        change cell bg color
       </button>
       <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         <AiOutlineLine/>
@@ -352,17 +337,36 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
 
 const MGTEditorMenuBar = styled.div`
 button {
+min-height: 2.1rem;
+max-height: 2.1rem;
 &.is-active {
 background-color: black;
 color: white;
 }
 &.gradient {
 width: 2.5rem;
-height: 2.1rem;
 color: black;
 font-weight: bold;
 background-color: white;
 background-image: linear-gradient(180deg, ${props => props.theme.turquoiseLight} 0%, rgba(212, 251, 249, 0.2) 48.96%, ${props => props.theme.turquoiseLight} 100%);
+}
+&.nanum-myeongjo {
+font-family: Nanum MyeongJo;
+}
+&.noto-serif-kr {
+font-family: Noto Serif KR;
+}
+&.black-han-sans {
+font-family: Black Han Sans;
+}
+&.monospace {
+font-family: monospace;
+}
+&.cursive {
+font-family: cursive;
+}
+&.comic-sans {
+font-family: "Comic Sans MS";
 }
 }
 `
