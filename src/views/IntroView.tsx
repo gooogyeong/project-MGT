@@ -37,4 +37,4 @@ max-width: calc(100% - 2.6rem);
 
 `
 
-export default IntroView
+export default React.memo(IntroView)
