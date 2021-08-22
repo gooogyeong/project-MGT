@@ -195,6 +195,11 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
       >
         h6
       </button>
+      <button
+        onClick={() => editor.chain().focus().toggleGradient().run()}
+        className={`gradient ${editor.isActive('gradient') ? 'is-active' : ''}`}>
+        h
+      </button>
       <button onClick={() => {
         toggleFontSizeOption('15px')
       }}
@@ -350,6 +355,14 @@ button {
 &.is-active {
 background-color: black;
 color: white;
+}
+&.gradient {
+width: 2.5rem;
+height: 2.1rem;
+color: black;
+font-weight: bold;
+background-color: white;
+background-image: linear-gradient(180deg, ${props => props.theme.turquoiseLight} 0%, rgba(212, 251, 249, 0.2) 48.96%, ${props => props.theme.turquoiseLight} 100%);
 }
 }
 `

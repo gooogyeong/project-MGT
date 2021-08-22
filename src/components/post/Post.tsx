@@ -223,7 +223,7 @@ const Post = (props: PostProps) => {
 
   return useObserver(() => {
     return (
-      <MGTPost className={`post ${props.isEdit ? 'edit' : ''} ${!props.prevPost && !props.nextPost ? 'no-nav' : ''} ${store?.mobile.isMobile && !props.post.tags.length ? 'no-tag' : ''}`}>
+      <MGTPost className={`post ${props.isEdit ? 'edit' : ''} ${!props.prevPost && !props.nextPost ? 'no-nav' : ''} ${store?.mobile.isMobile && !props.post?.tags.length ? 'no-tag' : ''}`}>
         {!store?.mobile.isMobile ? (
           <div className="post__header">
             <div className="label">좌측 각주</div>
