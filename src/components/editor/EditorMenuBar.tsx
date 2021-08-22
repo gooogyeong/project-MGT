@@ -73,7 +73,7 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
   }
 
   const addVideoToEditor = (videoSrc: string) => {
-    if (videoSrc.includes('youtube')) {
+    if (videoSrc.includes('youtube') || videoSrc.includes('vimeo')) {
       // @ts-ignore
       editor.chain().focus().setIframe({ src: videoSrc }).run()
     } else {

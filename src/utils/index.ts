@@ -73,3 +73,15 @@ export const shuffle = (array: any[]) => {
   }
   return array
 }
+
+export const getVideoSrc = (src: string) => {
+  if (src.includes('watch')) {
+    const videoId = src.split('=').pop()
+    return `https://www.youtube.com/embed/${videoId}`
+  } else if (src.includes('youtu.be')) {
+    const videoId = src.split('/').pop()
+    return `https://www.youtube.com/embed/${videoId}`
+  } else {
+    return src
+  }
+}
