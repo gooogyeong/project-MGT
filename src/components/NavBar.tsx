@@ -12,14 +12,14 @@ const menus = [
   },
   {
     key: 'posts',
-    menuText: '글',
+    menuText: '내용',
     uri: '/post/list'
-  }// ,
-  // {
-  //   key: 'subscription',
-  //   menuText: '구독',
-  //   uri: '/sub'
-  // },
+  },
+  {
+    key: 'subscription',
+    menuText: '구독',
+    uri: '/sub'
+  },
   // {
   //   key: 'shop',
   //   menuText: '구매',
