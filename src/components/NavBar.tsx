@@ -13,7 +13,7 @@ const menus = [
   {
     key: 'posts',
     menuText: '내용',
-    uri: '/post/l글ist'
+    uri: '/post/list'
   },
   {
     key: 'subscription',
