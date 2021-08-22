@@ -2,37 +2,45 @@ import React, { useState, Dispatch, SetStateAction, ChangeEvent, useRef } from '
 import Modal from '@/components/shared/Modal'
 import { storage } from '@/services/firebase'
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage'
+import styled from 'styled-components'
+import { getVideoSrc } from '@/utils'
 
-type ImageUploadModalProps = {
+type VideoUploadModalProps = {
   isOpen: boolean;
   openVideoUploadModal: Dispatch<SetStateAction<boolean>>;
   addVideoToEditor: (videoSrc: string) => void;
 }
 
-const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadModalProps): JSX.Element => {
+const VideoUploadModal: React.FC<VideoUploadModalProps> = (props: VideoUploadModalProps): JSX.Element => {
 
   const fileUploader = useRef<HTMLInputElement>(null)
 
   const [tempVideoSrc, setTempVideoSrc] = useState('')
+  const [embedCode, setEmbedCode] = useState('')
   const [tempFile, setTempFile] = useState(null as (null | File))
   const [previewSrc, setPreviewSrc] = useState('')
   const [progress, setProgress] = useState(null as (null | number))
   const [uploadStatus, setUploadStatus] = useState('')
 
   const addVideoToEditor = () => {
-    if (tempVideoSrc) {
-      if (tempVideoSrc.includes('embed')) {
-        props.addVideoToEditor(tempVideoSrc)
-      } else {
-        const videoId = tempVideoSrc.split('/').pop()
-        const embedURL = `https://www.youtube.com/embed/${videoId}`
-        setTempVideoSrc(embedURL)
-        props.addVideoToEditor(embedURL)
-      }
+    if (embedCode) {
+      const src = embedCode.split(' ').find(str => str.includes('src'))?.split('"')[1]
+      if (src) props.addVideoToEditor(src)
+      else alert('유효하지 않은 소스입니다')
+      setEmbedCode('')
+    } else if (tempVideoSrc) {
+      const embedURL = getVideoSrc(tempVideoSrc)
+      props.addVideoToEditor(embedURL)
+      setTempVideoSrc('')
     } else if (previewSrc) {
       props.addVideoToEditor(previewSrc)
+      setPreviewSrc('')
     }
     props.openVideoUploadModal(false)
+  }
+
+  const handleVideoEmbedInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setEmbedCode(e.target.value)
   }
 
   const handleVideoSrcInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -94,16 +102,26 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
       onConfirmButtonClick={addVideoToEditor}
       onCancelButtonClick={cancelVideoUpload}
     >
-      <div>
+      <MGTVideoUploadModal>
         <div>
           <label>video url:</label>
           <input type="text" onChange={handleVideoSrcInput}/>
+          <label>embed:</label>
+          <textarea rows={5} onChange={handleVideoEmbedInput}/>
           <label>upload file {typeof progress === 'number' ? uploadStatus || `${progress}% complete` : null}</label>
           <input type="file" onChange={handleFileChange} ref={fileUploader}/>
         </div>
-      </div>
+      </MGTVideoUploadModal>
     </Modal>
   )
 }
 
-export default ImageUploadModal
+const MGTVideoUploadModal = styled.div`
+input[type=text], textarea {
+width: 100%;
+border: 1px solid  rgb(133, 133, 133);
+border-radius: 2px;
+}
+`
+
+export default VideoUploadModal
