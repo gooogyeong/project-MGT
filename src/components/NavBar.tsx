@@ -112,7 +112,9 @@ left: 0;
 right: 0;
 flex-direction: column;
 padding: 3rem 1.4rem;
+justify-content: flex-start;
 align-items: center;
+height: calc(100vh - 5.2rem);
 .navbar {
 &__searchbar {
 position: relative;
