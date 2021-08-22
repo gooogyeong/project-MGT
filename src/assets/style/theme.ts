@@ -1,5 +1,7 @@
 export const widthMobileScreen = '600px'
 
+export const turquoiseLighter = '#D4FBF9'
+
 const size = {
   widthMobileScreen,
   fontSizeMobile: '1.7rem'
@@ -7,6 +9,7 @@ const size = {
 
 const color = {
   turquoiseLight: '#D4F9F9',
+  turquoiseLighter,
   beigeLight: '#FAF4D3'
 }
 
