@@ -15,6 +15,7 @@ import Image from '@tiptap/extension-image'
 import ImageExtension from '@/utils/tiptap/ImageExtension'
 import { HardBreak } from '@tiptap/extension-hard-break'
 import { FontSize } from '@/utils/tiptap/FontSize'
+import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import StarterKit from '@tiptap/starter-kit'
@@ -56,6 +57,7 @@ const Editor = (props: EditorProps): JSX.Element => {
       TextAlign,
       TextStyle,
       FontSize,
+      Gradient,
       FontFamily,
       Highlight.configure({ multicolor: true }),
       Table.configure({

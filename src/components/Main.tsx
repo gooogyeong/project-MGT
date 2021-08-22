@@ -321,7 +321,7 @@ background-color: ${props => props.theme.beigeLight};
 }
 &:nth-child(2) {
 .label {
-background: linear-gradient(180deg, #D4FBF9 0%, rgba(212, 251, 249, 0.2) 48.96%, ${props => props.theme.turquoiseLight} 100%);
+background: linear-gradient(180deg, ${props => props.theme.turquoiseLighter} 0%, rgba(212, 251, 249, 0.2) 48.96%, ${props => props.theme.turquoiseLight} 100%);
 }
 .button {
 .layer {
