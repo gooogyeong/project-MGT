@@ -15,6 +15,7 @@ import Image from '@tiptap/extension-image'
 import ImageExtension from '@/utils/tiptap/ImageExtension'
 import { HardBreak } from '@tiptap/extension-hard-break'
 import { FontSize } from '@/utils/tiptap/FontSize'
+import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import StarterKit from '@tiptap/starter-kit'
@@ -56,6 +57,7 @@ const Editor = (props: EditorProps): JSX.Element => {
       TextAlign,
       TextStyle,
       FontSize,
+      Gradient,
       FontFamily,
       Highlight.configure({ multicolor: true }),
       Table.configure({
@@ -195,9 +197,17 @@ const Editor = (props: EditorProps): JSX.Element => {
           alert('제목 또는 내용은 반드시 입력해야합니다')
           return
         }
+
+        let currEditPostCategory: CategoryType | undefined
         if (!postCategory) {
-          alert('카테고리를 선택해주세요')
-          return
+          if (!props.isEdit) {
+            alert('카테고리를 선택해주세요')
+            return
+          } else {
+            currEditPostCategory = store?.category.categories.find(category => {
+              return category.categoryId === store?.post.currEditPost?.categoryId
+            })
+          }
         }
 
         let formattedFootnoteArr = [] as FootnoteType[]
@@ -215,8 +225,8 @@ const Editor = (props: EditorProps): JSX.Element => {
         const payload = {
           authorUid: author ? author.uid : '',
           author: author ? author.nickName : '',
-          categoryName: postCategory.name,
-          categoryId: postCategory.categoryId,
+          categoryName: postCategory?.name || currEditPostCategory?.name,
+          categoryId: postCategory?.categoryId || currEditPostCategory?.categoryId,
           title,
           content: editor ? editor.getHTML() : '',
           createdAt: Date.now().valueOf(),
@@ -358,52 +368,6 @@ padding: 0;
   .iframe-wrapper {
   display: flex;
   justify-content: center;
-  }
-  table {
-    border-collapse: collapse;
-    table-layout: fixed;
-    width: 100%;
-    margin: 0;
-    overflow: hidden;
-
-    td,
-    th {
-      min-width: 1em;
-      border: 1px solid black;
-      padding: 3px 5px;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-
-      > * {
-        margin-bottom: 0;
-      }
-    }
-
-    th {
-      font-weight: bold;
-      text-align: left;
-      background-color: #f1f3f5;
-    }
-
-    .selectedCell:after {
-      z-index: 2;
-      position: absolute;
-      content: "";
-      left: 0; right: 0; top: 0; bottom: 0;
-      background: rgba(200, 200, 255, 0.4);
-      pointer-events: none;
-    }
-
-    .column-resize-handle {
-      position: absolute;
-      right: -2px;
-      top: 0;
-      bottom: -2px;
-      width: 4px;
-      background-color: #adf;
-      pointer-events: none;
-    }
   }
 }
 
