@@ -510,7 +510,7 @@ vertical-align: super;
 font-size: 75%;
 }
 }
-.iframe-wrapper {
+.iframe-wrapper, .video-wrapper {
 display: flex;
 justify-content: center;
 }
@@ -720,7 +720,7 @@ font-size: ${props => props.theme.fontSizeMobile};
 }
 &__text {
 font-size: ${props => props.theme.fontSizeMobile};
-  .iframe-wrapper {
+  .iframe-wrapper, .video-wrapper {
   height: 24rem !important;
   }
 }
