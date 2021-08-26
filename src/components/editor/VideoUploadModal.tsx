@@ -48,10 +48,14 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = (props: VideoUploadMod
   }
 
   const handleFileChange = async () => {
-    if (fileUploader.current && fileUploader.current.files) {
-      const file = fileUploader.current.files[0]
-      setTempFile(file)
-      await uploadFileToStorage(file)
+    try {
+      if (fileUploader.current && fileUploader.current.files) {
+        const file = fileUploader.current.files[0]
+        setTempFile(file)
+        await uploadFileToStorage(file)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
