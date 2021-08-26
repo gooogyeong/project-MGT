@@ -365,7 +365,7 @@ outline: none !important;
 }
 .ProseMirror {
 padding: 0;
-  .iframe-wrapper {
+  .iframe-wrapper, .video-wrapper {
   display: flex;
   justify-content: center;
   }
@@ -415,7 +415,7 @@ height: 100%;
 
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 .ProseMirror {
-  .iframe-wrapper {
+  .iframe-wrapper, .video-wrapper {
   height: 24rem !important;
   }
 }

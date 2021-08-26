@@ -223,7 +223,8 @@ const Post = (props: PostProps) => {
 
   return useObserver(() => {
     return (
-      <MGTPost className={`post ${props.isWrite || props.isEdit ? 'edit' : ''} ${!props.prevPost && !props.nextPost ? 'no-nav' : ''} ${store?.mobile.isMobile && !props.post?.tags.length ? 'no-tag' : ''}`}>
+      <MGTPost
+        className={`post ${props.isWrite || props.isEdit ? 'edit' : ''} ${!props.prevPost && !props.nextPost ? 'no-nav' : ''} ${store?.mobile.isMobile && !props.post?.tags.length ? 'no-tag' : ''}`}>
         {!store?.mobile.isMobile ? (
           <div className="post__header">
             <div className="label">좌측 각주</div>
@@ -501,6 +502,11 @@ padding: 0.6rem 1.8rem;
 &__text {
 font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
+br {
+content: " ";
+display: block;
+margin-top: 3.6rem;
+}
 footnote {
 &:after {
 // TODO: footnote style 통합
@@ -510,14 +516,13 @@ vertical-align: super;
 font-size: 75%;
 }
 }
-.iframe-wrapper {
+.iframe-wrapper, .video-wrapper {
 display: flex;
 justify-content: center;
 }
 img {
 max-width: 100%;
 }
-
 }
 .btn-container {
 display: flex;
@@ -720,7 +725,10 @@ font-size: ${props => props.theme.fontSizeMobile};
 }
 &__text {
 font-size: ${props => props.theme.fontSizeMobile};
-  .iframe-wrapper {
+br {
+margin-top: 3.4rem;
+}
+  .iframe-wrapper, .video-wrapper {
   height: 24rem !important;
   }
 }
