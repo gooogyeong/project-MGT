@@ -502,10 +502,8 @@ padding: 0.6rem 1.8rem;
 &__text {
 font-size: 1.8rem;
 padding: 3.1rem 1.3rem;
-br {
-content: " ";
-display: block;
-margin-top: 3.6rem;
+p {
+min-height: 1.8rem;
 }
 footnote {
 &:after {
@@ -725,8 +723,8 @@ font-size: ${props => props.theme.fontSizeMobile};
 }
 &__text {
 font-size: ${props => props.theme.fontSizeMobile};
-br {
-margin-top: 3.4rem;
+p {
+min-height: ${props => props.theme.fontSizeMobile};
 }
   .iframe-wrapper, .video-wrapper {
   height: 24rem !important;
