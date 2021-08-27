@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
-import TextAlign from '@tiptap/extension-text-align'
+import Paragraph from '@tiptap/extension-paragraph'
 import TextStyle from '@tiptap/extension-text-style'
 import FontFamily from '@tiptap/extension-font-family'
 import Highlight from '@tiptap/extension-highlight'
@@ -18,6 +18,7 @@ import { FontSize } from '@/utils/tiptap/FontSize'
 import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
+import { TextAlign } from '@/utils/tiptap/TextAlign'
 import StarterKit from '@tiptap/starter-kit'
 import EditorMenuBar from '@/components/editor/EditorMenuBar'
 import EditorBubbleMenu from '@/components/editor/EditorBubbleMenu'
@@ -54,6 +55,7 @@ const Editor = (props: EditorProps): JSX.Element => {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Paragraph,
       TextAlign,
       TextStyle,
       FontSize,
