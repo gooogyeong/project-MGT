@@ -113,24 +113,24 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         openVideoUploadModal={setIsOpenVideoUploadModal}
         addVideoToEditor={addVideoToEditor}
       />
+```      <button onClick={() => editor.chain().focus().setParagraph().run()}
+              className={editor.isActive('paragraph') ? 'is-active' : ''}>
+        paragraph
+      </button>
       <button onClick={() => editor.chain().focus().setTextAlign('left').run()}
               className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}>
-        {/*left*/}
         <FiAlignLeft/>
       </button>
       <button onClick={() => editor.chain().focus().setTextAlign('center').run()}
               className={editor.isActive({ textAlign: 'center' }) ? 'is-active' : ''}>
-        {/*center*/}
         <FiAlignCenter/>
       </button>
       <button onClick={() => editor.chain().focus().setTextAlign('right').run()}
               className={editor.isActive({ textAlign: 'right' }) ? 'is-active' : ''}>
-        {/*right*/}
         <FiAlignRight/>
       </button>
       <button onClick={() => editor.chain().focus().setTextAlign('justify').run()}
               className={editor.isActive({ textAlign: 'justify' }) ? 'is-active' : ''}>
-        {/*justify*/}
         <FiAlignJustify/>
       </button>
       <button
