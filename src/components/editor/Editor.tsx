@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
-import TextAlign from '@tiptap/extension-text-align'
+import Paragraph from '@tiptap/extension-paragraph'
 import TextStyle from '@tiptap/extension-text-style'
 import FontFamily from '@tiptap/extension-font-family'
 import Highlight from '@tiptap/extension-highlight'
@@ -13,11 +13,12 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import Image from '@tiptap/extension-image'
 import ImageExtension from '@/utils/tiptap/ImageExtension'
-import { HardBreak } from '@tiptap/extension-hard-break'
+import ParagraphExtension from '@/utils/tiptap/ParagraphExtenson'
 import { FontSize } from '@/utils/tiptap/FontSize'
 import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
+import { TextAlign } from '@/utils/tiptap/TextAlign'
 import StarterKit from '@tiptap/starter-kit'
 import EditorMenuBar from '@/components/editor/EditorMenuBar'
 import EditorBubbleMenu from '@/components/editor/EditorBubbleMenu'
@@ -35,7 +36,6 @@ import CategoryDropdown from '@/components/shared/CategoryDropdown'
 import Post from '@/components/post/Post'
 import { Post as PostType } from '@/types/posts'
 import ContentHeader from '@/components/shared/ContentHeader'
-import HardBreakExtension from '@/utils/tiptap/HardBreakExtension'
 
 type EditorProps = {
   isWrite?: boolean;
@@ -54,6 +54,8 @@ const Editor = (props: EditorProps): JSX.Element => {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Paragraph,
+      ParagraphExtension,
       TextAlign,
       TextStyle,
       FontSize,
@@ -71,15 +73,12 @@ const Editor = (props: EditorProps): JSX.Element => {
       Image,
       ImageExtension,
       Iframe,
-      Video,
-      HardBreak,
-      HardBreakExtension
+      Video
     ],
     content: store?.post.currEditPost?.content || ''
   })
 
   const author = store?.admin.admin
-
   const submitText = store?.post.currEditPost ? '수정' : '등록'
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])
