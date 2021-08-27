@@ -13,7 +13,7 @@ import TableCell from '@tiptap/extension-table-cell'
 import TableHeader from '@tiptap/extension-table-header'
 import Image from '@tiptap/extension-image'
 import ImageExtension from '@/utils/tiptap/ImageExtension'
-import { HardBreak } from '@tiptap/extension-hard-break'
+import ParagraphExtension from '@/utils/tiptap/ParagraphExtenson'
 import { FontSize } from '@/utils/tiptap/FontSize'
 import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
@@ -36,7 +36,6 @@ import CategoryDropdown from '@/components/shared/CategoryDropdown'
 import Post from '@/components/post/Post'
 import { Post as PostType } from '@/types/posts'
 import ContentHeader from '@/components/shared/ContentHeader'
-import HardBreakExtension from '@/utils/tiptap/HardBreakExtension'
 
 type EditorProps = {
   isWrite?: boolean;
@@ -56,6 +55,7 @@ const Editor = (props: EditorProps): JSX.Element => {
     extensions: [
       StarterKit,
       Paragraph,
+      ParagraphExtension,
       TextAlign,
       TextStyle,
       FontSize,
@@ -73,15 +73,12 @@ const Editor = (props: EditorProps): JSX.Element => {
       Image,
       ImageExtension,
       Iframe,
-      Video,
-      HardBreak,
-      HardBreakExtension
+      Video
     ],
     content: store?.post.currEditPost?.content || ''
   })
 
   const author = store?.admin.admin
-
   const submitText = store?.post.currEditPost ? '수정' : '등록'
   const [title, setTitle] = useState(store?.post.currEditPost?.title || '')
   const [tags, setTags] = useState([] as TagType[])

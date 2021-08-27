@@ -113,10 +113,6 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         openVideoUploadModal={setIsOpenVideoUploadModal}
         addVideoToEditor={addVideoToEditor}
       />
-```      <button onClick={() => editor.chain().focus().setParagraph().run()}
-              className={editor.isActive('paragraph') ? 'is-active' : ''}>
-        paragraph
-      </button>
       <button onClick={() => editor.chain().focus().setTextAlign('left').run()}
               className={editor.isActive({ textAlign: 'left' }) ? 'is-active' : ''}>
         <FiAlignLeft/>
