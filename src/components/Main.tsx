@@ -60,24 +60,37 @@ const Feed = (): JSX.Element => {
   }
 
   useEffect(() => {
+    const newThumbnailArr = [...thumbnailArr]
     store?.post.authorLatestPosts.forEach((post, postIdx) => {
-      processContent(postIdx)
+      const thumbnail = getThumbnail(postIdx)
+      newThumbnailArr[postIdx] = thumbnail
     })
-  }, [])
+    setThumbnailArr(newThumbnailArr)
+  }, [store?.post.authorLatestPosts])
+
+  const getThumbnail = (postIdx: number) => {
+    const content = store?.post.authorLatestPosts[postIdx].content as string
+    let thumbnail: undefined | Node = undefined
+    const transform = (node: Node) => {
+      if (node.type === 'tag' && (['img', 'video', 'iframe'].includes(node.name))) {
+        if (!thumbnail) {
+          thumbnail = node
+        }
+      }
+    }
+    const options = { transform } as Options
+    // TODO: thumbnail 발견하면 멈추도록 하면 좋겠음
+    ReactHtmlParser(content, options)
+    return thumbnail
+  }
 
   const processContent = (postIdx: number) => {
     const content = store?.post.authorLatestPosts[postIdx].content as string
     const transform = (node: Node) => {
-      if (node.type === 'tag' && node.name === 'img') {
-        if (thumbnailArr[postIdx] === undefined) {
-          const newThumbnailArr = [...thumbnailArr]
-          newThumbnailArr[postIdx] = node
-          setThumbnailArr(newThumbnailArr)
-        }
-        return null
-      }
-
-      if (node.type === 'tag' && (node.name === 'video' || node.name === 'iframe')) {
+      if (node.type === 'tag' && (
+          ['img', 'video', 'iframe'].includes(node.name)) ||
+        ['iframe-wrapper', 'video-wrpper'].includes(node?.attribs?.class || '')
+      ) {
         return null
       }
     }
@@ -96,7 +109,6 @@ const Feed = (): JSX.Element => {
   }
 
   return useObserver(() => {
-
     return (
       <MGTMain>
         <div className="content-header-wrapper">
@@ -122,19 +134,29 @@ const Feed = (): JSX.Element => {
                       })}
                       </span>
                     </div>
-                    <div className={`post__content__body ${!postIdx ? 'left' : 'right'}`}>
+                    <div
+                      className={`post__content__body ${!postIdx ? 'left' : 'right'} ${!thumbnailArr[postIdx] ? 'no-thumbnail' : ''}`}>
                       <div className="content-wrapper">
-                        <div className={`main-text ${!thumbnailArr[postIdx] ? 'no-thumbnail' : ''}`}>
+                        <div className="main-text">
                           <div className="text">
                             <div>{processContent(postIdx)}</div>
                           </div>
                         </div>
                         {thumbnailArr[postIdx] ? (
                           <div className="thumbnail__container">
-                            <img
-                              src={thumbnailArr[postIdx]?.attribs?.src}
-                              alt={thumbnailArr[postIdx]?.attribs?.alt}
-                            />
+                            {thumbnailArr[postIdx]?.name === 'img' ? (
+                              <img
+                                src={thumbnailArr[postIdx]?.attribs?.src}
+                                alt={thumbnailArr[postIdx]?.attribs?.alt}
+                              />) : thumbnailArr[postIdx]?.name === 'iframe' ? (
+                              <iframe
+                                src={thumbnailArr[postIdx]?.attribs?.src}
+                              />
+                            ) : thumbnailArr[postIdx]?.name === 'video' ? (
+                              <video
+                                src={thumbnailArr[postIdx]?.attribs?.src}
+                              />
+                            ) : null}
                           </div>
                         ) : null}
                       </div>
@@ -234,7 +256,7 @@ flex-direction: column;
 max-height: 20%;
 display: flex;
 margin: 0 -0.7rem;
-img {
+img, iframe, video {
 // TODO: 왜 fill이 안되는지. 그리고 이미지 사이즈에 따라 fill / cover 분기처리
 width: 100%;
 object-fit: contain; // cover;
@@ -242,18 +264,19 @@ object-fit: contain; // cover;
 }
 
 .main-text {
+border: 1px solid red !important;
 .text {
 overflow: hidden;
 text-overflow: ellipsis;
 & > div {
 position: relative;
 z-index: -1;
-} 
+}
+}
 }
 }
 }
 
-}
 .button__container {
 display: flex;
 justify-content: flex-end;
@@ -262,6 +285,12 @@ height: 7.8rem;
 
 // LEFT
 &.left {
+&.no-thumbnail {
+.main-text {
+max-height: 69.5rem;
+min-height: 69.5rem;
+}
+}
 .thumbnail__container {
 order: 1;
 justify-content: flex-start;
@@ -269,13 +298,13 @@ min-height: calc(68.8rem * 0.45);
 max-height: calc(68.8rem * 0.45);
 flex-basis: 45%;
 }
-.main-text { 
+.main-text {
 order: 2;
 max-height: calc(68.8rem * 0.55);
 flex-basis: 55%;
 overflow: hidden;
-&.no-thumbnail {
-max-height: 69.5rem;
+p {
+min-height: 1.8rem;
 }
 }
 .button__container {
@@ -286,6 +315,14 @@ box-shadow: white 0px -40px 20px 20px;
 
 // RIGHT
 &.right {
+&.no-thumbnail {
+.main-text {
+max-height: 69.5rem;
+}
+.button__container {
+box-shadow: white 0px -40px 20px 20px;
+}
+}
 .thumbnail__container {
 order: 3;
 min-height: calc(68.8rem * 0.45);
@@ -293,13 +330,13 @@ max-height: calc(68.8rem * 0.45);
 justify-content: flex-end;
 box-shadow: white 0px -40px 20px 20px;
 }
-.main-text { 
+.main-text {
 order: 1;
 // TODO: 공통 셀렉터 왜 안먹는지 알아내야함
 max-height: calc(68.8rem * 0.55);
 overflow: hidden;
-&.no-thumbnail {
-max-height: 69.5rem;
+p {
+min-height: 1.8rem;
 }
 }
 .button__container {
@@ -367,21 +404,39 @@ padding: 0.7rem 1.8rem;
 }
 }
 &.left {
-.thumbnail__container {
-min-height: calc(37.7rem * 0.45);
-max-height: calc(37.7rem * 0.45);
-}
-.main-text { 
+&.no-thumbnail {
+.main-text {
+min-height: calc(37.7rem * 0.55);
 max-height: calc(37.7rem * 0.55);
 }
 }
-&.right {
 .thumbnail__container {
 min-height: calc(37.7rem * 0.45);
 max-height: calc(37.7rem * 0.45);
 }
 .main-text {
 max-height: calc(37.7rem * 0.55);
+p {
+min-height: ${props => props.theme.fontSizeMobile};
+}
+}
+}
+&.right {
+&.no-thumbnail {
+.main-text {
+min-height: calc(37.7rem * 0.55);
+max-height: calc(37.7rem * 0.55);
+}
+}
+.thumbnail__container {
+min-height: calc(37.7rem * 0.45);
+max-height: calc(37.7rem * 0.45);
+}
+.main-text {
+max-height: calc(37.7rem * 0.55);
+p {
+min-height: ${props => props.theme.fontSizeMobile};
+}
 }
 }
 }

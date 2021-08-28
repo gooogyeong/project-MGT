@@ -10,6 +10,7 @@ export type Node = {
   attribs?: {
     src: string;
     alt: string;
+    class: string;
   }
 }
 

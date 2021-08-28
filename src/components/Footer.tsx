@@ -18,9 +18,15 @@ const FooterSocialMedia = () => {
   return (
     <div className="footer__social-media">
       <div className="footer__social-media__icon-wrapper">
-        <img src={instagram} alt="instagram-link"/>
-        <img src={twitterBlue} alt="twitter-link"/>
-        <img src={facebookBlue} alt="facebook-link"/>
+        <a href="https://www.instagram.com/m_g_times/" target="_blank" rel="noreferrer">
+          <img src={instagram} alt="instagram-link"/>
+        </a>
+        <a href="https://twitter.com/m_g_times" target="_blank" rel="noreferrer">
+          <img src={twitterBlue} alt="twitter-link"/>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=100072292567060" target="_blank" rel="noreferrer">
+          <img src={facebookBlue} alt="facebook-link"/>
+        </a>
       </div>
     </div>
   )
@@ -138,7 +144,13 @@ const Footer = (props: FooterProps) => {
             </div>
             <div className="sub-row">
               <div className="label">아이콘 제작자</div>
-              <div className="content">Pixel perfect from <a href="https://www.flaticon.com/" target="_blank">www.flaticon.com</a></div>
+              <div className="content">Pixel perfect from
+                <a href="https://www.flaticon.com/"
+                   target="_blank" rel="noreferrer"
+                >
+                  www.flaticon.com
+                </a>
+              </div>
             </div>
           </div>
           {!props.isMobile ? (
