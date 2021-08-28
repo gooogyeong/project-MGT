@@ -2,7 +2,7 @@ export default class FootnoteComponent {
   id: string;
   constructor (id: string) {
     this.id = id
-    const footnoteCreate = new CustomEvent<string>('footnote-create')
+    const footnoteCreate = new CustomEvent<string>('footnote-create', { detail: id })
     window.dispatchEvent(footnoteCreate)
   }
 

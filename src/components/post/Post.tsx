@@ -243,7 +243,8 @@ const Post = (props: PostProps) => {
                     <div key={footnoteIdx}
                          id={`preview_${footnote.id}`}
                          className="footnote__content"
-                    >{footnote.content}
+                    >
+                      {ReactHtmlParser(footnote.content)}
                     </div>
                   )
                 })}
@@ -284,7 +285,8 @@ const Post = (props: PostProps) => {
                     <div key={footnoteIdx}
                          id={`preview_${footnote.id}`}
                          className="footnote__content"
-                    >{footnote.content}
+                    >
+                      {ReactHtmlParser(footnote.content)}
                     </div>
                   )
                 })}
@@ -307,9 +309,10 @@ const Post = (props: PostProps) => {
             <div className="content">
               {props.post.footnote.map((footnote, footnoteIdx) => {
                 return (
-                  // <div>{foontnote.count})</div>
-                  <div>{footnoteIdx + 1}) {
-                    footnote.content
+                  <div
+                    className="footer__content"
+                  >{footnoteIdx + 1}) {
+                    ReactHtmlParser(footnote.content)
                   }</div>
                 )
               })}
@@ -362,7 +365,6 @@ const Post = (props: PostProps) => {
                 <img src={facebookBlue} alt="share-via-facebook"/>
               </div>
               <div onClick={shareKakaotalk}>
-                {/*TODO: 모바일 테스트*/}
                 <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
               </div>
               <div onClick={shareLink}>
@@ -399,7 +401,7 @@ const Post = (props: PostProps) => {
                 })
                 : null}</div>
             <div className="rel-posts__right">{
-              props.relPosts ? props.relPosts.slice(4, 8).map((post, postIdx) => {
+              props.relPosts && !store?.mobile.isMobile ? props.relPosts.slice(4, 8).map((post, postIdx) => {
                   return (
                     <div
                       key={postIdx}
@@ -543,11 +545,17 @@ padding-bottom: 2.2rem;
 .footnote__content__wrapper {
 width: calc(100% - 3rem);
 max-width: calc(100% - 3rem);
+overflow: hidden;
 .footnote__content {
+overflow-wrap: break-word;
 color: blue;
 font-size: 1.8rem;
 &:not(:last-child) {
 margin-bottom: 2.2rem;
+}
+img {
+max-width: 100%;
+object-fit: contain;
 }
 }
 }
@@ -745,6 +753,7 @@ margin-right: 0.8rem;
 }
 &__footer {
 &--footnote {
+//border: 3px solid mediumorchid;
 flex-direction: column;
 .label, .content {
 max-width: 100%;
@@ -756,15 +765,20 @@ flex-basis: 100%;
 }
 .content {
 padding: 0.7rem 1.3rem;
-& > div {
-  padding-left: 1.2em;
-  text-indent:-1.2em;
-  &:not(:last-child) {
-  margin-bottom: 0.4rem;
+  .footer__content {
+    padding-left: 1.2em;
+    text-indent:-1.2em;
+    &:not(:last-child) {
+      margin-bottom: 0.4rem;
+    }
+  img {
+    max-width: 100%;
+    object-fit: contain;
   }
 }
 }
 }
+
 &--reference {
 flex-direction: column;
 .label, .content {
@@ -791,8 +805,6 @@ flex-basis: 100%:
 .label {
 border-right: none;
 border-bottom: 1px dotted blue;
-}
-.label {
 border-top: 1px dotted blue;
 }
 &:not(:last-child) {
@@ -812,7 +824,6 @@ width: 2.8rem;
 }
 &:not(:last-child) {
 margin-right: 2rem;
-}
 }
 }
 }
