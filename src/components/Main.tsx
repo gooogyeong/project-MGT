@@ -134,9 +134,10 @@ const Feed = (): JSX.Element => {
                       })}
                       </span>
                     </div>
-                    <div className={`post__content__body ${!postIdx ? 'left' : 'right'}`}>
+                    <div
+                      className={`post__content__body ${!postIdx ? 'left' : 'right'} ${!thumbnailArr[postIdx] ? 'no-thumbnail' : ''}`}>
                       <div className="content-wrapper">
-                        <div className={`main-text ${!thumbnailArr[postIdx] ? 'no-thumbnail' : ''}`}>
+                        <div className="main-text">
                           <div className="text">
                             <div>{processContent(postIdx)}</div>
                           </div>
@@ -270,7 +271,7 @@ text-overflow: ellipsis;
 & > div {
 position: relative;
 z-index: -1;
-} 
+}
 }
 }
 }
@@ -284,6 +285,12 @@ height: 7.8rem;
 
 // LEFT
 &.left {
+&.no-thumbnail {
+.main-text {
+max-height: 69.5rem;
+min-height: 69.5rem;
+}
+}
 .thumbnail__container {
 order: 1;
 justify-content: flex-start;
@@ -291,14 +298,11 @@ min-height: calc(68.8rem * 0.45);
 max-height: calc(68.8rem * 0.45);
 flex-basis: 45%;
 }
-.main-text { 
+.main-text {
 order: 2;
 max-height: calc(68.8rem * 0.55);
 flex-basis: 55%;
 overflow: hidden;
-&.no-thumbnail {
-max-height: 69.5rem;
-}
 p {
 min-height: 1.8rem;
 }
@@ -311,6 +315,14 @@ box-shadow: white 0px -40px 20px 20px;
 
 // RIGHT
 &.right {
+&.no-thumbnail {
+.main-text {
+max-height: 69.5rem;
+}
+.button__container {
+box-shadow: white 0px -40px 20px 20px;
+}
+}
 .thumbnail__container {
 order: 3;
 min-height: calc(68.8rem * 0.45);
@@ -318,14 +330,11 @@ max-height: calc(68.8rem * 0.45);
 justify-content: flex-end;
 box-shadow: white 0px -40px 20px 20px;
 }
-.main-text { 
+.main-text {
 order: 1;
 // TODO: 공통 셀렉터 왜 안먹는지 알아내야함
 max-height: calc(68.8rem * 0.55);
 overflow: hidden;
-&.no-thumbnail {
-max-height: 69.5rem;
-}
 p {
 min-height: 1.8rem;
 }
@@ -395,11 +404,17 @@ padding: 0.7rem 1.8rem;
 }
 }
 &.left {
+&.no-thumbnail {
+.main-text {
+min-height: calc(37.7rem * 0.55);
+max-height: calc(37.7rem * 0.55);
+}
+}
 .thumbnail__container {
 min-height: calc(37.7rem * 0.45);
 max-height: calc(37.7rem * 0.45);
 }
-.main-text { 
+.main-text {
 max-height: calc(37.7rem * 0.55);
 p {
 min-height: ${props => props.theme.fontSizeMobile};
@@ -407,6 +422,12 @@ min-height: ${props => props.theme.fontSizeMobile};
 }
 }
 &.right {
+&.no-thumbnail {
+.main-text {
+min-height: calc(37.7rem * 0.55);
+max-height: calc(37.7rem * 0.55);
+}
+}
 .thumbnail__container {
 min-height: calc(37.7rem * 0.45);
 max-height: calc(37.7rem * 0.45);
