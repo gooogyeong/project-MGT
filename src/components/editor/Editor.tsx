@@ -19,6 +19,7 @@ import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import { TextAlign } from '@/utils/tiptap/TextAlign'
+import Link from '@tiptap/extension-link'
 import StarterKit from '@tiptap/starter-kit'
 import EditorMenuBar from '@/components/editor/EditorMenuBar'
 import EditorBubbleMenu from '@/components/editor/EditorBubbleMenu'
@@ -66,6 +67,7 @@ const Editor = (props: EditorProps): JSX.Element => {
         resizable: true
       }),
       Footnote,
+      Link,
       TableHeader,
       TableRow,
       TableCell,
