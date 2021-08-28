@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
@@ -37,6 +37,7 @@ import CategoryDropdown from '@/components/shared/CategoryDropdown'
 import Post from '@/components/post/Post'
 import { Post as PostType } from '@/types/posts'
 import ContentHeader from '@/components/shared/ContentHeader'
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable'
 
 type EditorProps = {
   isWrite?: boolean;
@@ -127,6 +128,9 @@ const Editor = (props: EditorProps): JSX.Element => {
     setIsPinned(e.target.checked ? 1 : 0)
   }
 
+  const [, updateState] = useState<{}>()
+  const forceUpdate = useCallback(() => updateState({}), [])
+
   useEffect(() => {
     if (store?.post.currEditPost) {
       const post = store.post.currEditPost
@@ -140,19 +144,22 @@ const Editor = (props: EditorProps): JSX.Element => {
     }
   }, [])
 
+
   useEffect(() => {
-    const handleFootnoteCreate = () => {
-      if (store?.post.currPostDetail?.footnote?.length !== footnoteArr.length) {
-        if (store?.post.currPostDetail && store?.post.currPostDetail?.footnote) {
+    const handleFootnoteCreate = (e: Event) => {
+      const createdFootnoteId = (e as CustomEvent<string>).detail
+      if (store?.post.currPostDetail?.footnote?.map(footnote => footnote.id) !== footnoteArr.map(footnote => footnote.id)) {
+        if (store?.post.currPostDetail?.footnote) {
           setFootnoteArr(store?.post.currPostDetail?.footnote)
         }
       }
+      forceUpdate()
     }
     window.addEventListener('footnote-create', handleFootnoteCreate)
     return () => {
       window.removeEventListener('footnote-create', handleFootnoteCreate)
     }
-  }, [footnoteArr, store?.post.currPostDetail?.footnote?.length])
+  }, [footnoteArr])
 
   useEffect(() => {
     const handleFootnoteDelete = (e: Event) => {
@@ -161,6 +168,7 @@ const Editor = (props: EditorProps): JSX.Element => {
         return footnote.id !== deletedFootnoteId
       })
       setFootnoteArr(newFootnoteArr)
+      forceUpdate()
     }
     window.addEventListener('footnote-delete', handleFootnoteDelete)
 
@@ -213,7 +221,7 @@ const Editor = (props: EditorProps): JSX.Element => {
 
         let formattedFootnoteArr = [] as FootnoteType[]
         if (footnoteArr.length) {
-          footnoteArr.forEach((footnote, footnoteIdx) => {
+          footnoteArr.forEach((footnote) => {
             const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
             const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
             if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
@@ -244,9 +252,12 @@ const Editor = (props: EditorProps): JSX.Element => {
         history.push('/post/list')
       }
 
-      const handleFootnoteContentInput = (footnoteIdx: number, e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const handleFootnoteContentInput = (footnoteIdx: number, e: ContentEditableEvent) => {
         const newFootnoteArr = [...footnoteArr]
-        newFootnoteArr.splice(footnoteIdx, 1, { ...newFootnoteArr[footnoteIdx], content: e.target.value })
+        newFootnoteArr.splice(footnoteIdx, 1, {
+          ...newFootnoteArr[footnoteIdx],
+          content: e.target.value
+        })
         setFootnoteArr(newFootnoteArr)
       }
 
@@ -305,12 +316,15 @@ const Editor = (props: EditorProps): JSX.Element => {
             />
             <div className="footnote-list__wrapper">
               {footnoteArr.map((footnote, footnoteIdx) => {
+                console.log(`index: ${footnoteIdx + 1}`)
                 return (
                   <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
                     <span className="footnote__count"></span>
-                    <textarea
-                      value={footnote.content}
-                      onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
+                    <ContentEditable
+                      html={footnote.content}
+                      onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}
+                      className="footnote__content"
+                    />
                   </div>
                 )
               })}
@@ -366,25 +380,25 @@ outline: none !important;
 }
 .ProseMirror {
 padding: 0;
-  .iframe-wrapper, .video-wrapper {
-  display: flex;
-  justify-content: center;
-  }
+.iframe-wrapper, .video-wrapper {
+display: flex;
+justify-content: center;
+}
 }
 
 .tableWrapper {
-  overflow-x: auto;
+overflow-x: auto;
 }
 
 .resize-cursor {
-  cursor: ew-resize;
-  cursor: col-resize;
+cursor: ew-resize;
+cursor: col-resize;
 }
 
-  blockquote {
-    padding-left: 1rem;
-    border-left: 3px solid black;
-  }
+blockquote {
+padding-left: 1rem;
+border-left: 3px solid black;
+}
 }
 .footnote-list__wrapper {
 counter-reset: footnote-content;
@@ -393,14 +407,18 @@ padding: 1.3rem;
 // TODO: scroll X -> flex height
 display: flex;
 .footnote__count {
-  &:after {
-  content: counter(footnote-content) ')';
-  counter-increment: footnote-content;
+&:after {
+content: counter(footnote-content) ')';
+counter-increment: footnote-content;
 }
 }
-textarea {
+.footnote__content {
 width: 100%;
 border: none;
+img {
+max-width: 20%;
+object-contain: fit;
+}
 }
 }
 }
@@ -416,9 +434,9 @@ height: 100%;
 
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 .ProseMirror {
-  .iframe-wrapper, .video-wrapper {
-  height: 24rem !important;
-  }
+.iframe-wrapper, .video-wrapper {
+height: 24rem !important;
+}
 }
 }
 `
