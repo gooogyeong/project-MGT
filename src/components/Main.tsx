@@ -66,7 +66,7 @@ const Feed = (): JSX.Element => {
       newThumbnailArr[postIdx] = thumbnail
     })
     setThumbnailArr(newThumbnailArr)
-  }, [])
+  }, [store?.post.authorLatestPosts])
 
   const getThumbnail = (postIdx: number) => {
     const content = store?.post.authorLatestPosts[postIdx].content as string
