@@ -259,6 +259,33 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         add link
       </button>
       <button
+        onClick={() => {
+          const url = window.prompt('URL') || ''
+          let sel, range
+          if (window.getSelection && (sel = window.getSelection())?.rangeCount) {
+            const text = sel.anchorNode?.textContent || ''
+            if (sel.anchorNode?.textContent) {
+              sel.anchorNode.textContent = ''
+            }
+            range = sel.getRangeAt(0)
+            range.collapse(true)
+            const a = document.createElement('a')
+            a.innerText = text
+            a.href = url
+            a.target = '_blank'
+            range.insertNode(a)
+
+            // Move the caret immediately after the inserted span
+            range.setStartAfter(a)
+            range.collapse(true)
+            sel.removeAllRanges()
+            sel.addRange(range)
+          }
+        }}
+      >
+        add link to footnote
+      </button>
+      <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'is-active' : ''}
       >
