@@ -141,31 +141,31 @@ const Editor = (props: EditorProps): JSX.Element => {
   }, [])
 
   useEffect(() => {
-    const updateFootnoteArr = () => {
+    const handleFootnoteCreate = () => {
       if (store?.post.currPostDetail?.footnote?.length !== footnoteArr.length) {
         if (store?.post.currPostDetail && store?.post.currPostDetail?.footnote) {
           setFootnoteArr(store?.post.currPostDetail?.footnote)
         }
       }
     }
-    window.addEventListener('footnote-create', updateFootnoteArr)
+    window.addEventListener('footnote-create', handleFootnoteCreate)
     return () => {
-      window.removeEventListener('footnote-create', updateFootnoteArr)
+      window.removeEventListener('footnote-create', handleFootnoteCreate)
     }
-  }, [footnoteArr])
+  }, [footnoteArr, store?.post.currPostDetail?.footnote?.length])
 
   useEffect(() => {
-    const updateFootnoteArr = (e: Event) => {
+    const handleFootnoteDelete = (e: Event) => {
       const deletedFootnoteId = (e as CustomEvent<string>).detail
       const newFootnoteArr = footnoteArr.filter(footnote => {
         return footnote.id !== deletedFootnoteId
       })
       setFootnoteArr(newFootnoteArr)
     }
-    window.addEventListener('footnote-delete', updateFootnoteArr)
+    window.addEventListener('footnote-delete', handleFootnoteDelete)
 
     return () => {
-      window.removeEventListener('footnote-delete', updateFootnoteArr)
+      window.removeEventListener('footnote-delete', handleFootnoteDelete)
     }
   }, [footnoteArr])
 
