@@ -250,6 +250,15 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         purple
       </button>
       <button
+        onClick={() => {
+          const url = window.prompt('URL') || ''
+          editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+        }}
+        className={editor.isActive('link') ? 'is-active' : ''}
+      >
+        add link
+      </button>
+      <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'is-active' : ''}
       >
@@ -312,19 +321,16 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         <IoIosUndo/>
       </button>
       <button onClick={() => editor.chain().focus().redo().run()}>
-        {/*redo*/}
         <IoIosRedo/>
       </button>
       <button onClick={() => {
         setIsOpenImageUploadModal(!isOpenImageUploadModal)
       }}>
-        {/*upload image*/}
         <RiImageAddLine/>
       </button>
       <button onClick={() => {
         setIsOpenVideoUploadModal(!isOpenVideoUploadModal)
       }}>
-        {/*upload video*/}
         <RiVideoUploadFill/>
       </button>
     </MGTEditorMenuBar>
