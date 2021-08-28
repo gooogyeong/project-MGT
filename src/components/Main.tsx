@@ -242,6 +242,7 @@ object-fit: contain; // cover;
 }
 
 .main-text {
+border: 1px solid red !important;
 .text {
 overflow: hidden;
 text-overflow: ellipsis;
@@ -252,8 +253,8 @@ z-index: -1;
 }
 }
 }
-
 }
+
 .button__container {
 display: flex;
 justify-content: flex-end;
@@ -276,6 +277,9 @@ flex-basis: 55%;
 overflow: hidden;
 &.no-thumbnail {
 max-height: 69.5rem;
+}
+p {
+min-height: 1.8rem;
 }
 }
 .button__container {
@@ -300,6 +304,9 @@ max-height: calc(68.8rem * 0.55);
 overflow: hidden;
 &.no-thumbnail {
 max-height: 69.5rem;
+}
+p {
+min-height: 1.8rem;
 }
 }
 .button__container {
@@ -373,6 +380,9 @@ max-height: calc(37.7rem * 0.45);
 }
 .main-text { 
 max-height: calc(37.7rem * 0.55);
+p {
+min-height: ${props => props.theme.fontSizeMobile};
+}
 }
 }
 &.right {
@@ -382,6 +392,9 @@ max-height: calc(37.7rem * 0.45);
 }
 .main-text {
 max-height: calc(37.7rem * 0.55);
+p {
+min-height: ${props => props.theme.fontSizeMobile};
+}
 }
 }
 }
