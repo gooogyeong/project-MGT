@@ -43,6 +43,9 @@ outline: none;
 }
 
 .ProseMirror, .content__text {
+span {
+overflow-wrap: break-word;
+}
 table {
     border-collapse: collapse;
     table-layout: fixed;
@@ -50,8 +53,7 @@ table {
     margin: 0;
     overflow: hidden;
 
-    td,
-    th {
+    th, td {
       min-width: 1em;
       border: 1px solid black;
       padding: 3px 5px;
@@ -59,8 +61,8 @@ table {
       box-sizing: border-box;
       position: relative;
 
-      > * {
-        margin-bottom: 0;
+      p, span {
+      overflow-wrap: break-word;
       }
     }
 
