@@ -553,6 +553,10 @@ font-size: 1.8rem;
 &:not(:last-child) {
 margin-bottom: 2.2rem;
 }
+p {
+margin-top: 0;
+margin-bottom: 0;
+}
 img {
 max-width: 100%;
 object-fit: contain;
@@ -753,7 +757,6 @@ margin-right: 0.8rem;
 }
 &__footer {
 &--footnote {
-//border: 3px solid mediumorchid;
 flex-direction: column;
 .label, .content {
 max-width: 100%;
@@ -771,10 +774,13 @@ padding: 0.7rem 1.3rem;
     &:not(:last-child) {
       margin-bottom: 0.4rem;
     }
+  p {
+margin-top: 0;
+margin-bottom: 0;
+}
   img {
     max-width: 100%;
     object-fit: contain;
-  }
 }
 }
 }
