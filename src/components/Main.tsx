@@ -60,24 +60,37 @@ const Feed = (): JSX.Element => {
   }
 
   useEffect(() => {
+    const newThumbnailArr = [...thumbnailArr]
     store?.post.authorLatestPosts.forEach((post, postIdx) => {
-      processContent(postIdx)
+      const thumbnail = getThumbnail(postIdx)
+      newThumbnailArr[postIdx] = thumbnail
     })
+    setThumbnailArr(newThumbnailArr)
   }, [])
+
+  const getThumbnail = (postIdx: number) => {
+    const content = store?.post.authorLatestPosts[postIdx].content as string
+    let thumbnail: undefined | Node = undefined
+    const transform = (node: Node) => {
+      if (node.type === 'tag' && (['img', 'video', 'iframe'].includes(node.name))) {
+        if (!thumbnail) {
+          thumbnail = node
+        }
+      }
+    }
+    const options = { transform } as Options
+    // TODO: thumbnail 발견하면 멈추도록 하면 좋겠음
+    ReactHtmlParser(content, options)
+    return thumbnail
+  }
 
   const processContent = (postIdx: number) => {
     const content = store?.post.authorLatestPosts[postIdx].content as string
     const transform = (node: Node) => {
-      if (node.type === 'tag' && node.name === 'img') {
-        if (thumbnailArr[postIdx] === undefined) {
-          const newThumbnailArr = [...thumbnailArr]
-          newThumbnailArr[postIdx] = node
-          setThumbnailArr(newThumbnailArr)
-        }
-        return null
-      }
-
-      if (node.type === 'tag' && (node.name === 'video' || node.name === 'iframe')) {
+      if (node.type === 'tag' && (
+          ['img', 'video', 'iframe'].includes(node.name)) ||
+        ['iframe-wrapper', 'video-wrpper'].includes(node?.attribs?.class || '')
+      ) {
         return null
       }
     }
@@ -96,7 +109,6 @@ const Feed = (): JSX.Element => {
   }
 
   return useObserver(() => {
-
     return (
       <MGTMain>
         <div className="content-header-wrapper">
@@ -131,10 +143,19 @@ const Feed = (): JSX.Element => {
                         </div>
                         {thumbnailArr[postIdx] ? (
                           <div className="thumbnail__container">
-                            <img
-                              src={thumbnailArr[postIdx]?.attribs?.src}
-                              alt={thumbnailArr[postIdx]?.attribs?.alt}
-                            />
+                            {thumbnailArr[postIdx]?.name === 'img' ? (
+                              <img
+                                src={thumbnailArr[postIdx]?.attribs?.src}
+                                alt={thumbnailArr[postIdx]?.attribs?.alt}
+                              />) : thumbnailArr[postIdx]?.name === 'iframe' ? (
+                              <iframe
+                                src={thumbnailArr[postIdx]?.attribs?.src}
+                              />
+                            ) : thumbnailArr[postIdx]?.name === 'video' ? (
+                              <video
+                                src={thumbnailArr[postIdx]?.attribs?.src}
+                              />
+                            ) : null}
                           </div>
                         ) : null}
                       </div>
@@ -234,7 +255,7 @@ flex-direction: column;
 max-height: 20%;
 display: flex;
 margin: 0 -0.7rem;
-img {
+img, iframe, video {
 // TODO: 왜 fill이 안되는지. 그리고 이미지 사이즈에 따라 fill / cover 분기처리
 width: 100%;
 object-fit: contain; // cover;
