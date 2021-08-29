@@ -784,7 +784,7 @@ margin-bottom: 0;
 }
 }
 }
-
+}
 &--reference {
 flex-direction: column;
 .label, .content {
