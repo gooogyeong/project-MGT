@@ -128,9 +128,6 @@ const Editor = (props: EditorProps): JSX.Element => {
     setIsPinned(e.target.checked ? 1 : 0)
   }
 
-  const [, updateState] = useState<{}>()
-  const forceUpdate = useCallback(() => updateState({}), [])
-
   useEffect(() => {
     if (store?.post.currEditPost) {
       const post = store.post.currEditPost
@@ -147,13 +144,11 @@ const Editor = (props: EditorProps): JSX.Element => {
 
   useEffect(() => {
     const handleFootnoteCreate = (e: Event) => {
+      // 이걸 해줘야 수정시에 기존 각주들의 값을 initial value로 세팅해줌. 왜그런지는..
       const createdFootnoteId = (e as CustomEvent<string>).detail
-      if (store?.post.currPostDetail?.footnote?.map(footnote => footnote.id) !== footnoteArr.map(footnote => footnote.id)) {
-        if (store?.post.currPostDetail?.footnote) {
-          setFootnoteArr(store?.post.currPostDetail?.footnote)
-        }
+      if (store?.post.currPostDetail?.footnote?.map(footnote => footnote.id).includes(createdFootnoteId)) {
+        setFootnoteArr(store?.post.currPostDetail?.footnote)
       }
-      forceUpdate()
     }
     window.addEventListener('footnote-create', handleFootnoteCreate)
     return () => {
@@ -168,7 +163,6 @@ const Editor = (props: EditorProps): JSX.Element => {
         return footnote.id !== deletedFootnoteId
       })
       setFootnoteArr(newFootnoteArr)
-      forceUpdate()
     }
     window.addEventListener('footnote-delete', handleFootnoteDelete)
 
