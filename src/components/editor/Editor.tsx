@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
@@ -146,9 +146,7 @@ const Editor = (props: EditorProps): JSX.Element => {
     const handleFootnoteCreate = (e: Event) => {
       // 이걸 해줘야 수정시에 기존 각주들의 값을 initial value로 세팅해줌. 왜그런지는..
       const createdFootnoteId = (e as CustomEvent<string>).detail
-      if (store?.post.currPostDetail?.footnote?.map(footnote => footnote.id).includes(createdFootnoteId)) {
-        setFootnoteArr(store?.post.currPostDetail?.footnote)
-      }
+      setFootnoteArr([...footnoteArr])
     }
     window.addEventListener('footnote-create', handleFootnoteCreate)
     return () => {
@@ -310,7 +308,6 @@ const Editor = (props: EditorProps): JSX.Element => {
             />
             <div className="footnote-list__wrapper">
               {footnoteArr.map((footnote, footnoteIdx) => {
-                console.log(`index: ${footnoteIdx + 1}`)
                 return (
                   <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
                     <span className="footnote__count"></span>
