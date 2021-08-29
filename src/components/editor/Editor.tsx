@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useEditor } from '@tiptap/react'
 import styled from 'styled-components'
@@ -19,6 +19,7 @@ import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
 import { Video } from '@/utils/tiptap/Video'
 import { TextAlign } from '@/utils/tiptap/TextAlign'
+import Link from '@tiptap/extension-link'
 import StarterKit from '@tiptap/starter-kit'
 import EditorMenuBar from '@/components/editor/EditorMenuBar'
 import EditorBubbleMenu from '@/components/editor/EditorBubbleMenu'
@@ -36,6 +37,7 @@ import CategoryDropdown from '@/components/shared/CategoryDropdown'
 import Post from '@/components/post/Post'
 import { Post as PostType } from '@/types/posts'
 import ContentHeader from '@/components/shared/ContentHeader'
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable'
 
 type EditorProps = {
   isWrite?: boolean;
@@ -66,6 +68,7 @@ const Editor = (props: EditorProps): JSX.Element => {
         resizable: true
       }),
       Footnote,
+      Link,
       TableHeader,
       TableRow,
       TableCell,
@@ -138,32 +141,33 @@ const Editor = (props: EditorProps): JSX.Element => {
     }
   }, [])
 
+
   useEffect(() => {
-    const updateFootnoteArr = () => {
-      if (store?.post.currPostDetail?.footnote?.length !== footnoteArr.length) {
-        if (store?.post.currPostDetail && store?.post.currPostDetail?.footnote) {
-          setFootnoteArr(store?.post.currPostDetail?.footnote)
-        }
+    const handleFootnoteCreate = (e: Event) => {
+      // 이걸 해줘야 수정시에 기존 각주들의 값을 initial value로 세팅해줌. 왜그런지는..
+      const createdFootnoteId = (e as CustomEvent<string>).detail
+      if (store?.post.currPostDetail?.footnote?.map(footnote => footnote.id).includes(createdFootnoteId)) {
+        setFootnoteArr(store?.post.currPostDetail?.footnote)
       }
     }
-    window.addEventListener('footnote-create', updateFootnoteArr)
+    window.addEventListener('footnote-create', handleFootnoteCreate)
     return () => {
-      window.removeEventListener('footnote-create', updateFootnoteArr)
+      window.removeEventListener('footnote-create', handleFootnoteCreate)
     }
   }, [footnoteArr])
 
   useEffect(() => {
-    const updateFootnoteArr = (e: Event) => {
+    const handleFootnoteDelete = (e: Event) => {
       const deletedFootnoteId = (e as CustomEvent<string>).detail
       const newFootnoteArr = footnoteArr.filter(footnote => {
         return footnote.id !== deletedFootnoteId
       })
       setFootnoteArr(newFootnoteArr)
     }
-    window.addEventListener('footnote-delete', updateFootnoteArr)
+    window.addEventListener('footnote-delete', handleFootnoteDelete)
 
     return () => {
-      window.removeEventListener('footnote-delete', updateFootnoteArr)
+      window.removeEventListener('footnote-delete', handleFootnoteDelete)
     }
   }, [footnoteArr])
 
@@ -211,7 +215,7 @@ const Editor = (props: EditorProps): JSX.Element => {
 
         let formattedFootnoteArr = [] as FootnoteType[]
         if (footnoteArr.length) {
-          footnoteArr.forEach((footnote, footnoteIdx) => {
+          footnoteArr.forEach((footnote) => {
             const footnoteWrapperArr = Array.from(document.getElementsByClassName('footnote__wrapper'))
             const footnoteWrapperIdArr = footnoteWrapperArr.map(footnote => footnote.id)
             if (footnoteWrapperIdArr.includes(footnote.id)) formattedFootnoteArr.push({
@@ -242,9 +246,12 @@ const Editor = (props: EditorProps): JSX.Element => {
         history.push('/post/list')
       }
 
-      const handleFootnoteContentInput = (footnoteIdx: number, e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const handleFootnoteContentInput = (footnoteIdx: number, e: ContentEditableEvent) => {
         const newFootnoteArr = [...footnoteArr]
-        newFootnoteArr.splice(footnoteIdx, 1, { ...newFootnoteArr[footnoteIdx], content: e.target.value })
+        newFootnoteArr.splice(footnoteIdx, 1, {
+          ...newFootnoteArr[footnoteIdx],
+          content: e.target.value
+        })
         setFootnoteArr(newFootnoteArr)
       }
 
@@ -303,12 +310,15 @@ const Editor = (props: EditorProps): JSX.Element => {
             />
             <div className="footnote-list__wrapper">
               {footnoteArr.map((footnote, footnoteIdx) => {
+                console.log(`index: ${footnoteIdx + 1}`)
                 return (
                   <div key={footnoteIdx} id={footnote.id} className="footnote__wrapper">
                     <span className="footnote__count"></span>
-                    <textarea
-                      value={footnote.content}
-                      onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}/>
+                    <ContentEditable
+                      html={footnote.content}
+                      onChange={(e) => handleFootnoteContentInput(footnoteIdx, e)}
+                      className="footnote__content"
+                    />
                   </div>
                 )
               })}
@@ -364,25 +374,25 @@ outline: none !important;
 }
 .ProseMirror {
 padding: 0;
-  .iframe-wrapper, .video-wrapper {
-  display: flex;
-  justify-content: center;
-  }
+.iframe-wrapper, .video-wrapper {
+display: flex;
+justify-content: center;
+}
 }
 
 .tableWrapper {
-  overflow-x: auto;
+overflow-x: auto;
 }
 
 .resize-cursor {
-  cursor: ew-resize;
-  cursor: col-resize;
+cursor: ew-resize;
+cursor: col-resize;
 }
 
-  blockquote {
-    padding-left: 1rem;
-    border-left: 3px solid black;
-  }
+blockquote {
+padding-left: 1rem;
+border-left: 3px solid black;
+}
 }
 .footnote-list__wrapper {
 counter-reset: footnote-content;
@@ -391,14 +401,18 @@ padding: 1.3rem;
 // TODO: scroll X -> flex height
 display: flex;
 .footnote__count {
-  &:after {
-  content: counter(footnote-content) ')';
-  counter-increment: footnote-content;
+&:after {
+content: counter(footnote-content) ')';
+counter-increment: footnote-content;
 }
 }
-textarea {
+.footnote__content {
 width: 100%;
 border: none;
+img {
+max-width: 20%;
+object-contain: fit;
+}
 }
 }
 }
@@ -414,9 +428,9 @@ height: 100%;
 
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 .ProseMirror {
-  .iframe-wrapper, .video-wrapper {
-  height: 24rem !important;
-  }
+.iframe-wrapper, .video-wrapper {
+height: 24rem !important;
+}
 }
 }
 `
