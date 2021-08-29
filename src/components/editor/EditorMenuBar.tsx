@@ -42,29 +42,39 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
   }
 
   const addFootnote = () => {
+    // 본문 내 footnote들의 array 추출
     let footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
+
+    // 본문 내 footnote들의 id를 array로 추출
     let footnoteLabelIdMap: string[] = []
     footnoteElArr.forEach(footnote => {
       const footnoteId = footnote.id
       if (footnoteId) footnoteLabelIdMap.push(footnoteId)
     })
 
+    // 새로운 footnote를 위한 id 생성
     const newFootnoteId = generateId()
+    // 기존 footnote의 id과 겹치지 않으면
     if (footnoteLabelIdMap.indexOf(newFootnoteId) < 0) {
+      // 생성한 id를 가지고 본문 내 새로운 footnote 생성
       // @ts-ignore
       editor.chain().focus().setFootnoteComponent({ id: newFootnoteId }).run()
-
+      // 본문 내 footnote들의 id를 다시 한번 추출
       footnoteElArr = Array.from(document.getElementsByTagName('footnote'))
-      footnoteLabelIdMap = footnoteElArr.map(footnote => {
-        return footnote.id
-      })
+      footnoteLabelIdMap = footnoteElArr.map(footnote => footnote.id)
+
+      // 본문 내 새로운 footnote의 위치가 어디인지 파악
       const newFootnoteWrapperIdx = footnoteLabelIdMap.indexOf(newFootnoteId)
+
+      // 본문 내 footnote의 위치에 맞게 footnoteArr에도 footnoteWrapperObj를 삽입
       const newFootnoteWrapperObj = {
         id: newFootnoteId,
         count: -1,
         content: ''
       }
       footnoteArr.splice(newFootnoteWrapperIdx, 0, newFootnoteWrapperObj)
+
+      // footnote 카운트 갱신
       footnoteArr.forEach((footnote, footnoteIdx) => {
         footnote.count = footnoteIdx + 1
       })
@@ -250,6 +260,42 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         purple
       </button>
       <button
+        onClick={() => {
+          const url = window.prompt('URL') || ''
+          editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+        }}
+        className={editor.isActive('link') ? 'is-active' : ''}
+      >
+        add link
+      </button>
+      <button
+        onClick={() => {
+          const url = window.prompt('URL') || ''
+          let sel, range
+          if (window.getSelection && (sel = window.getSelection())?.rangeCount) {
+            const text = sel.anchorNode?.textContent || ''
+            if (sel.anchorNode?.textContent) {
+              sel.anchorNode.textContent = ''
+            }
+            range = sel.getRangeAt(0)
+            range.collapse(true)
+            const a = document.createElement('a')
+            a.innerText = text
+            a.href = url
+            a.target = '_blank'
+            range.insertNode(a)
+
+            // Move the caret immediately after the inserted span
+            range.setStartAfter(a)
+            range.collapse(true)
+            sel.removeAllRanges()
+            sel.addRange(range)
+          }
+        }}
+      >
+        add link to footnote
+      </button>
+      <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'is-active' : ''}
       >
@@ -312,19 +358,16 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
         <IoIosUndo/>
       </button>
       <button onClick={() => editor.chain().focus().redo().run()}>
-        {/*redo*/}
         <IoIosRedo/>
       </button>
       <button onClick={() => {
         setIsOpenImageUploadModal(!isOpenImageUploadModal)
       }}>
-        {/*upload image*/}
         <RiImageAddLine/>
       </button>
       <button onClick={() => {
         setIsOpenVideoUploadModal(!isOpenVideoUploadModal)
       }}>
-        {/*upload video*/}
         <RiVideoUploadFill/>
       </button>
     </MGTEditorMenuBar>
