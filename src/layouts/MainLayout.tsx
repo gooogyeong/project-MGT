@@ -4,7 +4,7 @@ import Header from '@/components/Header'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
 import { storeContext } from '@/stores/context'
-import { widthMobileScreen } from '@/assets/style/theme'
+import { widthMobileScreen, widthTabletScreen } from '@/assets/style/theme'
 import { useObserver } from 'mobx-react-lite'
 
 type MainLayoutProps = {
@@ -18,7 +18,9 @@ const MainLayout = (props: MainLayoutProps) => {
   const [isShowMobileNavBar, setIsShowMobileNavBar] = useState(false)
 
   const handleResize = () => {
+    const isTablet = parseInt(widthMobileScreen) < window.innerWidth && window.innerWidth <= parseInt(widthTabletScreen)
     const isMobile = window.innerWidth <= parseInt(widthMobileScreen)
+    store?.mobile.setIsTablet(isTablet)
     if (store?.mobile.isMobile !== isMobile) {
       store?.mobile.setIsMobile(isMobile)
       if (!isMobile && !isShowMobileNavBar) setIsShowMobileNavBar(true)
@@ -53,6 +55,7 @@ const MainLayout = (props: MainLayoutProps) => {
         </div>
         <Footer
           isMobile={store?.mobile.isMobile || window.innerWidth <= parseInt(widthMobileScreen)}
+          isTablet={store?.mobile.isTablet || (parseInt(widthMobileScreen) < window.innerWidth && window.innerWidth <= parseInt(widthTabletScreen))}
         />
       </MGTMainLayout>
     )
@@ -64,8 +67,12 @@ margin: 6.8rem 7.6rem;
 border: 1px dotted red;
 position: relative;
 
+@media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
+margin: 1.2rem 1.2rem 38rem;
+}
+
 @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
-margin: 1.2rem 1.2rem 21.4rem;
+margin-bottom: 21.4rem;
 }
 `
 

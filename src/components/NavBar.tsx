@@ -74,28 +74,38 @@ const NavBar = (props: NavBarProps) => {
 
 const MGTNavBar = styled.div`
 display: flex;
-justify-content: center;
+//justify-content: center;
+justify-content: space-between;
 align-items: center;
 position: relative;
 border-bottom: 1px dotted red;
 padding: 1.2rem 1.4rem;
 background-color: white;
 z-index: ${props => props.theme.zIndexMobileNavBar};
+//border: 2px solid black;
 .navbar {
 &__logo {
-position: absolute;
+//position: absolute;
 left: 1.4rem;
 }
 &__searchbar {
-position: absolute;
-right: 1.4rem;
-height: 80%;
+flex-basis: 21.8%;
 max-height: 4.9rem;
+min-height: 4.9rem;
+position: relative;
+display: flex;
 .searchbar {
-height: 100%;
+align-items: stretch;
+min-height: 100%;
+}
+button {
+min-width: 8rem;
 }
 }
 &__menu {
+position: absolute;
+left: 50%;
+margin-left: -12.5%;
 display: flex;
 justify-content: space-between;
 font-size: 2.6rem;
@@ -103,6 +113,27 @@ font-size: 2.6rem;
 //width: 50%;
 width: 25%;
 cursor: pointer;
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
+.navbar {
+&__logo {
+//position: absolute;
+//left: 1.4rem;
+}
+&__searchbar {
+.searchbar {
+//height: 100%;
+}
+}
+&__menu {
+font-size: 2rem;
+// TODO: 50% 원복
+//width: 50%;
+//width: 25%;
+//cursor: pointer;
+}
 }
 }
 
