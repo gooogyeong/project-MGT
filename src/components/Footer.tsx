@@ -45,6 +45,7 @@ const FooterTag = (props: { randomTags: TagType[]; handleTagClick: (payload: Tag
 
 type FooterProps = {
   isMobile: boolean;
+  isTablet: boolean;
 }
 
 const Footer = (props: FooterProps) => {
@@ -119,9 +120,11 @@ const Footer = (props: FooterProps) => {
               <div className="label">협조자</div>
               <div className="content">
                 <div>이민경</div>
-                <div className="buffer">
-                  {!props.isMobile ? null : <FooterSocialMedia/>}
-                </div>
+                {!props.isTablet ? (
+                  <div className="buffer">
+                    {!props.isMobile ? null : <FooterSocialMedia/>}
+                  </div>
+                ) : null}
               </div>
             </div>
             {!props.isMobile ? (
@@ -144,7 +147,8 @@ const Footer = (props: FooterProps) => {
             </div>
             <div className="sub-row">
               <div className="label">아이콘 제작자</div>
-              <div className="content">Pixel perfect from
+              <div className="content">
+                <span>Pixel perfect from</span>
                 <a href="https://www.flaticon.com/"
                    target="_blank" rel="noreferrer"
                 >
@@ -194,6 +198,7 @@ const Footer = (props: FooterProps) => {
 const MGTFooter = styled.div`
 border-top: 1px dotted red;
 font-family: 'Noto Sans KR';
+overflow: hidden;
 .footer {
 &__copyright {
 display: flex;
@@ -281,6 +286,7 @@ flex-basis: 50%;
 border-right: 1px dotted red;
 }
 .label, .content {
+overflow: hidden;
 padding: 0 1.2rem;
 }
 .label, .content:not(:last-child) {
@@ -300,8 +306,6 @@ border-right: 1px dotted red;
 font-weight: bold;
 display: flex;
 justify-content: space-between;
-//border: 1px solid black;
-//overflow: hidden;
 .buffer {
 width: 3rem;
 border-left: 1px dotted red;
@@ -314,7 +318,6 @@ border-left: 1px dotted red;
  flex-basis: 10.67%;
  }
  .content {
- //flex-wrap: wrap;
  overflow: hidden;
    .tag {
  &:not(:last-child) {
@@ -331,6 +334,7 @@ border-left: 1px dotted red;
 flex-basis: 42.6%;
 .label {
 width: 21%;
+}
 }
 }
 }
@@ -360,7 +364,87 @@ width: 50%;
 }
 }
 
-@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+@media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
+ .footer {
+ &__contribution {
+ font-size: 1.5rem;
+//
+ &__row {
+ &:first-child {
+ .sub-row {
+ &:first-child {
+ .label {
+ min-width: 13rem;
+ }
+ }
+ &:nth-child(2) {
+ .label {
+ min-width: 20rem;
+ }
+ }
+ }
+ }
+
+ &:nth-child(2) {
+  .sub-row {
+  &:first-child {
+  .label {
+  min-width: 13rem;
+  }
+  }
+  &:nth-child(2) {
+  .label {
+  min-width: 8rem;
+  }
+  }
+  }
+ }
+ 
+ &:nth-child(3) {
+ .sub-row {
+ &:first-child {
+ .label {
+ min-width: 3rem;
+ }
+ .content {
+ min-width: 25.8rem;
+ }
+ }
+ &:nth-child(2) {
+ flex-grow: 1; 
+ .label {
+ min-width: 9rem;
+ }
+ .content {
+ display: flex;
+ span {
+ margin-right: 0.5rem;
+ }
+ }
+ }
+ }
+ }
+
+ &:nth-child(4) {
+ .sub-row {
+ &:first-child {
+ .content {
+ &:first-child {
+ min-width: 6rem;
+ }
+ &:nth-child(2) {
+ min-width: 27rem;
+ }
+ }
+ }
+ }
+ }
+ }
+ }
+ }
+ }
+
+ @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 .footer {
 &__copyright {
 font-size: 1rem;

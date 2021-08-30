@@ -69,7 +69,7 @@ const Feed = (): JSX.Element => {
   }, [store?.post.authorLatestPosts])
 
   const getThumbnail = (postIdx: number) => {
-    const content = store?.post.authorLatestPosts[postIdx].content as string
+    const content = store?.post.authorLatestPosts[postIdx]?.content as string
     let thumbnail: undefined | Node = undefined
     const transform = (node: Node) => {
       if (node.type === 'tag' && (['img', 'video', 'iframe'].includes(node.name))) {
@@ -116,7 +116,7 @@ const Feed = (): JSX.Element => {
         </div>
         <div className="main__body">
           {store?.post.authorLatestPosts.map((post, postIdx) => {
-            return (
+            return post ? (
               <div key={postIdx} className="content__wrapper">
                 <div className="label">{post.author}</div>
                 <div className="post">
@@ -167,7 +167,7 @@ const Feed = (): JSX.Element => {
                   </div>
                 </div>
               </div>
-            )
+            ) : null
           })}
         </div>
         {/*TODO: 복구*/}

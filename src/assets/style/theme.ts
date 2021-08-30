@@ -1,9 +1,11 @@
 export const widthMobileScreen = '600px'
+export const widthTabletScreen = '1200px'
 
 export const turquoiseLighter = '#D4FBF9'
 
 const size = {
   widthMobileScreen,
+  widthTabletScreen,
   fontSizeMobile: '1.7rem'
 }
 
