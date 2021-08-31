@@ -309,11 +309,10 @@ const Post = (props: PostProps) => {
             <div className="content">
               {props.post.footnote.map((footnote, footnoteIdx) => {
                 return (
-                  <div
-                    className="footer__content"
-                  >{footnoteIdx + 1}) {
-                    ReactHtmlParser(footnote.content)
-                  }</div>
+                  <div className="footer__content">
+                    <div className="footnote__count">{footnoteIdx + 1})</div>
+                    <div className="footnote__content">{ReactHtmlParser(footnote.content)}</div>
+                  </div>
                 )
               })}
             </div>
@@ -769,12 +768,24 @@ flex-basis: 100%;
 .content {
 padding: 0.7rem 1.3rem;
   .footer__content {
-    padding-left: 1.2em;
-    text-indent:-1.2em;
+  display: flex;
     &:not(:last-child) {
       margin-bottom: 0.4rem;
     }
-  p {
+    .footnote {
+    &__count {
+    max-width: 1.6rem;
+    }
+    &__content {
+    max-width: calc(100% - 1.6rem);
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    a {
+    max-width: calc(100% - 1.6rem);
+    word-break: break-all;
+    }
+      p {
 margin-top: 0;
 margin-bottom: 0;
 }
@@ -782,6 +793,8 @@ margin-bottom: 0;
     max-width: 100%;
     object-fit: contain;
 }
+    }
+    }
 }
 }
 }
