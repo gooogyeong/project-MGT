@@ -19,7 +19,7 @@ const menus = [
     key: 'subscription',
     menuText: '구독',
     uri: '/sub'
-  },
+  }
   // {
   //   key: 'shop',
   //   menuText: '구매',
@@ -57,7 +57,9 @@ const NavBar = (props: NavBarProps) => {
 
   return (
     <MGTNavBar className="navbar">
-      {!props.isMobile ? <div className="navbar__logo">logo</div> : null}
+      {!props.isMobile ? (
+        <div className="navbar__logo">logo</div>
+      ) : null}
       <div className="navbar__menu">
         {menus.map((menu, menuIdx) => {
           return (
@@ -74,7 +76,6 @@ const NavBar = (props: NavBarProps) => {
 
 const MGTNavBar = styled.div`
 display: flex;
-//justify-content: center;
 justify-content: space-between;
 align-items: center;
 position: relative;
@@ -82,10 +83,8 @@ border-bottom: 1px dotted red;
 padding: 1.2rem 1.4rem;
 background-color: white;
 z-index: ${props => props.theme.zIndexMobileNavBar};
-//border: 2px solid black;
 .navbar {
 &__logo {
-//position: absolute;
 left: 1.4rem;
 }
 &__searchbar {
@@ -109,7 +108,7 @@ margin-left: -12.5%;
 display: flex;
 justify-content: space-between;
 font-size: 2.6rem;
-// TODO: 50% 원복
+// TODO: 메뉴 추가시 50% 원복
 //width: 50%;
 width: 25%;
 cursor: pointer;
@@ -118,21 +117,41 @@ cursor: pointer;
 
 @media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
 .navbar {
-&__logo {
-//position: absolute;
-//left: 1.4rem;
-}
 &__searchbar {
 .searchbar {
-//height: 100%;
+input {
+max-width: 14rem;
+}
+button {
+padding: 0 1rem !important;
+min-width: 6rem;
+}
 }
 }
 &__menu {
 font-size: 2rem;
-// TODO: 50% 원복
-//width: 50%;
-//width: 25%;
-//cursor: pointer;
+}
+}
+}
+
+
+@media screen and (max-width: ${props => props.theme.widthTabletSmall}) {
+.navbar {
+&__searchbar {
+align-items: center;
+.searchbar {
+height: 4rem;
+input {
+max-width: 9rem;
+}
+button {
+padding: 0 0.75rem !important;
+}
+}
+}
+&__menu {
+font-size: 2rem;
+min-width: 16rem;
 }
 }
 }
@@ -146,25 +165,28 @@ padding: 3rem 1.4rem;
 justify-content: flex-start;
 align-items: center;
 height: calc(100vh - 5.2rem);
-.navbar {
+.navbar { 
 &__searchbar {
 position: relative;
 right: unset;
-height: 4rem;
+max-height: 4rem;
 min-width: 15.4rem;
 order: 1;
-button {
-max-height: 4rem;
+.searchbar {
+min-height: unset;
 }
 }
 &__menu {
+left: unset;
+margin-left: 0;
+position: relative;
 margin-top: 2.7rem;
 flex-direction: column;
 align-items: center;
 font-size: ${props => props.theme.fontSizeMobile};
 order: 2;
 & > div:not(:last-child) {
-margin-bottom: 1rem;
+margin-bottom: 1.6rem;
 }
 }
 }
