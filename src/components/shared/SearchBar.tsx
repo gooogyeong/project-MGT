@@ -40,7 +40,7 @@ display: flex;
 font-size: 1.8rem;
 input {
 border: 1px dotted red;
-padding: 0 0 0 1.6rem;
+padding: 0 1.6rem;
 font-size: 1.8rem;
 font-family: 'Noto Serif KR', sans-serif;
 }

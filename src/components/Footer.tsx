@@ -336,6 +336,13 @@ flex-basis: 42.6%;
 width: 21%;
 }
 }
+ &:nth-child(2) {
+ .content {
+ span {
+ margin-right: 0.5rem;
+ }
+ }
+ }
 }
 }
 }
@@ -417,9 +424,6 @@ width: 50%;
  }
  .content {
  display: flex;
- span {
- margin-right: 0.5rem;
- }
  }
  }
  }
