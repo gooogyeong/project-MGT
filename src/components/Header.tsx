@@ -7,6 +7,10 @@ import { GiHamburgerMenu } from 'react-icons/gi'
 import { GrClose } from 'react-icons/gr'
 import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { storeContext } from '@/stores/context'
+import Modern from '@/assets/img/modern-eng.png'
+import Grotesque from '@/assets/img/grotesque-eng .png'
+import Times from '@/assets/img/times-eng.png'
+import ModernGrotesqueTimesKo from '@/assets/img/modern-groteseque-times-ko.png'
 
 type HeaderProps = {
   isMobile: boolean;
@@ -55,13 +59,21 @@ const Header = (props: HeaderProps) => {
             onClick={() => {
               props.setIsShowMobileNavBar(!props.isShowMobileNavBar)
             }}>
-            {!props.isShowMobileNavBar ? <GiHamburgerMenu/> : <GrClose/>}
+            {!props.isShowMobileNavBar ? <GiHamburgerMenu size={'1.75rem'}/> : <GrClose size={'1.75rem'}/>}
           </div>
         )}
       </div>
       <div className="header__center" onClick={goToMain}>
-        <div>모던 그로테스크 타임스</div>
-        {!props.isMobile ? <div>Modern Grotesque Times</div> : null}
+        <div className="mgt__ko">
+          <img src={ModernGrotesqueTimesKo}/>
+        </div>
+        {!props.isMobile ? (
+            <div className="mgt__eng">
+              <img src={Modern} alt="modern"/>
+              <img src={Grotesque} alt="grotesque"/>
+              <img src={Times} alt="times"/>
+            </div>)
+          : null}
       </div>
       <div>
         <div className="header__top-right">
@@ -86,10 +98,48 @@ justify-content: space-between;
 border-bottom: 1px dotted red;
 text-align: center;
 .header {
+position: relative;
 &__center {
-font-size: 7.5rem;
-letter-spacing: -0.015rem;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 2rem 0;
 cursor: pointer;
+flex-basis: 78%;
+.mgt {
+&__ko {
+img {
+max-width: 100%;
+max-height: 100%;
+&:not(:last-child) {
+margin-right: 2rem;
+}
+}
+}
+&__eng {
+display: flex;
+justify-content: center;
+margin-top: 4rem;
+align-items: end;
+flex-wrap: wrap;
+img {
+max-height: 100%;
+&:not(:last-child) {
+margin-right: 2rem;
+}
+&[alt="modern"] {
+max-width: calc((100% - 4rem) * 0.3);
+}
+&[alt="grotesque"] {
+max-width: calc((100% - 4rem) * 0.45);
+}
+&[alt="times"] {
+max-height: 90%;
+max-width: calc((100% - 4rem) * 0.25);
+}
+}
+}
+}
 }
 &__top-left, &__top-right {
 font-size: 1.6rem;
@@ -102,7 +152,6 @@ width: 100%;
 border-right: 1px dotted red;
 border-bottom: 1px dotted red;
 > div  {
-//width: 100%;
 display: flex;
 &:not(:last-child) {
 border-bottom: 1px dotted red !important;
@@ -146,35 +195,36 @@ color: blue;
 }
 
 @media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
-//height: 4rem;
-//align-items: center;
 .header {
 &__center {
-font-size: 6rem;
+flex-basis: 70%;
+.mgt {
+&__eng {
+margin-top: 2rem;
+}
+}
 }
 &__top-left, &__top-right {
 font-size: 1.35rem;
-min-height: 8.8rem;
-}
-&__top-left {
-//font-size: 1.35rem;
-.icon-container {
-//height: 100%;
-//display: flex;
-//align-items: center;
-//width: 4rem;
-//justify-content: center;
-//cursor: pointer;
-}
+min-height: unset;
 }
 &__top-right {
-//border: none;
 div:nth-child(1) {
 font-size: 1.35rem;
 }
-.buffer {
-//width: 4rem;
-//border-bottom: none !important;
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthTabletSmall}) {
+.header {
+&__center {
+padding: 1rem 0;
+flex-basis: 70%;
+.mgt {
+&__eng {
+margin-top: 1rem;
+}
 }
 }
 }
@@ -185,7 +235,15 @@ height: 4rem;
 align-items: center;
 .header {
 &__center {
-font-size: 2rem;
+position: absolute;
+left: 0;
+right: 0;
+.mgt__ko {
+img {
+max-height: 2rem;
+min-height: 2rem;
+}
+}
 }
 &__top-left {
 .icon-container {
