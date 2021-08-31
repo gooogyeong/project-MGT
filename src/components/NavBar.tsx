@@ -58,7 +58,7 @@ const NavBar = (props: NavBarProps) => {
   return (
     <MGTNavBar className="navbar">
       {!props.isMobile ? (
-        <div className="navbar__logo">logo</div>
+        <div className="navbar__logo"></div>
       ) : null}
       <div className="navbar__menu">
         {menus.map((menu, menuIdx) => {
