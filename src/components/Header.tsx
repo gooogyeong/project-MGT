@@ -55,7 +55,7 @@ const Header = (props: HeaderProps) => {
             onClick={() => {
               props.setIsShowMobileNavBar(!props.isShowMobileNavBar)
             }}>
-            {!props.isShowMobileNavBar ? <GiHamburgerMenu/> : <GrClose/>}
+            {!props.isShowMobileNavBar ? <GiHamburgerMenu size={'1.75rem'}/> : <GrClose size={'1.75rem'}/>}
           </div>
         )}
       </div>
@@ -102,7 +102,6 @@ width: 100%;
 border-right: 1px dotted red;
 border-bottom: 1px dotted red;
 > div  {
-//width: 100%;
 display: flex;
 &:not(:last-child) {
 border-bottom: 1px dotted red !important;
@@ -146,35 +145,17 @@ color: blue;
 }
 
 @media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
-//height: 4rem;
-//align-items: center;
 .header {
 &__center {
 font-size: 6rem;
 }
 &__top-left, &__top-right {
 font-size: 1.35rem;
-min-height: 8.8rem;
-}
-&__top-left {
-//font-size: 1.35rem;
-.icon-container {
-//height: 100%;
-//display: flex;
-//align-items: center;
-//width: 4rem;
-//justify-content: center;
-//cursor: pointer;
-}
+min-height: unset;
 }
 &__top-right {
-//border: none;
 div:nth-child(1) {
 font-size: 1.35rem;
-}
-.buffer {
-//width: 4rem;
-//border-bottom: none !important;
 }
 }
 }
