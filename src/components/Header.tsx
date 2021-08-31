@@ -238,6 +238,8 @@ align-items: center;
 position: absolute;
 left: 0;
 right: 0;
+margin: auto;
+max-width: 25rem;
 .mgt__ko {
 img {
 max-height: 2rem;
