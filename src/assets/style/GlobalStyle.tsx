@@ -42,7 +42,7 @@ outline: none;
 }
 }
 
-.ProseMirror, .content__text {
+.ProseMirror, .content__text, .intro-wrapper {
 span {
 overflow-wrap: break-word;
 }
