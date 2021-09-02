@@ -125,14 +125,14 @@ const Feed = (): JSX.Element => {
                   </div>
                   <div className="post__content">
                     <div className="post__content__header">
-                      <span>
-                      {post.createdAt ? format(new Date(post.createdAt), yyyyMMddDot) : null}
-                      </span>
-                      <span>
-                      {post?.tags.map((tag, tagIdx) => {
-                        return <Tag key={tagIdx} tag={tag}/>
-                      })}
-                      </span>
+                      <div>
+                        {post.createdAt ? format(new Date(post.createdAt), yyyyMMddDot) : null}
+                      </div>
+                      <div className="tag-container">
+                        {post?.tags.map((tag, tagIdx) => {
+                          return <Tag key={tagIdx} tag={tag}/>
+                        })}
+                      </div>
                     </div>
                     <div
                       className={`post__content__body ${!postIdx ? 'left' : 'right'} ${!thumbnailArr[postIdx] ? 'no-thumbnail' : ''}`}>
@@ -232,10 +232,17 @@ justify-content: space-between;
 .created-at, .tag {
 font-size: 1.8rem;
 }
+.tag-container {
+display: flex;
+justify-content: flex-end;
+flex-wrap: wrap;
+max-height: 2.7rem;
+overflow: hidden;
 .tag {
 cursor: default;
 &:not(:last-child) {
 margin-right: 0.4rem;
+}
 }
 }
 }
@@ -394,7 +401,11 @@ font-size: ${props => props.theme.fontSizeMobile};
 &__content {
 font-size: ${props => props.theme.fontSizeMobile};
 max-height: 46.2rem;
-
+&__header {
+.tag {
+ font-size: ${props => props.theme.fontSizeMobile};
+}
+}
 &__body {
 .button__container {
 height: 5.2rem;

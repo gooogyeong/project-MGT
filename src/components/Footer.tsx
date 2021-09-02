@@ -556,6 +556,8 @@ min-width: 19.46%;
 }
 .content {
 overflow: hidden;
+display: flex;
+flex-wrap: wrap;
 .tag:not(:last-child) {
 margin-right: 0.4rem;
 }
