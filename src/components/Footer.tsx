@@ -525,6 +525,7 @@ align-items: center;
 width: 100%;
 img {
 height: 1.5rem;
+transform: translateY(0.28rem);
 }
 }
 }
