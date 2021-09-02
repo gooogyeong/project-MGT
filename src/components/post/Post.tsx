@@ -819,10 +819,10 @@ flex-direction: column;
 border-right: none;
 .label, .content {
 min-width: 100%;
-flex-basis: 100%:
+flex-basis: 100%;
+border-right: none;
 }
 .label {
-border-right: none;
 border-bottom: 1px dotted blue;
 border-top: 1px dotted blue;
 }
