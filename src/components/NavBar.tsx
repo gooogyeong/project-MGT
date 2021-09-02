@@ -97,6 +97,9 @@ display: flex;
 align-items: stretch;
 min-height: 100%;
 }
+input {
+max-width: 16rem;
+}
 button {
 min-width: 8rem;
 }

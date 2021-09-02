@@ -211,7 +211,7 @@ margin-right: 1.6rem;
 
 
 &.filter__searchbar {
-max-width: 21rem;
+max-width: 22rem;
 .searchbar {
 button {
 padding: 0 1rem !important;
