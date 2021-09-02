@@ -22,7 +22,7 @@ const IntroView: React.FC = () => {
               개념어이지만, 일반적으로는 ‘괴기한 것, 극도로 부자연한 것, 흉측하고
               우스꽝스러운 것’ 등을 형용하는 말로 쓰입니다. 우리는 구체적으로 동시대의 사회와 문화에서 나타나는 ‘그로테스크한 것The grotesque’ 전반에 관심이 많습니다. 그래서 <strong>〈모던
                 그로테스크
-                타임즈〉 프로젝트를 통해 오늘날 ‘지금, 여기’의 ‘그로테스크한 것’들을 사유하고, 탐구하여, 사람들과 공유해 보고자 합니다.</strong>
+                타임스〉 프로젝트를 통해 오늘날 ‘지금, 여기’의 ‘그로테스크한 것’들을 사유하고, 탐구하여, 사람들과 공유해 보고자 합니다.</strong>
             </p>
           </section>
           <section>
@@ -60,18 +60,18 @@ const IntroView: React.FC = () => {
             <p>2021년 9월부터 12월까지 온라인 플랫폼에서 매달 ‘그로테스크’와 관련 콘텐츠 업로드.</p>
             <p>한아임: 메갈로폴리스 서울을 배경으로 펼쳐지는 본격 슈퍼내추럴 판타지 소설 〈유랑 화가: 싱싱의 그놈〉 연재.</p>
             <p>이혜원: ‘일상’과 ‘그로테스크’라는 주제 아래 선정한 키워드를 동시대 시각 예술가들과 함께 탐구하고 관련 작품을 온라인에서 공개.</p><br/>
-            <p className="header">3) [연구결과 시각화 및 공유] 전시 《모던 그로테스크 타임즈》 개최 + 프로젝트 종합자료집 발간(12월 말)</p>
+            <p className="header">3) [연구결과 시각화 및 공유] 전시 《모던 그로테스크 타임스》 개최 + 프로젝트 종합자료집 발간(12월 말)</p>
             <p>1), 2)로 수렴된 번역서, 정기간행물, 연구 아카이브 등과 함께 각 키워드를 탐구한 작가들의 작품을 전시의 형태로 종합. 이후 모든 결과물을 수록한 종합자료집 발간.</p>
           </section>
         </div>
         <div>
           <section>
             <p className="header">[모던 그로테스크 타임스 전시(온/오프라인) MODERN GROTESQUE TIMES EXHIBITION(ON/OFF-LINE)]</p>
-            <p>- 전시 제목: 모던 그로테스크 타임즈 MODERN GROTESQUE TIMES</p>
+            <p>- 전시 제목: 모던 그로테스크 타임스 MODERN GROTESQUE TIMES</p>
             <p>- 전시 기간: 2021년 12월 18일(토) – 12월 31일(금), 12시-20시(매주 월요일 휴관)</p>
             <p>- 전시 장소: space xx(서울 영등포구 문래동 도림로 128 지하 1층)</p>
             <p>- 기획: 이혜원</p>
-            <p>- 후원: 서울문화재단(로고)</p>
+            <p>- 후원: 서울문화재단</p>
             <p>- 협력: 범고래출판사(<a href="http://orcabooks.co.kr" target="_blank" rel="noreferrer">http://orcabooks.co.kr</a>)
             </p>
             <p className="artists">
@@ -332,6 +332,10 @@ display: block;
   font-size: ${props => props.theme.fontSizeMobile};
  width: calc(100% - 2.6rem);
  max-width: calc(100% - 2.6rem);
+ p.artists {
+  padding-left: 8.8rem !important;
+  text-indent: -8.8rem !important;
+ }
 }
 }
 `
