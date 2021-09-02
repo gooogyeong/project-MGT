@@ -165,12 +165,81 @@ padding: 3rem 0 4.4rem;
 flex-basis: 82.2%;
 display: flex;
 justify-content: space-between;
+min-width: 87rem;
 & > div {
 display: flex;
+&:first-child {
+flex-basis: 29.4%;
+}
+&:nth-child(2) {
+flex-basis: 25.5%;
+}
 .dropdown {
 min-width: 14rem;
 &:not(:last-child) {
 margin-right: 2rem;
+}
+}
+
+&.filter__searchbar {
+display: flex;
+justify-content: flex-end;
+max-height: 4.84rem;
+flex-basis: 28.3%;
+.searchbar {
+input {
+max-width: 12rem;
+}
+}
+}
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
+.filter__wrapper {
+.filter__container {
+& > div {
+.dropdown {
+button {
+padding-right: 0.4rem;
+}
+&:not(:last-child) {
+margin-right: 1.6rem;
+}
+}
+
+
+&.filter__searchbar {
+max-width: 21rem;
+.searchbar {
+button {
+padding: 0 1rem !important;
+}
+}
+}
+}
+}
+}
+}
+
+
+@media screen and (max-width: 980px) {
+.filter__wrapper {
+.filter__container {
+min-width: unset;
+flex-direction: column;
+align-items: center;
+& > div {
+justify-content: center;
+
+&:not(:last-child) {
+margin-bottom: 1rem;
+}
+
+&.filter__searchbar {
+max-width: unset;
+min-height: 4.8rem;
 }
 }
 }
@@ -182,10 +251,7 @@ padding: 0 1rem 0.8rem;
 .filter__wrapper {
 padding: 2.2rem 0 2.8rem;
 .filter__container {
-flex-direction: column;
 & > div {
-justify-content: center;
-
 &:not(:last-child) {
 margin-bottom: 0.8rem;
 }
