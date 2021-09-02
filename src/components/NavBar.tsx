@@ -174,6 +174,9 @@ min-width: 15.4rem;
 order: 1;
 .searchbar {
 min-height: unset;
+input {
+font-size: ${props => props.theme.fontSizeMobile};
+}
 }
 }
 &__menu {
