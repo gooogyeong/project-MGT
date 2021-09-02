@@ -57,7 +57,7 @@ const IntroView: React.FC = () => {
             <p className="header">1) [공동 연구] 번역서 출판(12월 말 출간 예정)</p>
             <p>프로젝트의 개념적 토대가 되는 작업으로서, 시각문화 영역에서 다양하게 나타나는 ‘괴물성Monstrosity’을 탐구하는 연구서 번역 출판.</p><br/>
             <p className="header">2) [개별 연구] 온라인 정기간행물(웹진/뉴스레터) 발행(9월 - 12월)</p>
-            <p>2021년 9월부터 12월까지 온라인 플랫폼에서 매달 ‘그로테스크’와 관련 콘텐츠 업로드.</p>
+            <p>2021년 9월부터 12월까지 홈페이지에 매달 온라인 콘텐츠 업로드.</p>
             <p>한아임: 메갈로폴리스 서울을 배경으로 펼쳐지는 본격 슈퍼내추럴 판타지 소설 〈유랑 화가: 싱싱의 그놈〉 연재.</p>
             <p>이혜원: ‘일상’과 ‘그로테스크’라는 주제 아래 선정한 키워드를 동시대 시각 예술가들과 함께 탐구하고 관련 작품을 온라인에서 공개.</p><br/>
             <p className="header">3) [연구결과 시각화 및 공유] 전시 《모던 그로테스크 타임스》 개최 + 프로젝트 종합자료집 발간(12월 말)</p>
@@ -261,11 +261,11 @@ div {
 display: flex;
 margin-bottom: 13.6rem;
 justify-content: center;
-align-items: baseline;
+align-items: center;
 img {
 &[alt="sfac"] {
-width: 12rem;
-transform: translateY(-2rem);
+width: 20.8rem;
+transform: translateY(0.24rem);
 }
 &[alt="ORCA BOOKS"] {
 width: 15rem;
