@@ -1,6 +1,7 @@
 export const widthMobileScreen = '600px'
 export const widthTabletScreen = '1200px'
 export const widthTabletSmall = '800px'
+export const widthTabletMedium = '980px'
 
 export const turquoiseLighter = '#D4FBF9'
 
@@ -8,6 +9,7 @@ const size = {
   widthMobileScreen,
   widthTabletScreen,
   widthTabletSmall,
+  widthTabletMedium,
   fontSizeMobile: '1.7rem'
 }
 

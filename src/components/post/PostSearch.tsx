@@ -224,7 +224,7 @@ padding: 0 1rem !important;
 }
 
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: ${props => props.theme.widthTabletMedium}) {
 .filter__wrapper {
 .filter__container {
 min-width: unset;

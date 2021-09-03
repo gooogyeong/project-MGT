@@ -46,6 +46,7 @@ const FooterTag = (props: { randomTags: TagType[]; handleTagClick: (payload: Tag
 type FooterProps = {
   isMobile: boolean;
   isTablet: boolean;
+  isTabletMedium: boolean;
 }
 
 const Footer = (props: FooterProps) => {
@@ -89,7 +90,7 @@ const Footer = (props: FooterProps) => {
             <div className="seal"><img src={caligoliteSeal} alt="seal"/></div>
           </div>
         </div>
-        {!props.isMobile ? <FooterSocialMedia/> : <></>}
+        {!(props.isMobile || props.isTabletMedium) ? <FooterSocialMedia/> : <></>}
         <div className="footer__contribution">
           <div className="footer__contribution__row">
             <div className="sub-row">
@@ -102,7 +103,7 @@ const Footer = (props: FooterProps) => {
                 <div>이혜원</div>
               </div>
             </div>
-            {!props.isMobile ? (
+            {!(props.isMobile || props.isTabletMedium) ? (
               <div className="sub-row">
                 <div className="label">
                   <div>칼리고라이트 본부장 & 편집장</div>
@@ -119,15 +120,10 @@ const Footer = (props: FooterProps) => {
             <div className="sub-row">
               <div className="label">협조자</div>
               <div className="content">
-                <div>이민경</div>
-                {!props.isTablet ? (
-                  <div className="buffer">
-                    {!props.isMobile ? null : <FooterSocialMedia/>}
-                  </div>
-                ) : null}
+                이민경
               </div>
             </div>
-            {!props.isMobile ? (
+            {!(props.isMobile || props.isTabletMedium) ? (
               <div className="sub-row">
                 <FooterTag
                   randomTags={randomTags}
@@ -136,9 +132,14 @@ const Footer = (props: FooterProps) => {
               </div>
             ) : null}
           </div>
+          {props.isMobile || props.isTabletMedium ? (
+            <div className="footer__contribution__row">
+              <FooterSocialMedia/>
+            </div>
+          ) : null}
           <div className="footer__contribution__row">
             <div className="sub-row">
-              {!props.isMobile ? (
+              {!(props.isMobile || props.isTabletMedium) ? (
                 <>
                   <div className="label">시행</div>
                   <div className="content">모그타편집부-494982535(2021.6.22.)</div>
@@ -157,7 +158,7 @@ const Footer = (props: FooterProps) => {
               </div>
             </div>
           </div>
-          {!props.isMobile ? (
+          {!(props.isMobile || props.isTabletMedium) ? (
               <>
                 <div className="footer__contribution__row">
                   <div className="sub-row">
@@ -316,13 +317,16 @@ border-left: 1px dotted red;
  flex-basis: 59.7%;
  .label {
  flex-basis: 10.67%;
+ min-width: 6rem;
  }
  .content {
+ display: flex;
  overflow: hidden;
-   .tag {
- &:not(:last-child) {
- margin-right: 0.8rem;
- }
+ flex-wrap: wrap;
+ .tag {
+   &:not(:last-child) {
+     margin-right: 0.8rem;
+   }
  }
  }
  }
@@ -375,7 +379,6 @@ width: 50%;
  .footer {
  &__contribution {
  font-size: 1.5rem;
-//
  &__row {
  &:first-child {
  .sub-row {
@@ -448,6 +451,109 @@ width: 50%;
  }
  }
 
+@media screen and (max-width: ${props => props.theme.widthTabletMedium}) {
+.footer {
+&__copyright {
+font-size: 3.6rem;
+border-bottom: none;
+}
+&__contribution {
+&__row {
+&:first-child {
+.sub-row {
+&:first-child {
+width: 100%;
+flex-basis: 100%;
+.label, .content {
+width: 50%;
+& > div {
+height: 50%;
+}
+}
+}
+}
+}
+.sub-row {
+.label, .content {
+padding: 0 0.9rem;
+}
+}
+&:nth-child(2) {
+.sub-row {
+min-width: 100%;
+display: flex;
+.label {
+flex-basis: 50%;
+min-width: calc(50% - 1.81rem);
+max-width: calc(50% - 1.81rem);
+}
+.content {
+flex-basis: 50%;
+& > div {
+width: 50%;
+flex-basis: 50%;
+}
+}
+}
+}
+&:nth-child(3) {
+.footer__social-media {
+height: 100%;
+width: 100%;
+padding: 0 0.9rem;
+display: flex;
+justify-content: center;
+align-items: center;
+&__icon-wrapper {
+img {
+height: 2.4rem;
+transform: translateY(0.6rem);
+}
+}
+}
+}
+&:nth-child(4) {
+ .sub-row {
+ &:first-child {
+ flex-basis: 0;
+ width: 0%;
+ border-right: none;
+ }
+ &:nth-child(2) {
+ flex-basis: 100%;
+ .label {
+min-width: calc(27.1% - 1.8rem);
+max-width: calc(27.1% - 1.8rem);
+ }
+ .content {
+  span {
+ margin-right: 0.5rem;
+ }
+ }
+ }
+ }
+}
+&:nth-child(5) {
+.sub-row {
+flex-basis: 100%;
+.label {
+min-width: 19.46%;
+}
+.content {
+overflow: hidden;
+display: flex;
+flex-wrap: wrap;
+.tag:not(:last-child) {
+margin-right: 0.4rem;
+}
+}
+}
+}
+}
+}
+}
+}
+
  @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
 .footer {
 &__copyright {
@@ -482,85 +588,13 @@ line-height: 3.1rem;
 }
 &:first-child {
 height: 4.54rem;
-.sub-row {
-&:first-child {
-width: 100%;
-flex-basis: 100%;
-.label, .content {
-width: 50%;
-& > div {
-height: 50%;
 }
-}
-}
-}
-}
-.sub-row {
-.label, .content {
-padding: 0 0.9rem;
-}
-}
-&:nth-child(2) {
-.sub-row {
-min-width: 100%;
-display: flex;
-.label {
-flex-basis: 50%;
-min-width: calc(50% - 1.81rem);
-max-width: calc(50% - 1.81rem);
-}
-.content {
-padding-right: 0;
-flex-basis: 50%;
-& > div {
-width: 50%;
-flex-basis: 50%;
+&:nth-child(3) {
 .footer__social-media {
-height: 100%;
-padding: 0 0.9rem;
-display: flex;
-justify-content: center;
-align-items: center;
 &__icon-wrapper {
-width: 100%;
 img {
 height: 1.5rem;
 transform: translateY(0.28rem);
-}
-}
-}
-}
-}
-}
-}
-&:nth-child(3) {
- .sub-row {
- &:first-child {
- flex-basis: 0;
- width: 0%;
- border-right: none;
- }
- &:nth-child(2) {
- flex-basis: 100%;
- .label {
-min-width: calc(27.1% - 1.8rem);
-max-width: calc(27.1% - 1.8rem);
- }
- }
- }
-}
-&:nth-child(4) {
-.sub-row {
-flex-basis: 100%;
-.label {
-min-width: 19.46%;
-}
-.content {
-overflow: hidden;
-display: flex;
-flex-wrap: wrap;
-.tag:not(:last-child) {
-margin-right: 0.4rem;
 }
 }
 }
