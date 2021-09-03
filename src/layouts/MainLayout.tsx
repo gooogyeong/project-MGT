@@ -4,7 +4,7 @@ import Header from '@/components/Header'
 import NavBar from '@/components/NavBar'
 import Footer from '@/components/Footer'
 import { storeContext } from '@/stores/context'
-import { widthMobileScreen, widthTabletScreen } from '@/assets/style/theme'
+import { widthMobileScreen, widthTabletMedium, widthTabletScreen } from '@/assets/style/theme'
 import { useObserver } from 'mobx-react-lite'
 
 type MainLayoutProps = {
@@ -19,8 +19,10 @@ const MainLayout = (props: MainLayoutProps) => {
 
   const handleResize = () => {
     const isTablet = parseInt(widthMobileScreen) < window.innerWidth && window.innerWidth <= parseInt(widthTabletScreen)
+    const isTabletMedium = parseInt(widthMobileScreen) < window.innerWidth && window.innerWidth <= parseInt(widthTabletMedium)
     const isMobile = window.innerWidth <= parseInt(widthMobileScreen)
     store?.mobile.setIsTablet(isTablet)
+    store?.mobile.setIsTabletMedium(isTabletMedium)
     if (store?.mobile.isMobile !== isMobile) {
       store?.mobile.setIsMobile(isMobile)
       if (!isMobile && !isShowMobileNavBar) setIsShowMobileNavBar(true)
@@ -56,6 +58,7 @@ const MainLayout = (props: MainLayoutProps) => {
         <Footer
           isMobile={store?.mobile.isMobile || window.innerWidth <= parseInt(widthMobileScreen)}
           isTablet={store?.mobile.isTablet || (parseInt(widthMobileScreen) < window.innerWidth && window.innerWidth <= parseInt(widthTabletScreen))}
+          isTabletMedium={store?.mobile.isTabletMedium || parseInt(widthMobileScreen) < window.innerWidth && window.innerWidth <= parseInt(widthTabletMedium)}
         />
       </MGTMainLayout>
     )
