@@ -24,9 +24,6 @@ const FooterSocialMedia = () => {
         <a href="https://twitter.com/m_g_times" target="_blank" rel="noreferrer">
           <img src={twitterBlue} alt="twitter-link"/>
         </a>
-        <a href="https://www.facebook.com/profile.php?id=100072292567060" target="_blank" rel="noreferrer">
-          <img src={facebookBlue} alt="facebook-link"/>
-        </a>
       </div>
     </div>
   )
@@ -234,7 +231,7 @@ justify-content: center;
 align-items: center;
 padding: 2.2rem 0;
 &__icon-wrapper {
-width: 20%;
+width: 12%;
 display: flex;
 justify-content: space-between;
 img {
