@@ -1,5 +1,5 @@
 import { db } from '@/services/firebase'
-import { query, orderBy } from 'firebase/firestore'
+import { query, orderBy, deleteDoc, doc } from 'firebase/firestore'
 import { addDoc, collection, getDocs } from 'firebase/firestore'
 import { Tag, CreateTagPayload } from '@/types/tags'
 
@@ -33,6 +33,17 @@ export const createTag = ({ name }: CreateTagPayload) => {
       .then((res) => {
         resolve(res)
       }).catch((error) => {
+      reject(error)
+    })
+  })
+}
+
+export const deleteTag = (tagId: string) => {
+  return new Promise((resolve, reject) => {
+    deleteDoc(doc(db, 'tag', tagId))
+      .then(res => {
+        resolve(res)
+      }).catch(error => {
       reject(error)
     })
   })
