@@ -29,13 +29,13 @@ const rawHTML = `
             <div class="stb_form_msg_error" id="stb_email_error"></div>
         </fieldset>
         <div class="stb_form_policy">
+            <input type="checkbox" id="stb_policy" value="stb_policy_true">
             <label>
-                <input type="checkbox" id="stb_policy" value="stb_policy_true">
                 <button id="stb_form_modal_open" data-modal="stb_form_policy_modal" class="stb_form_modal_open_btn"
                         type="button">
                     개인정보 수집 및 이용
                 </button>
-                에 동의합니다.
+                <span>에 동의합니다.</span>
             </label>
             <div class="stb_form_msg_error" id="stb_policy_error"></div>
             <div class="stb_form_modal stb_form_policy_text blind" id="stb_form_policy_modal">
@@ -102,12 +102,15 @@ flex-basis: 60%;
 padding: 4.7rem 3rem;
 
 .stb_form_policy  {
-    label {
-    display: flex;
-    align-items: center;
+display: flex;
+align-items: center;
     input {
     margin-right: 0.6rem !important;
+    margin-top: 0.4rem;
     }
+    label {
+    display: flex;
+    flex-wrap: wrap;
     }
 }
 
@@ -138,6 +141,17 @@ padding: 3.1rem 1.3rem;
 flex-basis: 100%;
 
 #stb_subscribe {
+.stb_form_policy {
+align-items: flex-start;
+input {
+margin-top: 0.5rem;
+}
+label {
+button {
+margin-bottom: 0.2rem;
+}
+}
+}
 p.stb_form_modal_text {
 &.mobile {
 display: block !important;
