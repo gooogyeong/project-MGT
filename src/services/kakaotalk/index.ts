@@ -6,7 +6,7 @@ export const share = ({ title, objectID }: { title: string; objectID: string }) 
     content: {
       title: title,
       description: '',
-      imageUrl: `${config.baseURL}/modern-grotesque-times.png`,
+      imageUrl: `${config.baseURL}/modern-grotesque-times-share.png`,
       link: {
         mobileWebUrl: `${config.baseURL}/post/${objectID}`,
         androidExecParams: 'test'
