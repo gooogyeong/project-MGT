@@ -96,6 +96,11 @@ const Editor = (props: EditorProps): JSX.Element => {
   const [reference, setReference] = useState('')
   const [footnoteArr, setFootnoteArr] = useState(store?.post.currEditPost?.footnote || [] as FootnoteType[])
 
+  const removePostTag = (tagId: string) => {
+    const newPostTags = postTags.filter(tag => tag.id !== tagId)
+    setPostTags(newPostTags)
+  }
+
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
@@ -168,6 +173,14 @@ const Editor = (props: EditorProps): JSX.Element => {
       window.removeEventListener('footnote-delete', handleFootnoteDelete)
     }
   }, [footnoteArr])
+
+  const deleteTag = async (tag: TagType) => {
+    if (window.confirm(`'${tag.name}' 태그를 삭제하시겠습니까?`)) {
+      await store?.tag.deleteTag(tag.id)
+      const tags = await getTags()
+      setTags(tags as TagType[])
+    }
+  }
 
   return useObserver(() => {
       // TODO: 위로 올려도 될듯
@@ -302,6 +315,7 @@ const Editor = (props: EditorProps): JSX.Element => {
               editPostTags={postTags}
               editFootnote={footnoteArr}
               editReference={reference}
+              removePostTag={removePostTag}
               handleSubmitClick={handleSubmitClick}
               handleReferenceChange={handleReferenceChange}
               leaveWithoutSave={leaveWithoutSave}
@@ -321,11 +335,22 @@ const Editor = (props: EditorProps): JSX.Element => {
               })}
             </div>
             <div>
+              <div className="tag-opt-container">
+                {tags.map((tag, tagIndex) => {
+                  return (
+                    <Tag
+                      key={tagIndex}
+                      tag={tag}
+                      postTags={postTags}
+                      isShowXBtn={true}
+                      onXBtnClick={() => { deleteTag(tag) }}
+                      setTags={setPostTags}
+                    />
+                  )
+                })}
+              </div>
               <label>태그 추가</label>
               <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
-              {tags.map((tag, tagIndex) => {
-                return (<Tag key={tagIndex} tag={tag} postTags={postTags} setTags={setPostTags}/>)
-              })}
             </div>
           </MGTEditor>
         </div>
@@ -411,6 +436,16 @@ max-width: 20%;
 object-contain: fit;
 }
 }
+}
+}
+
+.tag-opt-container {
+display: flex;
+padding: 1rem 0;
+min-height: 2.4rem;
+align-items: center;
+.tag:not(:last-child) {
+margin-right: 0.4rem;
 }
 }
 

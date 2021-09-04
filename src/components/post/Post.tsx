@@ -33,6 +33,7 @@ type PostProps = {
   editPostTags?: PostType['tags'];
   editFootnote?: PostType['footnote'];
   editReference?: PostType['reference'];
+  removePostTag?: (tagId: string) => void;
   handleSubmitClick?: () => Promise<void>;
   handleReferenceChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   leaveWithoutSave?: () => void;
@@ -341,13 +342,17 @@ const Post = (props: PostProps) => {
               <div className="label">태그</div>
               <div className="content">
                 <div className="tag__wrapper">
-                  {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => <Tag
-                    key={tagIndex}
-                    tag={tag}
-                  />) : (
+                  {!props.isEdit && !props.isWrite ? props.post.tags.map((tag, tagIndex) => (
+                    <Tag
+                      key={tagIndex}
+                      tag={tag}
+                    />
+                  )) : (
                     props.editPostTags?.map((tag, tagIndex) => <Tag
                       key={tagIndex}
                       tag={tag}
+                      isShowXBtn={true}
+                      onXBtnClick={() => { if(props.removePostTag) props.removePostTag(tag.id) }}
                     />)
                   )}
                 </div>
@@ -604,10 +609,21 @@ line-height: 2rem;
 justify-content: center;
 align-items: center;
 .tag__wrapper {
+display: flex;
+flex-wrap: wrap;
 width: calc(100% - 2.6rem);
 max-width: calc(100% - 2.6rem);
-.tag:not(:last-child) {
+.tag {
+&:hover {
+padding-left: 0.6rem;
+border-radius: 2rem;
+}
+&:not(:last-child) {
 margin-right: 0.75rem;
+}
+.x-btn {
+padding: 0 0.8rem;
+}
 }
 }
 .social-media__wrapper {
