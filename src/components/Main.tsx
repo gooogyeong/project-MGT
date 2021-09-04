@@ -315,6 +315,7 @@ min-height: 1.8rem;
 }
 }
 .button__container {
+align-items: center;
 order: 3;
 box-shadow: white 0px -40px 20px 20px;
 }
@@ -347,6 +348,7 @@ min-height: 1.8rem;
 }
 }
 .button__container {
+align-items: center;
 order: 2;
 }
 }
@@ -409,6 +411,7 @@ max-height: 46.2rem;
 &__body {
 .button__container {
 height: 5.2rem;
+align-items: flex-end;
 .layer {
 font-size: ${props => props.theme.fontSizeMobile};
 padding: 0.7rem 1.8rem;
