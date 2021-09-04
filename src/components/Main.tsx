@@ -309,7 +309,6 @@ flex-basis: 45%;
 order: 2;
 max-height: calc(68.8rem * 0.55);
 flex-basis: 55%;
-overflow: hidden;
 p {
 min-height: 1.8rem;
 }
@@ -318,6 +317,9 @@ min-height: 1.8rem;
 align-items: center;
 order: 3;
 box-shadow: white 0px -40px 20px 20px;
+background-color: white;
+margin: 0 -0.8rem -0.7rem;
+padding: 0 0.8rem 0.7rem;
 }
 }
 
@@ -332,6 +334,7 @@ box-shadow: white 0px -40px 20px 20px;
 }
 }
 .thumbnail__container {
+background-color: white; // 추가
 order: 3;
 min-height: calc(68.8rem * 0.45);
 max-height: calc(68.8rem * 0.45);
@@ -342,7 +345,6 @@ box-shadow: white 0px -40px 20px 20px;
 order: 1;
 // TODO: 공통 셀렉터 왜 안먹는지 알아내야함
 max-height: calc(68.8rem * 0.55);
-overflow: hidden;
 p {
 min-height: 1.8rem;
 }
@@ -350,6 +352,9 @@ min-height: 1.8rem;
 .button__container {
 align-items: center;
 order: 2;
+background-color: white;
+margin: 0 -0.8rem -0.7rem;
+padding: 0 0.8rem 0.7rem;
 }
 }
 }
