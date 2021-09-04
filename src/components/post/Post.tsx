@@ -18,6 +18,7 @@ import config from '../../../env.json'
 import Button from '@/components/shared/Button'
 import { Editor, EditorContent } from '@tiptap/react'
 import { useObserver } from 'mobx-react-lite'
+import { share } from '@/services/kakaotalk'
 
 type PostProps = {
   post: PostType;
@@ -180,27 +181,12 @@ const Post = (props: PostProps) => {
   }
 
   const shareKakaotalk = () => {
-    // TODO: util이나 service로 분리
-    window.Kakao.Link.sendDefault({
-      objectType: 'feed',
-      content: {
+    if (props.post.title && props.post.objectID) {
+      share({
         title: props.post.title,
-        description: '',
-        imageUrl: '',
-        link: {
-          mobileWebUrl: `${config.baseURL}/post/${props.post.objectID}`,
-          androidExecParams: 'test'
-        }
-      },
-      buttons: [
-        {
-          title: '웹으로 이동',
-          link: {
-            mobileWebUrl: `${config.baseURL}/post/${props.post.objectID}`
-          }
-        }
-      ]
-    })
+        objectID: props.post.objectID
+      })
+    }
   }
 
   const shareLink = async () => {
