@@ -357,17 +357,21 @@ const Post = (props: PostProps) => {
           <div className="content share">
             <div className="label">공유하기</div>
             <div className="social-media__wrapper">
-              <div onClick={shareTwitter}>
-                <img src={twitterBlue} alt="share-via-twitter" className="red"/>
+              <div>
+                <div onClick={shareTwitter}>
+                  <img src={twitterBlue} alt="share-via-twitter" className="red"/>
+                </div>
+                <div onClick={shareFacebook}>
+                  <img src={facebookBlue} alt="share-via-facebook"/>
+                </div>
               </div>
-              <div onClick={shareFacebook}>
-                <img src={facebookBlue} alt="share-via-facebook"/>
-              </div>
-              <div onClick={shareKakaotalk}>
-                <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
-              </div>
-              <div onClick={shareLink}>
-                <img src={linkBlue} alt="share-via-link"/>
+              <div>
+                <div onClick={shareKakaotalk}>
+                  <img src={kakaotalkBlue} alt="share-via-kakaotalk"/>
+                </div>
+                <div onClick={shareLink}>
+                  <img src={linkBlue} alt="share-via-link"/>
+                </div>
               </div>
             </div>
           </div>
@@ -611,8 +615,14 @@ display: flex;
 padding-bottom: 1.3rem;
 cursor: pointer;
 & > div {
+display: flex;
 &:not(:last-child) {
 margin-right: 1.1rem;
+}
+& > div {
+&:not(:last-child) {
+margin-right: 1.1rem;
+}
 }
 }
 }
@@ -696,6 +706,28 @@ background-color: blue;
 &.cancel {
 background-color: red;
 }
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthTabletScreen}) {
+.label {
+font-size: 2.2rem;
+}
+.social-media__wrapper {
+& > div {
+& > div {
+img {
+height: 2.8rem;
+width: 2.8rem;
+}
+}
+}
+}
+}
+
+@media screen and (max-width: ${props => props.theme.widthTabletMedium}) {
+.social-media__wrapper {
+flex-direction: column;
 }
 }
 
@@ -834,15 +866,17 @@ padding: 0.7rem 0;
 }
 .social-media__wrapper {
 padding: 0.7rem 0;
+flex-direction: row;
 & > div {
-height: 2.8rem;
-width: 2.8rem;
+& > div {
+transform: translateY(0.2rem);
 img {
 height: 2.8rem;
 width: 2.8rem;
 }
 &:not(:last-child) {
 margin-right: 2rem;
+}
 }
 }
 }
