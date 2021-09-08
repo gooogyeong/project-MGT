@@ -31,7 +31,7 @@ const Header = (props: HeaderProps) => {
     const getExchRate = async () => {
       await store?.exchangeRate.getExchangeRate()
     }
-    getExchRate()
+    if (process.env.NODE_ENV === 'production') getExchRate()
   }, [])
 
   return (
