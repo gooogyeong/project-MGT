@@ -3,6 +3,7 @@ import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { getAuth } from 'firebase/auth'
 import { getFunctions } from 'firebase/functions'
+import { getAnalytics } from 'firebase/analytics'
 
 import config from '../../../env.json'
 
@@ -12,3 +13,4 @@ export const db = getFirestore()
 export const storage = getStorage()
 export const auth = getAuth()
 export const functions = getFunctions()
+export const analytics = getAnalytics()
