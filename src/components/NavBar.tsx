@@ -110,11 +110,12 @@ left: 50%;
 margin-left: -12.5%;
 display: flex;
 justify-content: space-between;
-font-size: 2.6rem;
-// TODO: 메뉴 추가시 50% 원복
-//width: 50%;
 width: 25%;
 cursor: pointer;
+& > div {
+font-size: 2.8rem;
+font-weight: 700;
+}
 }
 }
 
