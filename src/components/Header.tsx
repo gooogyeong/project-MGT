@@ -109,7 +109,7 @@ flex-basis: 78%;
 .mgt {
 &__ko {
 img {
-max-width: 100%;
+max-width: 80%;
 max-height: 100%;
 &:not(:last-child) {
 margin-right: 2rem;
@@ -119,9 +119,10 @@ margin-right: 2rem;
 &__eng {
 display: flex;
 justify-content: center;
-margin-top: 4rem;
+margin-top: 2rem;
 align-items: end;
 flex-wrap: wrap;
+max-width: 88%;
 img {
 max-height: 100%;
 &:not(:last-child) {
@@ -242,6 +243,7 @@ margin: auto;
 max-width: 25rem;
 .mgt__ko {
 img {
+max-width: 100%;
 max-height: 2rem;
 min-height: 2rem;
 }
