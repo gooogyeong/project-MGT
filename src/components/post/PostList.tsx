@@ -157,6 +157,7 @@ padding: 1rem 0;
 background-color: ${props => props.theme.turquoiseLight};
 &.category-name, &.author, &.created-at {
 width: 10%;
+min-width: 12rem;
 }
 }
 tbody {
