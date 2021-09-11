@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import ModernGrotesqueTimes from '@/assets/img/modern-grotesque-times.png'
-import identityFontDesc from '@/assets/img/identity-font-desc.jpg'
+import identityFontDesc from '@/assets/img/identity-font-desc.png'
 import foundation from '@/assets/img/foundation.jpg'
 import OrcaBooks from '@/assets/img/orca-books.png'
 
@@ -62,6 +62,32 @@ const IntroView: React.FC = () => {
             <p>이혜원: ‘일상’과 ‘그로테스크’라는 주제 아래 선정한 키워드를 동시대 시각 예술가들과 함께 탐구하고 관련 작품을 온라인에서 공개.</p><br/>
             <p className="header">3) [연구결과 시각화 및 공유] 전시 《모던 그로테스크 타임스》 개최 + 프로젝트 종합자료집 발간(12월 말)</p>
             <p>1), 2)로 수렴된 번역서, 정기간행물, 연구 아카이브 등과 함께 각 키워드를 탐구한 작가들의 작품을 전시의 형태로 종합. 이후 모든 결과물을 수록한 종합자료집 발간.</p>
+          </section>
+        </div>
+        <div>
+          <section>
+            <p className="header">
+              [모던 그로테스크 타임스 연재소설 〈유랑 화가: 싱싱의 그놈〉 MODERN GROTESQUE TIMES SERIAL FICTION: The Traveling Painter]
+            </p>
+            <p>
+              보이는 것만 믿고 산 건 아니지만 보이는 대로 그리고 보여주는 삶을 살았던 초상화가 정시연.
+              어느 날, 잘만 보이던 것이 보이지 않게 되고 만다. 심지어 들리지 않아야 할 것이 들리게 되는데.
+            </p>
+            <p>나름 실용적이면서도 이상적이라고 여겼던 삶에 설명할 수 없는 일이 벌어지는 가운데, 시연은 적응하고 흥하고, 심지어 존재하는 줄도 몰랐던 나쁜 녀석들과의 싸움에서 승할 수 있을까?</p>
+            <p>*시즌제로 연재되는 유랑 화가, 그 첫 번째 시즌.</p>
+            <p>
+              {`- 9월 1일: 1화
+              - 9월 11일: 2화
+              - 9월 21일: 3화
+              - 10월 1일: 4화
+              - 10월 11일: 5화
+              - 10월 21일: 6화
+              - 11월 1일: 7화
+              - 11월 11일: 8화
+              - 11월 21일: 9화
+              - 12월 1일: 10화
+              - 12월 11일: 11화 (시즌 1 완결)`}
+            </p>
           </section>
         </div>
         <div>
@@ -178,11 +204,13 @@ const IntroView: React.FC = () => {
               작품으로 풀어낸다.</p>
           </section>
         </div>
-        <div>
+        <div className="identity-font-desc">
           <section>
             <p className="header">[모던 그로테스크 타임스 아이덴티티 MODERN GROTESQUE TIMES IDENTITY]</p><br/>
-            <img src={ModernGrotesqueTimes} alt="MODERN GROTESQUE TIMES"/>
-            <img src={identityFontDesc} alt="identity font desc"/><br/>
+            <div className="identity-font-desc-container">
+              <img src={ModernGrotesqueTimes} alt="MODERN GROTESQUE TIMES"/>
+              <img src={identityFontDesc} alt="identity font desc"/><br/>
+            </div>
             <p>모던 그로테스크 타임스의 타이포그래피 아이덴티티는 ‘천리마’체로 만들어졌다. 천리마체는 북한이 자체개발한 운영체제(OS) '붉은별'의 메인 폰트로, 북한식 고딕체라고 할 수 있다. 북한의
               선전
               포스터와
@@ -257,6 +285,19 @@ object-fit: contain;
 max-width: 100%;
 }
 div {
+&.identity-font-desc {
+.identity-font-desc-container {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+img {
+&[alt="identity font desc"] {
+width: 80%;
+}
+}
+}
+}
 &.sponsor-container {
 display: flex;
 margin-bottom: 13.6rem;
