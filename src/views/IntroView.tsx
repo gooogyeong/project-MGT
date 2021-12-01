@@ -4,6 +4,7 @@ import ModernGrotesqueTimes from '@/assets/img/modern-grotesque-times.png'
 import identityFontDesc from '@/assets/img/identity-font-desc.png'
 import foundation from '@/assets/img/foundation.jpg'
 import OrcaBooks from '@/assets/img/orca-books.png'
+import invitation from '@/assets/video/invitation.mp4'
 
 const IntroView: React.FC = () => {
 
@@ -93,6 +94,13 @@ const IntroView: React.FC = () => {
         <div>
           <section>
             <p className="header">[모던 그로테스크 타임스 전시(온/오프라인) MODERN GROTESQUE TIMES EXHIBITION(ON/OFF-LINE)]</p>
+            <div className="video-wrapper">
+              <video
+                src={invitation}
+                autoPlay
+                loop
+              />
+            </div>
             <p>- 전시 제목: 모던 그로테스크 타임스 MODERN GROTESQUE TIMES</p>
             <p>- 전시 기간: 2021년 12월 18일(토) – 12월 31일(금), 12시-20시(매주 월요일 휴관)</p>
             <p>- 전시 장소: space xx(서울 영등포구 문래동 도림로 128 지하 1층)</p>
@@ -253,6 +261,15 @@ justify-content: center;
   }
   }
   section {
+  .video-wrapper {
+  display: flex;
+  justify-content: center;
+  video {
+  width: 60%;
+  max-width: 100%;
+    object-fit: contain;
+  }
+  }
 &:not(:first-child) {
   padding-top: 1.8rem;
 }
@@ -355,6 +372,11 @@ content: '-';
 }
 
 @media screen and (max-width: ${props => props.theme.widthTabletSmall}) {
+   .video-wrapper {
+  video {
+  width: unset !important;
+  }
+  }
 .intro-wrapper > div section table tr td.exp-schedule > div {
 white-space: pre-line;
 &.separator {
@@ -369,6 +391,7 @@ display: block;
   font-size: ${props => props.theme.fontSizeMobile};
  width: calc(100% - 2.6rem);
  max-width: calc(100% - 2.6rem);
+ 
  p.artists {
   padding-left: 8.8rem !important;
   text-indent: -8.8rem !important;
