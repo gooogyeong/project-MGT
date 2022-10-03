@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { signOut } from 'firebase/auth'
-import { auth } from '@/services/firebase'
 import styled from 'styled-components'
 import { storeContext } from '@/stores/context'
 import { useObserver } from 'mobx-react-lite'
@@ -96,16 +94,6 @@ const Feed = (): JSX.Element => {
     }
     const options = { transform } as Options
     return ReactHtmlParser(content, options)
-  }
-
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        history.push('/login')
-      })
-      .catch((error) => {
-        console.log(error)
-      })
   }
 
   return useObserver(() => {

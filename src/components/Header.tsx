@@ -11,6 +11,8 @@ import Modern from '@/assets/img/modern-eng.png'
 import Grotesque from '@/assets/img/grotesque-eng .png'
 import Times from '@/assets/img/times-eng.png'
 import ModernGrotesqueTimesKo from '@/assets/img/modern-groteseque-times-ko.png'
+import { signOut } from 'firebase/auth'
+import { auth } from '@/services/firebase'
 
 type HeaderProps = {
   isMobile: boolean;
@@ -22,6 +24,7 @@ const Header = (props: HeaderProps) => {
   const history = useHistory()
 
   const store = useContext(storeContext)
+  const author = store?.admin.admin
 
   const goToMain = () => {
     history.push('/')
@@ -33,6 +36,17 @@ const Header = (props: HeaderProps) => {
     }
     if (process.env.NODE_ENV === 'production') getExchRate()
   }, [])
+
+  const handleSignOut = () => {
+    if(!window.confirm('로그아웃하시겠습니까?')) return
+    store?.admin.signOut()
+      .then(() => {
+        history.push('/login')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
 
   return (
     <MGTHeader className="header">
@@ -52,6 +66,13 @@ const Header = (props: HeaderProps) => {
                 <td>이민경</td>
               </tr>
             </div>
+            {author ? (
+              <div onClick={handleSignOut}>
+              <tr>
+                {`${author.nickName} 님`}
+              </tr>
+            </div>
+            ) : null}
           </table>
         ) : (
           <div

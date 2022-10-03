@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { useObserver } from 'mobx-react-lite'
 import Editor from '@/components/editor/Editor'
 import { storeContext } from '@/stores/context'
-import { useObserver } from 'mobx-react-lite'
 import { createTempPost } from '@/services/posts'
 import { PostPayload, UpdatePostPayload } from '@/types/posts'
 
