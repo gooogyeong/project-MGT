@@ -29,6 +29,7 @@ type PostProps = {
   relPosts?: PostType[];
   // TODO: edit props 하나의 객체로 관리
   isPreview?: boolean;
+  isGuest?: boolean;
   isEdit?: boolean;
   editor?: Editor | null;
   editPostTags?: PostType['tags'];
@@ -242,7 +243,7 @@ const Post = (props: PostProps) => {
             <div className="content">
               <div className="content__sub-header">
                 <div>{format(props.post ? new Date(props.post.createdAt) : new Date(), yyyyMMddDot)}</div>
-                <div>{props.post?.author || store?.admin.admin?.nickName}</div>
+                <div>{props.post?.author || store?.admin.admin?.nickName || props.isGuest && 'Guest' }</div>
               </div>
               <div className="content__text">
                 {!props.isEdit && !props.isWrite ?

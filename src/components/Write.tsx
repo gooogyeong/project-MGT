@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useObserver } from 'mobx-react-lite'
 import Editor from '@/components/editor/Editor'
 import { storeContext } from '@/stores/context'
@@ -7,9 +8,11 @@ import { PostPayload, UpdatePostPayload } from '@/types/posts'
 
 const Write: React.FC = (): JSX.Element => {
 
+  const location = useLocation()
   const store = React.useContext(storeContext)
 
   const author = store?.admin.admin
+  const isGuest = location.pathname === '/write/guest' && !author
 
   const [isNotice, setIsNotice] = useState(false)
 
@@ -54,6 +57,7 @@ const Write: React.FC = (): JSX.Element => {
     return (
       <div>
         <Editor
+          isGuest={isGuest}
           isWrite={true}
           isNotice={isNotice}
           setIsNotice={setIsNotice}

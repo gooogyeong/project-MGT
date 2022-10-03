@@ -40,11 +40,12 @@ import ContentHeader from '@/components/shared/ContentHeader'
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable'
 
 type EditorProps = {
-  isWrite?: boolean;
-  isNotice: boolean;
-  isEdit?: boolean;
-  setIsNotice: Dispatch<SetStateAction<boolean>>;
-  handleSubmitClick: (payload: PostPayload | UpdatePostPayload) => Promise<void>;
+  isGuest?: boolean
+  isWrite?: boolean
+  isNotice: boolean
+  isEdit?: boolean
+  setIsNotice: Dispatch<SetStateAction<boolean>>
+  handleSubmitClick: (payload: PostPayload | UpdatePostPayload) => Promise<void>
 }
 
 const Editor = (props: EditorProps): JSX.Element => {
@@ -309,6 +310,7 @@ const Editor = (props: EditorProps): JSX.Element => {
             <EditorBubbleMenu editor={editor}/>
             <Post
               post={store?.post.currEditPost as PostType}
+              isGuest={props.isGuest}
               isEdit={props.isEdit}
               isWrite={props.isWrite}
               editor={editor}

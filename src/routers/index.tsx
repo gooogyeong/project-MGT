@@ -21,8 +21,8 @@ function AppRouter (): JSX.Element {
           <Route exact path="/post/list" component={PostListView}/>
           <Route exact path="/post/:id" component={PostDetailView}/>
           <Route exact path="/sub" component={SubscribeView}/>
-          <Route path="/login" component={LoginView}/>
           <Route exact path="/write/guest" component={WriteView}/>
+          <Route path="/login" component={LoginView}/>
           <PrivateRoute exact path="/write" component={WriteView}/>
           <PrivateRoute exact path="/write/:postId" component={EditView}/>
         </Switch>
