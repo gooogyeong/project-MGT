@@ -6,9 +6,10 @@ import styled from 'styled-components'
 import { getVideoSrc } from '@/utils'
 
 type VideoUploadModalProps = {
-  isOpen: boolean;
-  openVideoUploadModal: Dispatch<SetStateAction<boolean>>;
-  addVideoToEditor: (videoSrc: string) => void;
+  isOpen: boolean
+  isGuest?: boolean
+  openVideoUploadModal: Dispatch<SetStateAction<boolean>>
+  addVideoToEditor: (videoSrc: string) => void
 }
 
 const VideoUploadModal: React.FC<VideoUploadModalProps> = (props: VideoUploadModalProps): JSX.Element => {
@@ -52,7 +53,8 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = (props: VideoUploadMod
       if (fileUploader.current && fileUploader.current.files) {
         const file = fileUploader.current.files[0]
         setTempFile(file)
-        await uploadFileToStorage(file)
+        if (!props.isGuest) await uploadFileToStorage(file)
+        else setPreviewSrc(URL.createObjectURL(file))
       }
     } catch (error) {
       console.log(error)
@@ -87,7 +89,7 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = (props: VideoUploadMod
 
   const cancelVideoUpload = async () => {
     // TODO: 파일 삭제하는 로직 정교화
-    if (!tempFile) return
+    if (!tempFile || props.isGuest) return
     const videoRef = ref(storage, `video/${tempFile.name}`)
     deleteObject(videoRef)
       .then(() => {

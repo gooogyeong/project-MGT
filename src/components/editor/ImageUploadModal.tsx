@@ -6,9 +6,10 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '@/services/firebase'
 
 type ImageUploadModalProps = {
-  isOpen: boolean;
-  openImageUploadModal: Dispatch<SetStateAction<boolean>>;
-  addImageToEditor: (imageSrc: string) => void;
+  isOpen: boolean
+  isGuest?: boolean
+  openImageUploadModal: Dispatch<SetStateAction<boolean>>
+  addImageToEditor: (imageSrc: string) => void
 }
 
 const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadModalProps): JSX.Element => {
@@ -26,7 +27,8 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = (props: ImageUploadMod
     try {
       if (fileUploader.current && fileUploader.current.files) {
         const file = fileUploader.current.files[0]
-        await uploadFileToStorage(file)
+        if (!props.isGuest) await uploadFileToStorage(file)
+        else setTempImageSrc(URL.createObjectURL(file))
       }
     } catch (error) {
       console.log(error)

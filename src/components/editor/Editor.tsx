@@ -301,6 +301,7 @@ const Editor = (props: EditorProps): JSX.Element => {
               </div>
               <div className='menu-bar__wrapper'>
                 <EditorMenuBar
+                  isGuest={props.isGuest}
                   editor={editor}
                   footnoteArr={footnoteArr}
                   setFootnoteArr={setFootnoteArr}

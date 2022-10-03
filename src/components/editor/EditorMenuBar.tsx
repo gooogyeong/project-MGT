@@ -21,12 +21,13 @@ import {
 import { TiSortNumerically } from 'react-icons/ti'
 
 type MenuBarProps = {
-  editor: EditorType | null;
-  footnoteArr: Footnote[];
-  setFootnoteArr: Dispatch<SetStateAction<Footnote[]>>;
+  isGuest?: boolean
+  editor: EditorType | null
+  footnoteArr: Footnote[]
+  setFootnoteArr: Dispatch<SetStateAction<Footnote[]>>
 }
 
-const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) => {
+const EditorMenuBar = ({ isGuest, editor, footnoteArr, setFootnoteArr }: MenuBarProps) => {
   if (!editor) {
     return null
   }
@@ -115,11 +116,13 @@ const EditorMenuBar = ({ editor, footnoteArr, setFootnoteArr }: MenuBarProps) =>
     <MGTEditorMenuBar>
       <ImageUploadModal
         isOpen={isOpenImageUploadModal}
+        isGuest={isGuest}
         openImageUploadModal={setIsOpenImageUploadModal}
         addImageToEditor={addImageToEditor}
       />
       <VideoUploadModal
         isOpen={isOpenVideoUploadModal}
+        isGuest={isGuest}
         openVideoUploadModal={setIsOpenVideoUploadModal}
         addVideoToEditor={addVideoToEditor}
       />
