@@ -176,7 +176,8 @@ const Editor = (props: EditorProps): JSX.Element => {
   }, [footnoteArr])
 
   const deleteTag = async (tag: TagType) => {
-    if (window.confirm(`'${tag.name}' 태그를 삭제하시겠습니까?`)) {
+    if (props.isGuest) return
+    else if (window.confirm(`'${tag.name}' 태그를 삭제하시겠습니까?`)) {
       await store?.tag.deleteTag(tag.id)
       const tags = await getTags()
       setTags(tags as TagType[])
@@ -280,26 +281,29 @@ const Editor = (props: EditorProps): JSX.Element => {
           <MGTEditor>
             <ContentHeader>
               <input
-                value={title}
+                value={title || ''}
+                placeholder="Enter title ✍️"
                 spellCheck={false}
                 onChange={handleTitleChange}
               />
             </ContentHeader>
             <div className="toolbar-wrapper">
               <div className="edit-menu-wrapper">
-                <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
-                {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
-                  <>
-                    <input
-                      type="checkbox"
-                      checked={!!isPinned}
-                      onChange={handleIsPinnedSelect}
-                    />
-                    <label>상단에 고정</label>
-                  </>
-                ) : null}
+                {!props.isGuest ? (<>
+                  <CategoryDropdown handleCategorySelect={handleCategorySelect}/>
+                  {props.isNotice || store?.post.currEditPost?.categoryName === CategoryEnum.notice ? (
+                    <>
+                      <input
+                        type="checkbox"
+                        checked={!!isPinned}
+                        onChange={handleIsPinnedSelect}
+                      />
+                      <label>상단에 고정</label>
+                    </>
+                  ) : null}
+                </>) : null}
               </div>
-              <div className='menu-bar__wrapper'>
+              <div className="menu-bar__wrapper">
                 <EditorMenuBar
                   isGuest={props.isGuest}
                   editor={editor}
@@ -345,15 +349,19 @@ const Editor = (props: EditorProps): JSX.Element => {
                       key={tagIndex}
                       tag={tag}
                       postTags={postTags}
-                      isShowXBtn={true}
-                      onXBtnClick={() => { deleteTag(tag) }}
+                      isShowXBtn={!props.isGuest}
+                      onXBtnClick={() => {
+                        deleteTag(tag)
+                      }}
                       setTags={setPostTags}
                     />
                   )
                 })}
               </div>
-              <label>태그 추가</label>
-              <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
+              {!props.isGuest ? <>
+                <label>태그 추가</label>
+                <input value={tagName} onKeyDown={handleTagCreate} onChange={handleTagInput}/>
+              </> : null}
             </div>
           </MGTEditor>
         </div>
@@ -363,111 +371,136 @@ const Editor = (props: EditorProps): JSX.Element => {
 }
 
 const MGTEditor = styled.div`
-.toolbar-wrapper {
-position: sticky;
-top: 0;
-background-color: white;
-border-bottom: 1px dotted blue;
-z-index: ${props => props.theme.zIndexToolBar};
-.edit-menu-wrapper {
-border-top: 1px dotted blue !important;
-}
-}
-.editor__wrapper {
-user-select: auto !important;
-counter-reset: footnote-label;
-footnote {
-cursor: pointer;
-&:after {
-content: counter(footnote-label) ')';
-vertical-align: super;
-font-size: 75%;
-counter-increment: footnote-label;
-}
-}
-button {
-&.is-active {
-background-color: black;
-color: white;
-}
-}
-& > * {
-padding: 1rem;
-&:focus {
-outline: none !important;
-}
-}
-.ProseMirror {
-padding: 0;
-.iframe-wrapper, .video-wrapper {
-display: flex;
-justify-content: center;
-}
-}
+  button {
+    &.is-active {
+      background-color: black !important;
+      color: white !important;
+    }
+  }
 
-.tableWrapper {
-overflow-x: auto;
-}
+  .toolbar-wrapper {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    border-bottom: 1px dotted blue;
+    z-index: ${props => props.theme.zIndexToolBar};
 
-.resize-cursor {
-cursor: ew-resize;
-cursor: col-resize;
-}
+    .edit-menu-wrapper {
+      border-top: 1px dotted blue !important;
+    }
+  }
 
-blockquote {
-padding-left: 1rem;
-border-left: 3px solid black;
-}
-}
-.footnote-list__wrapper {
-counter-reset: footnote-content;
-padding: 1.3rem;
-.footnote__wrapper {
-// TODO: scroll X -> flex height
-display: flex;
-.footnote__count {
-&:after {
-content: counter(footnote-content) ')';
-counter-increment: footnote-content;
-}
-}
-.footnote__content {
-width: 100%;
-border: none;
-img {
-max-width: 20%;
-object-contain: fit;
-}
-}
-}
-}
+  .editor__wrapper {
+    user-select: auto !important;
+    counter-reset: footnote-label;
 
-.tag-opt-container {
-display: flex;
-padding: 1rem 0;
-min-height: 2.4rem;
-align-items: center;
-.tag:not(:last-child) {
-margin-right: 0.4rem;
-}
-}
+    footnote {
+      cursor: pointer;
 
-.post {
-&__footer--reference {
-textarea {
-width: calc(100% - 2.6rem);
-height: 100%;
-}
-}
-}
+      &:after {
+        content: counter(footnote-label) ')';
+        vertical-align: super;
+        font-size: 75%;
+        counter-increment: footnote-label;
+      }
+    }
+    
+    & > * {
+      padding: 1rem;
 
-@media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
-.ProseMirror {
-.iframe-wrapper, .video-wrapper {
-height: 24rem !important;
-}
-}
-}
+      &:focus {
+        outline: none !important;
+      }
+    }
+
+    .ProseMirror {
+      padding: 0;
+
+      .iframe-wrapper, .video-wrapper {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .tableWrapper {
+      overflow-x: auto;
+    }
+
+    .resize-cursor {
+      cursor: ew-resize;
+      cursor: col-resize;
+    }
+
+    blockquote {
+      padding-left: 1rem;
+      border-left: 3px solid black;
+    }
+  }
+
+  .footnote-list__wrapper {
+    counter-reset: footnote-content;
+    padding: 1.3rem;
+
+    .footnote__wrapper {
+      // TODO: scroll X -> flex height
+      display: flex;
+
+      .footnote__count {
+        &:after {
+          content: counter(footnote-content) ')';
+          counter-increment: footnote-content;
+        }
+      }
+
+      .footnote__content {
+        width: 100%;
+        border: none;
+
+        img {
+          max-width: 20%;
+          object-contain: fit;
+        }
+      }
+    }
+  }
+
+  .tag-opt-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 1rem 0;
+    min-height: 2.4rem;
+
+    .tag {
+      padding: 0 0.4rem;
+
+      &:not(.x-btn):hover {
+        border-radius: 44%;
+        border: 1px solid red;
+      }
+    }
+
+    .tag:not(:last-child) {
+      margin-right: 0.4rem;
+    }
+  }
+
+  .post {
+    &__footer--reference {
+      textarea {
+        width: calc(100% - 2.6rem);
+        height: 100%;
+      }
+    }
+  }
+
+  @media screen and (max-width: ${props => props.theme.widthMobileScreen}) {
+    .ProseMirror {
+      .iframe-wrapper, .video-wrapper {
+        height: 24rem !important;
+      }
+    }
+  }
 `
 
 export default Editor

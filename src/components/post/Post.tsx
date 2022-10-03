@@ -170,6 +170,7 @@ const Post = (props: PostProps) => {
   }
 
   const shareTwitter = () => {
+    if (props.isGuest) return
     // TODO: sendURL -> useEffect ? const ?
     const sendText = props.post.title
     const sendUrl = `${config.baseURL}/post/${props.post.objectID}`
@@ -177,11 +178,13 @@ const Post = (props: PostProps) => {
   }
 
   const shareFacebook = () => {
+    if (props.isGuest) return
     const sendURL = `${config.baseURL}/post/${props.post.objectID}`
     window.open('http://www.facebook.com/sharer/sharer.php?u=' + sendURL)
   }
 
   const shareKakaotalk = () => {
+    if (props.isGuest) return
     if (props.post.title && props.post.objectID) {
       share({
         title: props.post.title,
@@ -191,6 +194,7 @@ const Post = (props: PostProps) => {
   }
 
   const shareLink = async () => {
+    if (props.isGuest) return
     setIsOpenLinkModal(true)
     const { url } = await bitly.shorten(`${config.baseURL}/post/${props.post.objectID}`)
     setShortenURL(url)
@@ -254,7 +258,7 @@ const Post = (props: PostProps) => {
                       editor={props.editor}
                     />) : null}
               </div>
-              <div className="btn-container">
+              {!props.isGuest ? <div className="btn-container">
                 {!props.isEdit && !props.isWrite && (props.post && store?.admin.admin?.nickName === props.post.author) ?
                   <Button variant="red" buttonText="삭제" onClick={handleDeleteClick}/> : null}
                 {props.isWrite || (props.post && store?.admin.admin?.nickName === props.post.author) ?
@@ -262,7 +266,7 @@ const Post = (props: PostProps) => {
                 {props.isEdit || props.isWrite ? <Button variant="red" buttonText="취소" onClick={() => {
                   if (props.leaveWithoutSave) props.leaveWithoutSave()
                 }}/> : null}
-              </div>
+              </div> : null}
             </div>
           </div>
           {!store?.mobile.isMobile ? (
@@ -348,7 +352,7 @@ const Post = (props: PostProps) => {
           ) : null}
           <div className="content share">
             <div className="label">공유하기</div>
-            <div className="social-media__wrapper">
+            <div className={`social-media__wrapper ${props.isGuest ? 'guest' : ''}`}>
               <div>
                 <div onClick={shareTwitter}>
                   <img src={twitterBlue} alt="share-via-twitter" className="red"/>
@@ -614,9 +618,12 @@ padding: 0 0.8rem;
 }
 }
 .social-media__wrapper {
-display: flex;
-padding-bottom: 1.3rem;
-cursor: pointer;
+  display: flex;
+  padding-bottom: 1.3rem;
+  cursor: pointer;
+  &.guest {
+    cursor: not-allowed;
+  }
 & > div {
 display: flex;
 &:not(:last-child) {
