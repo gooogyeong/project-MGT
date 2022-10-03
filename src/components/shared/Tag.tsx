@@ -54,31 +54,31 @@ const Tag: React.FC<TagProps> = (props: TagProps) => {
 export default Tag
 
 const MGTTag = styled.div`
-border-radius: 4px;
-color: red;
-white-space: nowrap;
-display: flex;
-align-items: center;
-&:not(.disabled) {
-  cursor: pointer;
-}
-.x-btn {
-display: none;
-border-radius: 100%;
-&:hover {
-background-color: rgba(250,128,114, 0.2);
-border-radius: 100%;
-}
+  border-radius: 4px;
+  color: red;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  &:not(.disabled) {
+    cursor: pointer;
+  }
+  .x-btn {
+    display: none;
+    border-radius: 100%;
+  &:hover {
+    background-color: rgba(250,128,114, 0.2);
+    border-radius: 100%;
+  }
 }
 &.x-btn {
-&:hover {
-padding-left: 0.4rem;
-border: 1px solid red;
-border-radius: 1rem;
-.x-btn {
-padding: 0 0.6rem;
-display: inline;
-}
-}
+  &:hover {
+  padding-left: 0.4rem;
+  border: 1px solid red;
+  border-radius: 1rem;
+    .x-btn {
+      padding: 0 0.6rem;
+      display: inline;
+    }
+  }
 }
 `

@@ -2,11 +2,12 @@ import { Editor as EditorType } from '@tiptap/react'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import ImageUploadModal from '@/components/editor/ImageUploadModal'
 import VideoUploadModal from '@/components/editor/VideoUploadModal'
+import Dropdown from '@/components/shared/Dropdown'
 import styled from 'styled-components'
 import { Footnote } from '@/types/posts'
 import { generateId } from '@/utils'
 // TODO
-// import { BiFont, BiHighlight } from 'react-icons/bi'
+import { BiFont, BiHighlight } from 'react-icons/bi'
 import { RiVideoUploadFill, RiImageAddLine } from 'react-icons/ri'
 import { IoIosUndo, IoIosRedo } from 'react-icons/io'
 import { FiAlignCenter, FiAlignJustify, FiAlignLeft, FiAlignRight } from 'react-icons/fi'
@@ -19,6 +20,7 @@ import {
   AiOutlineUnorderedList
 } from 'react-icons/ai'
 import { TiSortNumerically } from 'react-icons/ti'
+import ReactTooltip from 'react-tooltip'
 
 type MenuBarProps = {
   isGuest?: boolean
@@ -37,6 +39,8 @@ const EditorMenuBar = ({ isGuest, editor, footnoteArr, setFootnoteArr }: MenuBar
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isOpenVideoUploadModal, setIsOpenVideoUploadModal] = useState(false)
+
+  const highlightOptions = [{ value: '#ffa8a8', name: 'red' }]
 
   const addImageToEditor = (imageSrc: string) => {
     editor.chain().focus().setImage({ src: imageSrc }).run()
@@ -237,6 +241,12 @@ const EditorMenuBar = ({ isGuest, editor, footnoteArr, setFootnoteArr }: MenuBar
               className={`comic-sans ${editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' }) ? 'is-active' : ''}`}>
         Comic Sans
       </button>
+      {/*<Dropdown*/}
+      {/*  defaultText="highlight"*/}
+      {/*  list={highlightOptions}*/}
+      {/*  getText={(idx: number) => highlightOptions[idx].name}*/}
+      {/*  handleItemSelect={(idx: number) => editor.chain().focus().toggleHighlight({ color:  highlightOptions[idx].value }).run()}*/}
+      {/*/>*/}
       <button
         onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffa8a8' }).run()}
         className={editor.isActive('highlight', { color: '#ffa8a8' }) ? 'is-active' : ''}>
@@ -263,7 +273,10 @@ const EditorMenuBar = ({ isGuest, editor, footnoteArr, setFootnoteArr }: MenuBar
         purple
       </button>
       <button
+        data-for="add-link"
+        data-tip
         onClick={() => {
+          if (editor.view.state.selection.empty) return window.alert('Please select the text you want to add link to')
           const url = window.prompt('URL') || ''
           if (url) editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
         }}
@@ -271,6 +284,10 @@ const EditorMenuBar = ({ isGuest, editor, footnoteArr, setFootnoteArr }: MenuBar
       >
         add link
       </button>
+      <ReactTooltip
+        id="add-link"
+        getContent={() => "select text to add link"}
+      />
       <button
         onClick={() => {
           const url = window.prompt('URL') || ''
