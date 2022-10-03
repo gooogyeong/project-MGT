@@ -265,7 +265,7 @@ const EditorMenuBar = ({ isGuest, editor, footnoteArr, setFootnoteArr }: MenuBar
       <button
         onClick={() => {
           const url = window.prompt('URL') || ''
-          editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+          if (url) editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
         }}
         className={editor.isActive('link') ? 'is-active' : ''}
       >
