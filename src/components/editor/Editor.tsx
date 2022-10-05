@@ -14,6 +14,7 @@ import TableHeader from '@tiptap/extension-table-header'
 import Image from '@tiptap/extension-image'
 import ImageExtension from '@/utils/tiptap/ImageExtension'
 import ParagraphExtension from '@/utils/tiptap/ParagraphExtenson'
+import Placeholder from '@tiptap/extension-placeholder'
 import { FontSize } from '@/utils/tiptap/FontSize'
 import { Gradient } from '@/utils/tiptap/Gradient'
 import { Iframe } from '@/utils/tiptap/Iframe'
@@ -57,6 +58,9 @@ const Editor = (props: EditorProps): JSX.Element => {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Placeholder.configure({
+        placeholder: 'Write something',
+      }),
       Paragraph,
       ParagraphExtension,
       TextAlign,
@@ -404,7 +408,7 @@ const MGTEditor = styled.div`
         counter-increment: footnote-label;
       }
     }
-    
+
     & > * {
       padding: 1rem;
 
@@ -415,6 +419,12 @@ const MGTEditor = styled.div`
 
     .ProseMirror {
       padding: 0;
+
+      p.is-editor-empty:first-child::before {
+        content: attr(data-placeholder);
+        color: #757575;
+        pointer-events: none;
+      }
 
       .iframe-wrapper, .video-wrapper {
         display: flex;
