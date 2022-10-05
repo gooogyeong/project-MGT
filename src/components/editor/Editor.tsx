@@ -59,7 +59,7 @@ const Editor = (props: EditorProps): JSX.Element => {
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: 'Write something',
+        placeholder: 'Write something'
       }),
       Paragraph,
       ParagraphExtension,
@@ -391,6 +391,19 @@ const MGTEditor = styled.div`
 
     .edit-menu-wrapper {
       border-top: 1px dotted blue !important;
+    }
+  }
+
+  #tippy-1 {
+    z-index: 9 !important;
+
+    button {
+      border: 1px dotted red;
+      background-color: white;
+
+      &:not(:last-child) {
+        border-right: none;
+      }
     }
   }
 

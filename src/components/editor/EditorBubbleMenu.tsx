@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { BubbleMenu, Editor as EditorType } from '@tiptap/react'
 import { TextSelection, NodeSelection } from 'prosemirror-state'
+import { GrBold } from 'react-icons/gr'
+import { AiOutlineItalic, AiOutlineStrikethrough } from 'react-icons/ai'
 
 type BubbleMenuProps = {
   editor: EditorType | null;
@@ -26,19 +28,19 @@ const EditorBubbleMenu = ({ editor }: BubbleMenuProps) => {
             onClick={() => editor.chain().focus().toggleBold().run()}
             className={editor.isActive('bold') ? 'is-active' : ''}
           >
-            bold
+            <GrBold size={14}/>
           </button>
           <button
             onClick={() => editor.chain().focus().toggleItalic().run()}
             className={editor.isActive('italic') ? 'is-active' : ''}
           >
-            italic
+            <AiOutlineItalic/>
           </button>
           <button
             onClick={() => editor.chain().focus().toggleStrike().run()}
             className={editor.isActive('strike') ? 'is-active' : ''}
           >
-            strike
+            <AiOutlineStrikethrough/>
           </button>
         </div>) : null}
       {selectionType === 'img' ? (
